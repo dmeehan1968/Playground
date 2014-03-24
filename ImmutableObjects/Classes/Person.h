@@ -90,12 +90,12 @@ private:
 
 inline std::ostream &operator << (std::ostream &stream, const Person &person) {
     
-    stream << "Person (" << &person << "):" << std::endl
-    << "\t" << "Firstname: " << *person.firstName() << std::endl
-    << "\t" << "Lastname: " << *person.lastName() << std::endl
-    << "\t" << "DOB: " << person.dateOfBirth() << std::endl;
+    return stream
+        << "Person (" << &person << "):" << std::endl
+        << "\t" << "Firstname: " << *person.firstName() << std::endl
+        << "\t" << "Lastname: " << *person.lastName() << std::endl
+        << "\t" << "DOB: " << person.dateOfBirth() << std::endl;
     
-    return stream;
 }
 
 

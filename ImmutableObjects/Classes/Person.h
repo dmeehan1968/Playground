@@ -12,6 +12,7 @@
 #include "DateTime.h"
 
 #include <functional>
+#include <string>
 
 class Person {
     
@@ -19,9 +20,14 @@ public:
     
     template <class String>
     Person(String &&firstName, String &&lastName, const DateTime &dateOfBirth) :
-        _firstName(std::forward<String>(firstName)),
-        _lastName(std::forward<String>(lastName)),
+        _firstName(std::make_shared<String>(std::forward<String>(firstName))),
+        _lastName(std::make_shared<String>(std::forward<String>(lastName))),
         _dateOfBirth(dateOfBirth)
+    {}
+    
+    Person(const char * const firstName, const char * const lastName, const DateTime &dateOfBirth)
+    :
+        Person(std::string(firstName), std::string(lastName), dateOfBirth)
     {}
     
 private:

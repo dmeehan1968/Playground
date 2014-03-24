@@ -14,70 +14,50 @@
 #include <functional>
 #include <string>
 #include <ostream>
+#include <iostream>
 
 class Person {
     
 public:
     
-    template <class String>
-    Person(String &&firstName, String &&lastName, const DateTime &dateOfBirth) :
-        _firstName(std::make_shared<String>(std::forward<String>(firstName))),
-        _lastName(std::make_shared<String>(std::forward<String>(lastName))),
-        _dateOfBirth(dateOfBirth)
-    {}
-    
-    Person(const char * const firstName, const char * const lastName, const DateTime &dateOfBirth)
+    Person(const std::string &firstName, const std::string &lastName, const DateTime &dateOfBirth)
     :
-        Person(std::string(firstName == nullptr ? "" : firstName),
-               std::string(lastName == nullptr ? "" : lastName), dateOfBirth)
-    {}
-    
-    template <class String>
-    Person firstName(String &&firstName) const {
-        
-        Person person(*this);
-        
-        person._firstName = std::make_shared<String>(firstName);
-        
-        return person;
-        
-    }
-    
-    template <class String>
-    Person lastName(String &&lastName) const {
-        
-        Person person(*this);
-        
-        person._lastName = std::make_shared<String>(lastName);
-        
-        return person;
-        
-    }
-    
-    Person dateOfBirth(const DateTime &dateOfBirth) {
-        
-        Person person(*this);
-        
-        person._dateOfBirth = dateOfBirth;
-        
-        return person;
-        
+    _firstName(std::make_shared<std::string>(firstName)),
+    _lastName(std::make_shared<std::string>(lastName)),
+    _dateOfBirth(dateOfBirth)
+    {
+        std::cout << "Person(" << this << ")" << std::endl;
     }
 
+    Person(const Person &other)
+    :
+        _firstName(other._firstName),
+        _lastName(other._lastName),
+        _dateOfBirth(other._dateOfBirth)
+    {
+        std::cout << "copy Person(" << this << ")" << std::endl;
+    }
+    
+    ~Person() {
+        std::cout << "~Person(" << this << ")" << std::endl;
+    }
+    
     std::shared_ptr<std::string> firstName() const {
-        
         return _firstName;
     }
     
     std::shared_ptr<std::string> lastName() const {
-        
         return _lastName;
-        
     }
-
+    
     DateTime dateOfBirth() const {
-        
         return _dateOfBirth;
+    }
+    
+    void setFirstName(const std::shared_ptr<std::string> &firstName) {
+    
+        _firstName = firstName;
+        
     }
     
 private:

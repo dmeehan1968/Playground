@@ -6,6 +6,12 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		A32E105D18E0650F0098254B /* Person.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A32E105B18E0650F0098254B /* Person.cpp */; };
+		A32E106018E066BD0098254B /* DateTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A32E105E18E066BD0098254B /* DateTime.cpp */; };
+		A32E106218E0673B0098254B /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A32E106118E0673B0098254B /* main.cpp */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		A32E104C18E0635E0098254B /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -20,6 +26,11 @@
 
 /* Begin PBXFileReference section */
 		A32E104E18E0635E0098254B /* ImmutableObjects */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ImmutableObjects; sourceTree = BUILT_PRODUCTS_DIR; };
+		A32E105B18E0650F0098254B /* Person.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Person.cpp; sourceTree = "<group>"; };
+		A32E105C18E0650F0098254B /* Person.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Person.h; sourceTree = "<group>"; };
+		A32E105E18E066BD0098254B /* DateTime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DateTime.cpp; sourceTree = "<group>"; };
+		A32E105F18E066BD0098254B /* DateTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateTime.h; sourceTree = "<group>"; };
+		A32E106118E0673B0098254B /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -36,6 +47,7 @@
 		A32E104518E0635E0098254B = {
 			isa = PBXGroup;
 			children = (
+				A32E106118E0673B0098254B /* main.cpp */,
 				A32E105A18E063790098254B /* Classes */,
 				A32E104F18E0635E0098254B /* Products */,
 			);
@@ -52,6 +64,10 @@
 		A32E105A18E063790098254B /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				A32E105B18E0650F0098254B /* Person.cpp */,
+				A32E105C18E0650F0098254B /* Person.h */,
+				A32E105E18E066BD0098254B /* DateTime.cpp */,
+				A32E105F18E066BD0098254B /* DateTime.h */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -107,6 +123,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A32E106018E066BD0098254B /* DateTime.cpp in Sources */,
+				A32E105D18E0650F0098254B /* Person.cpp in Sources */,
+				A32E106218E0673B0098254B /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

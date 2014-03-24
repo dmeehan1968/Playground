@@ -14,51 +14,33 @@
 #include <stdio.h>
 
 int main(int argc, char *argv[]) {
-    
-    using _s = std::string;
 
-    auto pGod = std::make_shared<const Person>(_s("God"), _s(""), DateTime(0,0,0));
+    using _s = std::string;
+    
+    const auto pGod = Person::const_create("God", "", DateTime(0,0,0));
     
     std::cout << *pGod << std::endl;
     
-    std::shared_ptr<const Person> pDave = std::make_shared<const Person>(_s("Dave"), _s("Meehan"), DateTime(1968,8,14));
+    auto pDave = Person::const_create("Dave", "Meehan", DateTime(1968,8,14));
     
     std::cout << *pDave << std::endl;
 
     std::cout << "Mutable copy" << std::endl;
     
-    std::shared_ptr<Person> pMutableDave = std::make_shared<Person>(*pDave);
+    auto pMutableDave = Person::create(*pDave);
     
-    pMutableDave->setFirstName(std::make_shared<std::string>("David"));
+    pMutableDave->setFirstName("David");
     
     std::cout << "Replace immutable" << std::endl;
 
-    pDave = std::make_shared<const Person>(*pMutableDave);
+    pDave = Person::const_create(std::move(*pMutableDave));
     
     std::cout << *pDave << std::endl;
     
-    pMutableDave->setFirstName(std::make_shared<std::string>("Satan"));
+    pMutableDave->setFirstName(pDave->lastName());
+    
+    std::cout << *pMutableDave << std::endl;
     
     std::cout << *pDave << std::endl;
     
-    
-    
-//    const Person God("God", nullptr, DateTime(0,0,0));
-//    
-//    std::cout << God << std::endl;
-//    
-//    Person daveMeehan(_s("dave"), _s("meehan"), DateTime(1968,8,15));
-//
-//    std::cout << daveMeehan << std::endl;
-//
-//    daveMeehan = daveMeehan.firstName(_s("Dave"));
-//    
-//    std::cout << daveMeehan << std::endl;
-//
-//    daveMeehan = MutablePerson(daveMeehan)
-//                    .lastName(_s("Meehan"))
-//                    .dateOfBirth(DateTime(1968,8,14));
-// 
-//    std::cout << daveMeehan << std::endl;
-
 }

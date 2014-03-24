@@ -9,37 +9,38 @@
 #include "Person.h"
 
 #include <iostream>
+#include <memory>
 
 #include <stdio.h>
 
-class MutablePerson : public Person {
-
-public:
-    
-    MutablePerson(const Person &person) : Person(person) {}
-    
-};
-
 int main(int argc, char *argv[]) {
-    
+
     using _s = std::string;
     
-    const Person God("God", nullptr, DateTime(0,0,0));
+    const auto pGod = Person::const_create("God", "", DateTime(0,0,0));
     
-    std::cout << God << std::endl;
+    std::cout << *pGod << std::endl;
     
-    Person daveMeehan(_s("dave"), _s("meehan"), DateTime(1968,8,15));
-
-    std::cout << daveMeehan << std::endl;
-
-    daveMeehan = daveMeehan.firstName(_s("Dave"));
+    auto pDave = Person::const_create("Dave", "Meehan", DateTime(1968,8,14));
     
-    std::cout << daveMeehan << std::endl;
+    std::cout << *pDave << std::endl;
 
-    daveMeehan = MutablePerson(daveMeehan)
-                    .lastName(_s("Meehan"))
-                    .dateOfBirth(DateTime(1968,8,14));
- 
-    std::cout << daveMeehan << std::endl;
+    std::cout << "Mutable copy" << std::endl;
+    
+    auto pMutableDave = Person::create(*pDave);
+    
+    pMutableDave->setFirstName("David");
+    
+    std::cout << "Replace immutable" << std::endl;
 
+    pDave = Person::const_create(std::move(*pMutableDave));
+    
+    std::cout << *pDave << std::endl;
+    
+    pMutableDave->setFirstName(pDave->lastName());
+    
+    std::cout << *pMutableDave << std::endl;
+    
+    std::cout << *pDave << std::endl;
+    
 }

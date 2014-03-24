@@ -14,77 +14,69 @@
 #include <functional>
 #include <string>
 #include <ostream>
+#include <iostream>
 
 class Person {
     
 public:
     
-    template <class String>
-    Person(String &&firstName, String &&lastName, const DateTime &dateOfBirth) :
-        _firstName(std::make_shared<String>(std::forward<String>(firstName))),
-        _lastName(std::make_shared<String>(std::forward<String>(lastName))),
-        _dateOfBirth(dateOfBirth)
-    {}
+    using ptr = std::shared_ptr<Person>;
+    using const_ptr = std::shared_ptr<const Person>;
+    using FirstName = std::shared_ptr<const std::string>;
+    using LastName = std::shared_ptr<const std::string>;
     
-    Person(const char * const firstName, const char * const lastName, const DateTime &dateOfBirth)
+    
+    template <class S1, class S2>
+    Person(S1 &&firstName, S2 &&lastName, const DateTime &dateOfBirth)
     :
-        Person(std::string(firstName == nullptr ? "" : firstName),
-               std::string(lastName == nullptr ? "" : lastName), dateOfBirth)
-    {}
-    
-    template <class String>
-    Person firstName(String &&firstName) const {
-        
-        Person person(*this);
-        
-        person._firstName = std::make_shared<String>(firstName);
-        
-        return person;
-        
+        _firstName(std::make_shared<std::string>(std::forward<S1>(firstName))),
+        _lastName(std::make_shared<std::string>(std::forward<S2>(lastName))),
+        _dateOfBirth(dateOfBirth)
+    {
+        std::cout << "Person(" << this << ")" << std::endl;
     }
     
-    template <class String>
-    Person lastName(String &&lastName) const {
-        
-        Person person(*this);
-        
-        person._lastName = std::make_shared<String>(lastName);
-        
-        return person;
-        
+    ~Person() {
+        std::cout << "~Person(" << this << ")" << std::endl;
     }
     
-    Person dateOfBirth(const DateTime &dateOfBirth) {
-        
-        Person person(*this);
-        
-        person._dateOfBirth = dateOfBirth;
-        
-        return person;
-        
+    template <typename... Args>
+    static const_ptr const_create(Args&&...args) {
+        return std::make_shared<const_ptr::element_type>(std::forward<Args>(args)...);
     }
-
-    std::shared_ptr<std::string> firstName() const {
-        
+    
+    template <typename... Args>
+    static ptr create(Args&&...args) {
+        return std::make_shared<ptr::element_type>(std::forward<Args>(args)...);
+    }
+    
+    FirstName firstName() const {
         return _firstName;
     }
     
-    std::shared_ptr<std::string> lastName() const {
-        
+    LastName lastName() const {
         return _lastName;
-        
     }
-
+    
     DateTime dateOfBirth() const {
-        
         return _dateOfBirth;
     }
     
+    template <class S>
+    void setFirstName(S &&firstName) {
+    
+        _firstName = std::make_shared<const std::string>(std::forward<S>(firstName));
+        
+    }
+
+    void setFirstName(const FirstName firstName) {
+        _firstName = firstName;
+    }
 private:
     
-    std::shared_ptr<std::string>    _firstName;
-    std::shared_ptr<std::string>    _lastName;
-    DateTime                        _dateOfBirth;
+    FirstName   _firstName;
+    LastName    _lastName;
+    DateTime    _dateOfBirth;
     
 };
 

@@ -14,8 +14,14 @@ int main(int argc, char *argv[]) {
     
     using _s = std::string;
     
-    Person daveMeehan(_s("dave"), _s("meehan"), DateTime(1968,8,14));
- 
     const Person God("God", nullptr, DateTime(0,0,0));
+    
+    Person daveMeehan(_s("dave"), _s("meehan"), DateTime(1968,8,15));
+
+    daveMeehan = daveMeehan.firstName(_s("Dave"));
+    
+    daveMeehan = daveMeehan
+                    .lastName(_s("Meehan"))
+                    .dateOfBirth(DateTime(1968,8,14));
     
 }

@@ -30,6 +30,38 @@ public:
         Person(std::string(firstName), std::string(lastName), dateOfBirth)
     {}
     
+    template <class String>
+    Person firstName(String &&firstName) const {
+        
+        Person person(*this);
+        
+        person._firstName = std::make_shared<String>(firstName);
+        
+        return person;
+        
+    }
+    
+    template <class String>
+    Person lastName(String &&lastName) const {
+        
+        Person person(*this);
+        
+        person._lastName = std::make_shared<String>(lastName);
+        
+        return person;
+        
+    }
+    
+    Person dateOfBirth(const DateTime &dateOfBirth) {
+        
+        Person person(*this);
+        
+        person._dateOfBirth = dateOfBirth;
+        
+        return person;
+        
+    }
+    
 private:
     
     std::shared_ptr<std::string>    _firstName;

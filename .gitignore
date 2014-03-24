@@ -9,13 +9,24 @@
 !default.mode2v3
 *.perspectivev3
 !default.perspectivev3
-xcuserdata
+**/xcuserdata/
 profile
 *.moved-aside
 DerivedData
 .idea/
 *.hmap
 *.xccheckout
+*.ipa
 
 #CocoaPods
 Pods
+
+# vi
+*.swp
+
+# Visual Studio
+*.suo
+**/Debug/
+**/Release/
+
+~                

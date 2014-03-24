@@ -13,6 +13,7 @@
 
 #include <functional>
 #include <string>
+#include <ostream>
 
 class Person {
     
@@ -27,7 +28,8 @@ public:
     
     Person(const char * const firstName, const char * const lastName, const DateTime &dateOfBirth)
     :
-        Person(std::string(firstName), std::string(lastName), dateOfBirth)
+        Person(std::string(firstName == nullptr ? "" : firstName),
+               std::string(lastName == nullptr ? "" : lastName), dateOfBirth)
     {}
     
     template <class String>
@@ -61,6 +63,22 @@ public:
         return person;
         
     }
+
+    std::shared_ptr<std::string> firstName() const {
+        
+        return _firstName;
+    }
+    
+    std::shared_ptr<std::string> lastName() const {
+        
+        return _lastName;
+        
+    }
+
+    DateTime dateOfBirth() const {
+        
+        return _dateOfBirth;
+    }
     
 private:
     
@@ -69,6 +87,16 @@ private:
     DateTime                        _dateOfBirth;
     
 };
+
+inline std::ostream &operator << (std::ostream &stream, const Person &person) {
+    
+    stream << "Person (" << &person << "):" << std::endl
+    << "\t" << "Firstname: " << *person.firstName() << std::endl
+    << "\t" << "Lastname: " << *person.lastName() << std::endl
+    << "\t" << "DOB: " << person.dateOfBirth() << std::endl;
+    
+    return stream;
+}
 
 
 #endif /* defined(__ImmutableObjects__Person__) */

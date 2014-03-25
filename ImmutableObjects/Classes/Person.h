@@ -70,16 +70,20 @@ public:
     :
         _pImpl(std::make_shared<PersonImpl>(givenNames, familyNames, aliases))
     {}
-    
-    Person(const Person &other) {
-    
-        _pImpl = std::make_shared<PersonImpl>(*other._pImpl);
-        
-    }
 
     Person(Person &&other) : _pImpl(nullptr) {
         
         std::swap(_pImpl, other._pImpl);
+        
+    }
+    
+    Person clone() const {
+        
+        Person other;
+        
+        other._pImpl = std::make_shared<PersonImpl>(*_pImpl);
+        
+        return other;
         
     }
     
@@ -96,6 +100,8 @@ public:
     }
     
 private:
+    
+    Person() {}
     
     std::shared_ptr<PersonImpl> _pImpl;
     

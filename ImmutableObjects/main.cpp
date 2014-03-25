@@ -15,14 +15,10 @@
 int main(int argc, char *argv[]) {
     
     Person dave({ "David", "John" }, { "Meehan" }, { "Dave" });
+
+    Person other(dave.clone());
     
     std::cout << dave << std::endl;
-    
-    auto other = std::move(dave);
-    
-    std::cout << dave << std::endl;
-    
-    std::cout << other << std::endl;
     
     
 }

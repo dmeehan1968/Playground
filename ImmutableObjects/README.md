@@ -106,9 +106,26 @@ The obvious first solution is to use a Shared Pointer (such as std::shared_point
 std::vector<std::shared_pointer<Person>> people;
 ```
 
-Now when we add Person instances to the container, we are only storing a pointer.  When we give out copies of the shared pointer, its reference count is incremented to retain the Person instance whilst that reference exists.  Note that we always give out copies of Shared Pointers, not references to them.
+Now when we add Person instances to the container, we are only storing a pointer.  When we give out copies of the shared pointer, its reference count is incremented to retain the Person instance whilst that reference exists.  Note that we always give out copies of Shared Pointers, not references to them.  
 
 This is a reasonable solution, but one that is a little error prone.  Person instances could still be allocated on the stack and passed to a thread for processing, with no guarentee that the allocating threads stack doesn't get unwound in the meantime.  Its an easy mistake to make.
+
+Unfotunately the STL containers throw a spanner in the works by returning references to items.  Consider the following:
+
+```cpp
+people.front().givenNames();
+```
+
+What happens if there is a context switch between `front()` and `givenNames()` which results in another thread calling `pop_front()`?  The reference we've just got now gets invalidated by the items disposal (assuming no other copies).  Our call to `givenNames()` now references deleted memory, and woops, crash.
+
+The only way to avoid this is to take a copy, not a reference.  You can't do that with a inline call like above, but:
+
+```cpp
+auto first = people.front();
+auto names = first.givenNames();
+```
+
+This will work, because `first` contains a copy of Person, with its shared pointer to the pImpl.  Now if something pops the first item, we still have a retained copy to work with.
 
 ## The pImpl Solution
 
@@ -120,10 +137,68 @@ There are downsides to the pImpl idiom:
 
 * Copying an instance of Person only copies the underlying shared pointer, not the member data.  So assignment of a Person instance results in two Person instances pointing to the same member data.  It's the same problem as assigning one shared pointer to another, except we've just hidden the fact it happens.
 
-So what does Person look like with the pImpl idiom employed?
+* Debugging is slightly harder as its now necessary to drill into the _pImpl and its pointer in order to see the member variables.
 
+But the upsides?
 
+* We get a non-pointer instance to work with.  We can use `.` instead of `->`.
 
+So what does Person look like with the pImpl idiom employed? See commit 579b682.
+
+I've added custom copy and move constructors to Person to resolve the second issue above, so that now assigning Person to another variable will have the expected effect of creating a copy of the member data.  Note that I could have decided to enable the default move constructor, but I decided here that it was better to null out the _pImpl pointer on the object you are moving from, as it makes it more explicit that the previous object is no longer valid.
+
+```cpp
+auto other = std::move(dave);
+// dave is no longer valid, calling methods will lead to an exception
+```
+
+Debugger output after copying (the first is 'dave', the second is 'other':
+
+```text
+(Person) $1 = {
+  _pImpl = 0x0000000100103ab8 (strong=1 weak=1) {
+    __ptr_ = 0x0000000100103ab8
+  }
+}
+(Person) $2 = {
+  _pImpl = 0x0000000100200018 (strong=1 weak=1) {
+    __ptr_ = 0x0000000100200018
+  }
+}
+```
+
+And output after move:
+
+```text
+(Person) $1 = {
+  _pImpl = 0x0000000000000000 (strong=1 weak=1) {
+    __ptr_ = 0x0000000000000000
+  }
+}
+(Person) $2 = {
+  _pImpl = 0x0000000100103ab8 (strong=1 weak=1) {
+    __ptr_ = 0x0000000100103ab8
+  }
+}
+```
+
+I note at this point that in Xcode 5, the use of initializer lists appears incompatible with std::vector::emplace_back.  The following won't compile:
+
+```cpp
+    people.emplace_back({ "Elvis", "Aaron" }, { "Presley" }, { "The King", "Elvis the Pelvis" });
+```
+
+But this will, which should be identical given that Person is an rvalue and should be moved into the container in the same way emplace_back intends.
+
+```cpp
+    people.push_back(Person({ "Elvis", "Aaron" }, { "Presley" }, { "The King", "Elvis the Pelvis" }));
+```
+
+## Time to Back Track
+
+You may have noticed an error in my logic here.  My copy and move constructors are overriding behaviour I've already said I want.  Returning a copy of a Person instance from a container is going to give a full copy, not just a shared pointer.  This won't be good for performance, so I think we have to give up on the idea of copy semantics (although I still prefer my move implementation).
+
+In order to resolve the copy semantics, we'll need an explicit clone method (see commit 
 
 
 

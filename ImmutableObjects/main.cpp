@@ -9,10 +9,13 @@
 #include "Person.h"
 
 #include <iostream>
-#include <memory>
 
 #include <stdio.h>
 
 int main(int argc, char *argv[]) {
+    
+    Person dave({ "David", "John" }, { "Meehan" }, { "Dave" });
+    
+    std::cout << dave << std::endl;
     
 }

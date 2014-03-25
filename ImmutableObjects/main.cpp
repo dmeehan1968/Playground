@@ -18,4 +18,11 @@ int main(int argc, char *argv[]) {
     
     std::cout << dave << std::endl;
     
+    auto other = std::move(dave);
+    
+    std::cout << dave << std::endl;
+    
+    std::cout << other << std::endl;
+    
+    
 }

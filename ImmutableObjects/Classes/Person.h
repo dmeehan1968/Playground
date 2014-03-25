@@ -13,8 +13,8 @@
 #include <vector>
 #include <ostream>
 
-class Person {
-
+class PersonImpl {
+    
 public:
     
     using Name = std::string;
@@ -24,7 +24,7 @@ public:
     using FamilyNames = Names;
     using Aliases = Names;
     
-    Person(const std::initializer_list<const Name> &givenNames,
+    PersonImpl(const std::initializer_list<const Name> &givenNames,
            const std::initializer_list<const Name> &familyNames,
            const std::initializer_list<const Name> &aliases)
     :
@@ -50,6 +50,54 @@ private:
     GivenNames _givenNames;
     FamilyNames _familyNames;
     Aliases _aliases;
+    
+};
+
+class Person {
+
+public:
+
+    using Name = PersonImpl::Name;
+    using Names = PersonImpl::Names;
+
+    using GivenNames = PersonImpl::GivenNames;
+    using FamilyNames = PersonImpl::FamilyNames;
+    using Aliases = PersonImpl::Aliases;
+    
+    Person(const std::initializer_list<const Name> &givenNames,
+           const std::initializer_list<const Name> &familyNames,
+           const std::initializer_list<const Name> &aliases)
+    :
+        _pImpl(std::make_shared<PersonImpl>(givenNames, familyNames, aliases))
+    {}
+    
+    Person(const Person &other) {
+    
+        _pImpl = std::make_shared<PersonImpl>(*other._pImpl);
+        
+    }
+
+    Person(Person &&other) : _pImpl(nullptr) {
+        
+        std::swap(_pImpl, other._pImpl);
+        
+    }
+    
+    const GivenNames &givenNames() const {
+        return _pImpl->givenNames();
+    }
+    
+    const FamilyNames &familyNames() const {
+        return _pImpl->familyNames();
+    }
+    
+    const Aliases &aliases() const {
+        return _pImpl->aliases();
+    }
+    
+private:
+    
+    std::shared_ptr<PersonImpl> _pImpl;
     
 };
 

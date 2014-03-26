@@ -9,86 +9,108 @@
 #ifndef __ImmutableObjects__Person__
 #define __ImmutableObjects__Person__
 
-#include "DateTime.h"
-
-#include <functional>
 #include <string>
+#include <vector>
 #include <ostream>
-#include <iostream>
 
-class Person {
+class PersonImpl {
     
 public:
     
-    using ptr = std::shared_ptr<Person>;
-    using const_ptr = std::shared_ptr<const Person>;
-    using FirstName = std::shared_ptr<const std::string>;
-    using LastName = std::shared_ptr<const std::string>;
+    using Name = std::string;
+    using Names = std::vector<const Name>;
     
+    using GivenNames = Names;
+    using FamilyNames = Names;
+    using Aliases = Names;
     
-    template <class S1, class S2>
-    Person(S1 &&firstName, S2 &&lastName, const DateTime &dateOfBirth)
+    PersonImpl(const std::initializer_list<const Name> &givenNames,
+           const std::initializer_list<const Name> &familyNames,
+           const std::initializer_list<const Name> &aliases)
     :
-        _firstName(std::make_shared<std::string>(std::forward<S1>(firstName))),
-        _lastName(std::make_shared<std::string>(std::forward<S2>(lastName))),
-        _dateOfBirth(dateOfBirth)
-    {
-        std::cout << "Person(" << this << ")" << std::endl;
+        _givenNames(givenNames),
+        _familyNames(familyNames),
+        _aliases(aliases)
+    {}
+    
+    const GivenNames &givenNames() const {
+        return _givenNames;
     }
     
-    ~Person() {
-        std::cout << "~Person(" << this << ")" << std::endl;
+    const FamilyNames &familyNames() const {
+        return _familyNames;
     }
     
-    template <typename... Args>
-    static const_ptr const_create(Args&&...args) {
-        return std::make_shared<const_ptr::element_type>(std::forward<Args>(args)...);
+    const Aliases &aliases() const {
+        return _aliases;
     }
     
-    template <typename... Args>
-    static ptr create(Args&&...args) {
-        return std::make_shared<ptr::element_type>(std::forward<Args>(args)...);
-    }
-    
-    FirstName firstName() const {
-        return _firstName;
-    }
-    
-    LastName lastName() const {
-        return _lastName;
-    }
-    
-    DateTime dateOfBirth() const {
-        return _dateOfBirth;
-    }
-    
-    template <class S>
-    void setFirstName(S &&firstName) {
-    
-        _firstName = std::make_shared<const std::string>(std::forward<S>(firstName));
-        
-    }
-
-    void setFirstName(const FirstName firstName) {
-        _firstName = firstName;
-    }
 private:
     
-    FirstName   _firstName;
-    LastName    _lastName;
-    DateTime    _dateOfBirth;
+    GivenNames _givenNames;
+    FamilyNames _familyNames;
+    Aliases _aliases;
     
 };
 
-inline std::ostream &operator << (std::ostream &stream, const Person &person) {
+class Person {
+
+public:
+
+    using Name = PersonImpl::Name;
+    using Names = PersonImpl::Names;
+
+    using GivenNames = PersonImpl::GivenNames;
+    using FamilyNames = PersonImpl::FamilyNames;
+    using Aliases = PersonImpl::Aliases;
     
-    return stream
-        << "Person (" << &person << "):" << std::endl
-        << "\t" << "Firstname: " << *person.firstName() << std::endl
-        << "\t" << "Lastname: " << *person.lastName() << std::endl
-        << "\t" << "DOB: " << person.dateOfBirth() << std::endl;
+    Person(const std::initializer_list<const Name> &givenNames,
+           const std::initializer_list<const Name> &familyNames,
+           const std::initializer_list<const Name> &aliases)
+    :
+        _pImpl(std::make_shared<PersonImpl>(givenNames, familyNames, aliases))
+    {}
+
+    Person(Person &&other) : _pImpl(nullptr) {
+        
+        std::swap(_pImpl, other._pImpl);
+        
+    }
+    
+    Person clone() const {
+        
+        Person other;
+        
+        other._pImpl = std::make_shared<PersonImpl>(*_pImpl);
+        
+        return other;
+        
+    }
+
+    const GivenNames &givenNames() const {
+        return _pImpl->givenNames();
+    }
+    
+    const FamilyNames &familyNames() const {
+        return _pImpl->familyNames();
+    }
+    
+    const Aliases &aliases() const {
+        return _pImpl->aliases();
+    }
+    
+private:
+    
+    Person() {}
+    
+    std::shared_ptr<PersonImpl> _pImpl;
+    
+};
+
+inline std::ostream & operator << (std::ostream &stream, const Person &person) {
+    
+    return stream << "Person:";
     
 }
-
 
 #endif /* defined(__ImmutableObjects__Person__) */

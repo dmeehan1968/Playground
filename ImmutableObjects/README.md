@@ -198,7 +198,8 @@ But this will, which should be identical given that Person is an rvalue and shou
 
 You may have noticed an error in my logic here.  My copy and move constructors are overriding behaviour I've already said I want.  Returning a copy of a Person instance from a container is going to give a full copy, not just a shared pointer.  This won't be good for performance, so I think we have to give up on the idea of copy semantics (although I still prefer my move implementation).
 
-In order to resolve the copy semantics, we'll need an explicit clone method (see commit 
+In order to resolve the copy semantics, we'll need an explicit clone method (see commit ae50456).
 
+# Hiatus
 
-
+its at this point that I lose the plot, so this is unfinished work.

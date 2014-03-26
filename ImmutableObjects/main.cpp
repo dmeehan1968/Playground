@@ -14,11 +14,8 @@
 
 int main(int argc, char *argv[]) {
     
-    Person dave({ "David", "John" }, { "Meehan" }, { "Dave" });
+    const Person dave({ "David", "John" }, { "Meehan" }, { "Dave" });
 
-    Person other(dave.clone());
-    
     std::cout << dave << std::endl;
-    
     
 }

@@ -86,7 +86,7 @@ public:
         return other;
         
     }
-    
+
     const GivenNames &givenNames() const {
         return _pImpl->givenNames();
     }

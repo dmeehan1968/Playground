@@ -1,5 +1,5 @@
 //
-//  main.cpp
+//  Person.cpp
 //  Concurrency
 //
 //  Created by Dave Meehan on 31/03/2014.
@@ -7,13 +7,3 @@
 //
 
 #include "Person.h"
-
-#include <stdio.h>
-
-int main(int argc, char *argv[]) {
-
-    Person dave({ "David", "John" }, { "Meehan" });
-    
-    return 0;
-    
-}

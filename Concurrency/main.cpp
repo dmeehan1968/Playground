@@ -7,12 +7,15 @@
 //
 
 #include "Person.h"
+#include "People.h"
 
 #include <stdio.h>
 
 int main(int argc, char *argv[]) {
 
     Person dave({ "David", "John" }, { "Meehan" });
+    
+    People people({ dave });
     
     return 0;
     

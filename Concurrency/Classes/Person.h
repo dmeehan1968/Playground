@@ -25,11 +25,11 @@ public:
         _familyNames(familyNames)
     {}
     
-    const Names &givenNames() const {
+    Names givenNames() const {
         return _givenNames;
     }
     
-    const Names &familyNames() const {
+    Names familyNames() const {
         return _familyNames;
     }
     
@@ -42,8 +42,8 @@ private:
 
 inline std::ostream &operator << (std::ostream &stream, const Person &person) {
 
-    auto given = person.givenNames();
-    auto family = person.familyNames();
+    const auto given = person.givenNames();
+    const auto family = person.familyNames();
     
     bool delim = given.size() > 0 && family.size() > 0;
     

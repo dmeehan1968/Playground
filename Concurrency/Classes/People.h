@@ -11,19 +11,29 @@
 
 #include "Person.h"
 
-class People {
+#include <functional>
+#include <iostream>
+#include <future>
+
+class People : public std::vector<Person> {
     
 public:
     
     People(const std::initializer_list<Person> &people)
     :
-        _people(people)
+        std::vector<Person>(people)
     {}
-    
-private:
-    
-    std::vector<Person> _people;
-    
+
 };
+
+inline std::ostream &operator << (std::ostream &stream, const People &people) {
+    
+    std::for_each(people.begin(), people.end(), [&stream](const Person &person) {
+        stream << person << std::endl;
+    });
+    
+    return stream;
+    
+}
 
 #endif /* defined(__Concurrency__People__) */

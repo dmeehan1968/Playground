@@ -10,12 +10,13 @@
 #include "People.h"
 
 #include <stdio.h>
+#include <iostream>
 
 int main(int argc, char *argv[]) {
 
-    Person dave({ "David", "John" }, { "Meehan" });
+    People people({ Person({ "David", "John" }, { "Meehan" }) });
     
-    People people({ dave });
+    std::cout << people;
     
     return 0;
     

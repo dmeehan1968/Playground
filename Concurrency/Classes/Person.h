@@ -11,6 +11,7 @@
 
 #include <string>
 #include <vector>
+#include <ostream>
 
 class Person {
 
@@ -25,11 +26,55 @@ public:
         _familyNames(familyNames)
     {}
     
+    const Names &givenNames() const {
+        return _givenNames;
+    }
+    
+    const Names &familyNames() const {
+        return _familyNames;
+    }
+    
 private:
     
     Names _givenNames;
     Names _familyNames;
     
 };
+
+inline std::ostream &operator << (std::ostream &stream, const Person &person) {
+
+    std::string fullName;
+    
+    std::for_each(person.givenNames().begin(), person.givenNames().end(), [&fullName](const Person::Name &name) {
+        
+        if (name.size() < 1) {
+            return;
+        }
+        
+        if (fullName.size() > 0) {
+            fullName += " ";
+        }
+        
+        fullName += name;
+        
+    });
+
+    std::for_each(person.familyNames().begin(), person.familyNames().end(), [&fullName](const Person::Name &name) {
+        
+        if (name.size() < 1) {
+            return;
+        }
+        
+        if (fullName.size() > 0) {
+            fullName += " ";
+        }
+        
+        fullName += name;
+        
+    });
+    
+    return stream << fullName;
+    
+}
 
 #endif /* defined(__Concurrency__Person__) */

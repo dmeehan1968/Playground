@@ -42,37 +42,12 @@ private:
 
 inline std::ostream &operator << (std::ostream &stream, const Person &person) {
 
-    std::string fullName;
+    auto given = person.givenNames();
+    auto family = person.familyNames();
     
-    std::for_each(person.givenNames().begin(), person.givenNames().end(), [&fullName](const Name &name) {
-        
-        if (name.size() < 1) {
-            return;
-        }
-        
-        if (fullName.size() > 0) {
-            fullName += " ";
-        }
-        
-        fullName += name;
-        
-    });
-
-    std::for_each(person.familyNames().begin(), person.familyNames().end(), [&fullName](const Name &name) {
-        
-        if (name.size() < 1) {
-            return;
-        }
-        
-        if (fullName.size() > 0) {
-            fullName += " ";
-        }
-        
-        fullName += name;
-        
-    });
+    bool delim = given.size() > 0 && family.size() > 0;
     
-    return stream << fullName;
+    return stream << given << (delim ? " " : "") << family;
     
 }
 

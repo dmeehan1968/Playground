@@ -14,7 +14,10 @@
 
 int main(int argc, char *argv[]) {
 
-    People people({ Person({ "David", "John" }, { "Meehan" }) });
+    People people({
+        Person({ "David", "John" }, { "Meehan" }),
+        Person({ "Elvis", "Aaron" }, { "Presley" }) }
+    );
     
     std::cout << people;
     

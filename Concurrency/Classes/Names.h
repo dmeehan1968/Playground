@@ -12,6 +12,7 @@
 #include "Name.h"
 
 #include <vector>
+#include <ostream>
 
 class Names : public std::vector<Name> {
 
@@ -23,5 +24,26 @@ public:
     {}
     
 };
+
+inline std::ostream &operator << (std::ostream &stream, const Names &names) {
+    
+    std::string nameString;
+    
+    std::for_each(names.begin(), names.end(), [&nameString](const Name &name) {
+        
+        if (name.size() < 1) {
+            return;
+        }
+        
+        if (nameString.size() > 0) {
+            nameString += " ";
+        }
+        
+        nameString += name;
+        
+    });
+    
+    return stream << nameString;
+}
 
 #endif /* defined(__Concurrency__Names__) */

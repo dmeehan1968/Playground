@@ -28,9 +28,19 @@ public:
 
 inline std::ostream &operator << (std::ostream &stream, const People &people) {
     
-    std::for_each(people.begin(), people.end(), [&stream](const Person &person) {
-        stream << person << std::endl;
+    bool delim = false;
+    
+    std::for_each(people.begin(), people.end(), [&stream, &delim](const Person &person) {
+        if (delim) {
+            stream << ", " << std::endl;
+        }
+        delim = true;
+        stream << person;
     });
+    
+    if (people.size() > 0) {
+        stream << std::endl;
+    }
     
     return stream;
     

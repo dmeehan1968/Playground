@@ -10,6 +10,8 @@
 		A369C54E18E9E4AB0000CF09 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A369C54D18E9E4AB0000CF09 /* main.cpp */; };
 		A369C55118E9E5740000CF09 /* Person.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A369C54F18E9E5740000CF09 /* Person.cpp */; };
 		A369C55418E9E75C0000CF09 /* People.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A369C55218E9E75C0000CF09 /* People.cpp */; };
+		A369C55718EAAA360000CF09 /* Names.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A369C55518EAAA360000CF09 /* Names.cpp */; };
+		A369C55A18EAAA640000CF09 /* Name.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A369C55818EAAA640000CF09 /* Name.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -31,6 +33,10 @@
 		A369C55018E9E5740000CF09 /* Person.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Person.h; sourceTree = "<group>"; };
 		A369C55218E9E75C0000CF09 /* People.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = People.cpp; sourceTree = "<group>"; };
 		A369C55318E9E75C0000CF09 /* People.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = People.h; sourceTree = "<group>"; };
+		A369C55518EAAA360000CF09 /* Names.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Names.cpp; sourceTree = "<group>"; };
+		A369C55618EAAA360000CF09 /* Names.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Names.h; sourceTree = "<group>"; };
+		A369C55818EAAA640000CF09 /* Name.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Name.cpp; sourceTree = "<group>"; };
+		A369C55918EAAA640000CF09 /* Name.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Name.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,6 +70,10 @@
 		A369C54C18E9E48D0000CF09 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				A369C55818EAAA640000CF09 /* Name.cpp */,
+				A369C55918EAAA640000CF09 /* Name.h */,
+				A369C55518EAAA360000CF09 /* Names.cpp */,
+				A369C55618EAAA360000CF09 /* Names.h */,
 				A369C54F18E9E5740000CF09 /* Person.cpp */,
 				A369C55018E9E5740000CF09 /* Person.h */,
 				A369C55218E9E75C0000CF09 /* People.cpp */,
@@ -125,7 +135,9 @@
 			files = (
 				A369C55118E9E5740000CF09 /* Person.cpp in Sources */,
 				A369C55418E9E75C0000CF09 /* People.cpp in Sources */,
+				A369C55718EAAA360000CF09 /* Names.cpp in Sources */,
 				A369C54E18E9E4AB0000CF09 /* main.cpp in Sources */,
+				A369C55A18EAAA640000CF09 /* Name.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

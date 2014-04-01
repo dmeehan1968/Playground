@@ -9,6 +9,8 @@
 #ifndef __Concurrency__Person__
 #define __Concurrency__Person__
 
+#include "Names.h"
+
 #include <string>
 #include <vector>
 #include <ostream>
@@ -16,9 +18,6 @@
 class Person {
 
 public:
-    
-    using Name = std::string;
-    using Names = std::vector<Name>;
     
     Person(const std::initializer_list<Name> &givenNames, const std::initializer_list<Name> &familyNames)
     :
@@ -45,7 +44,7 @@ inline std::ostream &operator << (std::ostream &stream, const Person &person) {
 
     std::string fullName;
     
-    std::for_each(person.givenNames().begin(), person.givenNames().end(), [&fullName](const Person::Name &name) {
+    std::for_each(person.givenNames().begin(), person.givenNames().end(), [&fullName](const Name &name) {
         
         if (name.size() < 1) {
             return;
@@ -59,7 +58,7 @@ inline std::ostream &operator << (std::ostream &stream, const Person &person) {
         
     });
 
-    std::for_each(person.familyNames().begin(), person.familyNames().end(), [&fullName](const Person::Name &name) {
+    std::for_each(person.familyNames().begin(), person.familyNames().end(), [&fullName](const Name &name) {
         
         if (name.size() < 1) {
             return;

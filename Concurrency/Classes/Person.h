@@ -24,13 +24,15 @@ public:
         _givenNames(givenNames),
         _familyNames(familyNames)
     {}
-    
-    Names givenNames() const {
-        return _givenNames;
+ 
+    template <class F>
+    void givenNames(F &functor) const {
+        functor(_givenNames);
     }
     
-    Names familyNames() const {
-        return _familyNames;
+    template <class F>
+    void familyNames(F &functor) const {
+        functor(_familyNames);
     }
     
 private:
@@ -39,16 +41,5 @@ private:
     Names _familyNames;
     
 };
-
-inline std::ostream &operator << (std::ostream &stream, const Person &person) {
-
-    const auto given = person.givenNames();
-    const auto family = person.familyNames();
-    
-    bool delim = given.size() > 0 && family.size() > 0;
-    
-    return stream << given << (delim ? " " : "") << family;
-    
-}
 
 #endif /* defined(__Concurrency__Person__) */

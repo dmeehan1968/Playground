@@ -36,6 +36,34 @@ private:
     
 };
 
+class PersonDecorator {
+    
+public:
+    
+    PersonDecorator(std::ostream &stream)
+    :
+        _stream(stream),
+        _count(0)
+    {}
+    
+    void operator() (const Names &names) {
+        
+        if (_count++ > 0) {
+            _stream << " ";
+        }
+        
+        _stream << names;
+        
+    }
+    
+private:
+    
+    std::ostream &_stream;
+    unsigned _count;
+    
+};
+
+template <class PersonDecorator>
 class PeopleDecorator {
     
 public:
@@ -52,7 +80,10 @@ public:
             _stream << "," << std::endl;
         }
         
-        _stream << person;
+        PersonDecorator _personDecorator(_stream);
+        
+        person.givenNames(_personDecorator);
+        person.familyNames(_personDecorator);
         
     }
     
@@ -65,7 +96,7 @@ private:
 
 inline std::ostream &operator << (std::ostream &stream, const People &people) {
     
-    people.for_each(PeopleDecorator(stream));
+    people.for_each(PeopleDecorator<PersonDecorator>(stream));
     
     return stream << std::endl;
     

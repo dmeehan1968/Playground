@@ -46,7 +46,7 @@ public:
         _count(0)
     {}
     
-    void operator() (const Names &names) {
+    void operator() (const Names &names) const {
         
         if (_count++ > 0) {
             _stream << " ";
@@ -56,10 +56,14 @@ public:
         
     }
     
+    void operator() (const std::string &email) const {
+        _stream << " (" << email << ")";
+    }
+    
 private:
     
     std::ostream &_stream;
-    unsigned _count;
+    mutable unsigned _count;
     
 };
 
@@ -74,7 +78,7 @@ public:
         _count(0)
     {}
     
-    void operator() (const Person &person) {
+    void operator() (const Person &person) const {
         
         if (_count++ > 0) {
             _stream << "," << std::endl;
@@ -84,13 +88,14 @@ public:
         
         person.givenNames(_personDecorator);
         person.familyNames(_personDecorator);
+        person.email(_personDecorator);
         
     }
     
 private:
     
     std::ostream &_stream;
-    unsigned _count;
+    mutable unsigned _count;
     
 };
 

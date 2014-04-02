@@ -19,26 +19,33 @@ class Person {
 
 public:
     
-    Person(const std::initializer_list<Name> &givenNames, const std::initializer_list<Name> &familyNames)
+    Person(const std::initializer_list<Name> &givenNames, const std::initializer_list<Name> &familyNames, const std::string &email)
     :
         _givenNames(givenNames),
-        _familyNames(familyNames)
+        _familyNames(familyNames),
+        _email(email)
     {}
  
     template <class F>
-    void givenNames(F &functor) const {
+    void givenNames(const F &functor) const {
         functor(_givenNames);
     }
     
     template <class F>
-    void familyNames(F &functor) const {
+    void familyNames(const F &functor) const {
         functor(_familyNames);
+    }
+    
+    template <class F>
+    void email(const F &functor) const {
+        functor(_email);
     }
     
 private:
     
     Names _givenNames;
     Names _familyNames;
+    std::string _email;
     
 };
 

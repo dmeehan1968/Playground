@@ -15,57 +15,6 @@
 #include <iostream>
 #include <future>
 
-class PeopleNewlineDecorator {
-    
-public:
-    
-    PeopleNewlineDecorator(std::ostream &stream) : _stream(stream) {}
-    
-    void before() const {}
-    
-    void between() const {
-        _stream << ", " << std::endl;
-    }
-    
-    void after() const {
-        _stream << std::endl;
-    }
-    
-    template <class Iterator>
-    void decorate(const Iterator &begin, const Iterator &end) const {
-        
-        int count = 0;
-        
-        if (end > begin) {
-            before();
-        }
-        
-        std::for_each(begin, end, [&](const Person &person) {
-            
-            if (count++ > 0) {
-                between();
-            }
-            
-            decorate(person);
-            
-        });
-        
-        if (count) {
-            after();
-        }
-
-    }
-    
-    void decorate(const Person &person) const {
-        _stream << person;
-    }
-    
-private:
-    
-    std::ostream &_stream;
-    
-};
-
 class People {
     
 public:
@@ -75,10 +24,10 @@ public:
         _people(people)
     {}
 
-    void decorate(const PeopleNewlineDecorator &decorator) const {
+    void for_each(std::function<void(const Person &)> action) const {
         
-        decorator.decorate(_people.begin(), _people.end());
-
+        std::for_each(_people.begin(), _people.end(), action);
+        
     }
     
 private:
@@ -87,11 +36,38 @@ private:
     
 };
 
+class PeopleDecorator {
+    
+public:
+
+    PeopleDecorator(std::ostream &stream)
+    :
+        _stream(stream),
+        _count(0)
+    {}
+    
+    void operator() (const Person &person) {
+        
+        if (_count++ > 0) {
+            _stream << "," << std::endl;
+        }
+        
+        _stream << person;
+        
+    }
+    
+private:
+    
+    std::ostream &_stream;
+    unsigned _count;
+    
+};
+
 inline std::ostream &operator << (std::ostream &stream, const People &people) {
     
-    people.decorate(PeopleNewlineDecorator(stream));
+    people.for_each(PeopleDecorator(stream));
     
-    return stream;
+    return stream << std::endl;
     
 }
 

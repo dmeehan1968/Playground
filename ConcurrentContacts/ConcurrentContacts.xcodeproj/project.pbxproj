@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		A369C57218EDE4B60000CF09 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A369C57118EDE4B60000CF09 /* main.cpp */; };
+		A369C57518EDE5B60000CF09 /* Contact.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A369C57318EDE5B60000CF09 /* Contact.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +26,8 @@
 /* Begin PBXFileReference section */
 		A369C56418EDE45C0000CF09 /* ConcurrentContacts */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ConcurrentContacts; sourceTree = BUILT_PRODUCTS_DIR; };
 		A369C57118EDE4B60000CF09 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		A369C57318EDE5B60000CF09 /* Contact.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Contact.cpp; sourceTree = "<group>"; };
+		A369C57418EDE5B60000CF09 /* Contact.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Contact.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +61,8 @@
 		A369C57018EDE49D0000CF09 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				A369C57318EDE5B60000CF09 /* Contact.cpp */,
+				A369C57418EDE5B60000CF09 /* Contact.h */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -113,6 +118,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A369C57518EDE5B60000CF09 /* Contact.cpp in Sources */,
 				A369C57218EDE4B60000CF09 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

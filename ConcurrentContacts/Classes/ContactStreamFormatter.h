@@ -23,14 +23,14 @@ public:
 
     std::ostream &toStream(std::ostream &stream) const {
 
-        NameStreamFormatter formatter(stream, " ");
+        NameStreamFormatter formatter(stream, " ", "Name: ");
         
         _contact.givenNames(std::cref(formatter));
         _contact.familyNames(std::cref(formatter));
         
         stream << std::endl;
         
-        _contact.emails(EmailStreamFormatter(stream, ", "));
+        _contact.emails(EmailStreamFormatter(stream, ", ", "Email: "));
         
         stream << std::endl;
         

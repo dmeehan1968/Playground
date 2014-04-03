@@ -18,10 +18,11 @@ class EmailStreamFormatter {
     
 public:
     
-    EmailStreamFormatter(std::ostream &stream, const std::string &delim)
+    EmailStreamFormatter(std::ostream &stream, const std::string &delim, const std::string &prefix)
     :
         _stream(stream),
         _delim(delim),
+        _prefix(prefix),
         _count(0)
     {}
     
@@ -30,7 +31,7 @@ public:
         if (_count++ > 0) {
             _stream << _delim;
         } else {
-            _stream << "Email: ";
+            _stream << _prefix;
         }
         
         _stream << email;
@@ -41,6 +42,7 @@ private:
     
     std::ostream &_stream;
     std::string _delim;
+    std::string _prefix;
     mutable unsigned _count;
     
 };

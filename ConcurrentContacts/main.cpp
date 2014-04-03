@@ -6,10 +6,10 @@
 //  Copyright (c) 2014 Replicated Solutions Limited. All rights reserved.
 //
 
-#include <iostream>
+#include <stdio.h>
 
-int main(int argc, const char * argv[])
-{
-
+int main(int argc, char *argv[]) {
+    
+    return 0;
+    
 }
-

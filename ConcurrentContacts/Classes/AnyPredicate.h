@@ -13,7 +13,7 @@ template <class T>
 class AnyPredicate {
     
 public:
-    bool operator() (T) {
+    bool operator() (T) const {
         return true;
     }
     

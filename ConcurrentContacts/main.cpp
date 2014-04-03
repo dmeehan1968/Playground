@@ -7,12 +7,15 @@
 //
 
 #include "Contact.h"
-
+#include "ContactStreamFormatter.h"
+#include <iostream>
 #include <stdio.h>
 
 int main(int argc, char *argv[]) {
     
     Contact first({"David", "John"}, {"Meehan"}, {"dave.meehan@test.com"});
+    
+    std::cout << ContactStreamFormatter(first) << std::endl;
     
     return 0;
     

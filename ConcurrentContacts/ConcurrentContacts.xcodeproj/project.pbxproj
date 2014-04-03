@@ -14,6 +14,7 @@
 		A369C58418EDFDEE0000CF09 /* EmailStreamFormatter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A369C58218EDFDEE0000CF09 /* EmailStreamFormatter.cpp */; };
 		A369C58718EE02980000CF09 /* Contacts.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A369C58518EE02980000CF09 /* Contacts.cpp */; };
 		A369C58A18EE07410000CF09 /* ContactsStreamFormatter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A369C58818EE07410000CF09 /* ContactsStreamFormatter.cpp */; };
+		A369C58D18EE0B190000CF09 /* AnyPredicate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A369C58B18EE0B190000CF09 /* AnyPredicate.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -43,6 +44,8 @@
 		A369C58618EE02980000CF09 /* Contacts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Contacts.h; sourceTree = "<group>"; };
 		A369C58818EE07410000CF09 /* ContactsStreamFormatter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContactsStreamFormatter.cpp; sourceTree = "<group>"; };
 		A369C58918EE07410000CF09 /* ContactsStreamFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContactsStreamFormatter.h; sourceTree = "<group>"; };
+		A369C58B18EE0B190000CF09 /* AnyPredicate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AnyPredicate.cpp; sourceTree = "<group>"; };
+		A369C58C18EE0B190000CF09 /* AnyPredicate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnyPredicate.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,6 +91,8 @@
 				A369C58318EDFDEE0000CF09 /* EmailStreamFormatter.h */,
 				A369C57918EDEC290000CF09 /* NameStreamFormatter.cpp */,
 				A369C57A18EDEC290000CF09 /* NameStreamFormatter.h */,
+				A369C58B18EE0B190000CF09 /* AnyPredicate.cpp */,
+				A369C58C18EE0B190000CF09 /* AnyPredicate.h */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -145,6 +150,7 @@
 			files = (
 				A369C58A18EE07410000CF09 /* ContactsStreamFormatter.cpp in Sources */,
 				A369C58718EE02980000CF09 /* Contacts.cpp in Sources */,
+				A369C58D18EE0B190000CF09 /* AnyPredicate.cpp in Sources */,
 				A369C58418EDFDEE0000CF09 /* EmailStreamFormatter.cpp in Sources */,
 				A369C57518EDE5B60000CF09 /* Contact.cpp in Sources */,
 				A369C57B18EDEC290000CF09 /* NameStreamFormatter.cpp in Sources */,

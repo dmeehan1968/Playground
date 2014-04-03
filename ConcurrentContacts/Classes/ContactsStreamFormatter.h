@@ -11,6 +11,7 @@
 
 #include "Contacts.h"
 #include "ContactStreamFormatter.h"
+#include "AnyPredicate.h"
 
 #include <ostream>
 
@@ -25,11 +26,7 @@ public:
     
     std::ostream &toStream(std::ostream &stream) const {
         
-        _contacts.matching([](const Contact &contact) {
-        
-            return true;
-            
-        }, [&stream](const Contact &contact) {
+        _contacts.matching(AnyPredicate<const Contact &>(), [&stream](const Contact &contact) {
            
             stream << ContactStreamFormatter(contact);
             

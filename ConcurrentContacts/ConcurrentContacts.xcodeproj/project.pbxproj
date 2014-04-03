@@ -79,6 +79,8 @@
 		A369C57018EDE49D0000CF09 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				A369C58B18EE0B190000CF09 /* AnyPredicate.cpp */,
+				A369C58C18EE0B190000CF09 /* AnyPredicate.h */,
 				A369C57318EDE5B60000CF09 /* Contact.cpp */,
 				A369C57418EDE5B60000CF09 /* Contact.h */,
 				A369C58518EE02980000CF09 /* Contacts.cpp */,
@@ -91,8 +93,6 @@
 				A369C58318EDFDEE0000CF09 /* EmailStreamFormatter.h */,
 				A369C57918EDEC290000CF09 /* NameStreamFormatter.cpp */,
 				A369C57A18EDEC290000CF09 /* NameStreamFormatter.h */,
-				A369C58B18EE0B190000CF09 /* AnyPredicate.cpp */,
-				A369C58C18EE0B190000CF09 /* AnyPredicate.h */,
 			);
 			path = Classes;
 			sourceTree = "<group>";

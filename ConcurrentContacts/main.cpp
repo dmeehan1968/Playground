@@ -13,7 +13,7 @@
 
 int main(int argc, char *argv[]) {
     
-    Contact first({"David", "John"}, {"Meehan"}, {"dave.meehan@test.com"});
+    Contact first({"David", "John"}, {"Meehan"}, {"dave.meehan@test.com", "dave.meehan@another.com"});
     
     std::cout << ContactStreamFormatter(first) << std::endl;
     

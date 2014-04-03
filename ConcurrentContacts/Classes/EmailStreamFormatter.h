@@ -1,39 +1,39 @@
 //
-//  NameStreamFormatter.h
+//  EmailStreamFormatter.h
 //  ConcurrentContacts
 //
 //  Created by Dave Meehan on 03/04/2014.
 //  Copyright (c) 2014 Replicated Solutions Limited. All rights reserved.
 //
 
-#ifndef __ConcurrentContacts__NameStreamFormatter__
-#define __ConcurrentContacts__NameStreamFormatter__
+#ifndef __ConcurrentContacts__EmailStreamFormatter__
+#define __ConcurrentContacts__EmailStreamFormatter__
 
 #include "Contact.h"
 
 #include <string>
 #include <ostream>
 
-class NameStreamFormatter {
+class EmailStreamFormatter {
     
 public:
     
-    NameStreamFormatter(std::ostream &stream, const std::string &delim)
+    EmailStreamFormatter(std::ostream &stream, const std::string &delim)
     :
         _stream(stream),
         _delim(delim),
         _count(0)
     {}
     
-    void operator() (const Contact::Name &name) const {
+    void operator() (const Contact::Email &email) const {
         
         if (_count++ > 0) {
             _stream << _delim;
         } else {
-            _stream << "Name: ";
+            _stream << "Email: ";
         }
         
-        _stream << name;
+        _stream << email;
         
     }
     
@@ -45,4 +45,5 @@ private:
     
 };
 
-#endif /* defined(__ConcurrentContacts__NameStreamFormatter__) */
+
+#endif /* defined(__ConcurrentContacts__EmailStreamFormatter__) */

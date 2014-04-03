@@ -43,6 +43,12 @@ public:
         
     }
     
+    void emails(std::function<void(const Email &)> functor) const {
+        
+        std::for_each(_emails.begin(), _emails.end(), functor);
+        
+    }
+    
 private:
     
     Names _givenNames;

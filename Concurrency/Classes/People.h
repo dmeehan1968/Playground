@@ -48,6 +48,10 @@ public:
     
     void operator() (const Names &names) const {
         
+        if (names.size() < 1) {
+            return;
+        }
+        
         if (_count++ > 0) {
             _stream << " ";
         }

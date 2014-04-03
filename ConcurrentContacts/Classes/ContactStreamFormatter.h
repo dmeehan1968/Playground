@@ -23,8 +23,11 @@ public:
     std::ostream &toStream(std::ostream &stream) const {
 
         stream << "Name: ";
+
+        NameStreamFormatter formatter(stream, " ");
         
-        _contact.givenNames(NameStreamFormatter(stream, " "));
+        _contact.givenNames(std::cref(formatter));
+        _contact.familyNames(std::cref(formatter));
         
         return stream;
     }

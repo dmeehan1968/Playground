@@ -37,6 +37,12 @@ public:
         
     }
     
+    void familyNames(std::function<void(const Name &)> functor) const {
+        
+        std::for_each(_familyNames.begin(), _familyNames.end(), functor);
+        
+    }
+    
 private:
     
     Names _givenNames;

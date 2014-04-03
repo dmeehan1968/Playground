@@ -25,7 +25,7 @@ public:
         _count(0)
     {}
     
-    void operator() (const Contact::Name &name) {
+    void operator() (const Contact::Name &name) const {
         
         if (_count++ > 0) {
             _stream << " ";
@@ -39,7 +39,7 @@ private:
     
     std::ostream &_stream;
     std::string _delim;
-    unsigned _count;
+    mutable unsigned _count;
     
 };
 

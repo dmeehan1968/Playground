@@ -12,6 +12,7 @@
 		A369C57818EDE9AD0000CF09 /* ContactStreamFormatter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A369C57618EDE9AD0000CF09 /* ContactStreamFormatter.cpp */; };
 		A369C57B18EDEC290000CF09 /* NameStreamFormatter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A369C57918EDEC290000CF09 /* NameStreamFormatter.cpp */; };
 		A369C58418EDFDEE0000CF09 /* EmailStreamFormatter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A369C58218EDFDEE0000CF09 /* EmailStreamFormatter.cpp */; };
+		A369C58718EE02980000CF09 /* Contacts.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A369C58518EE02980000CF09 /* Contacts.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -37,6 +38,8 @@
 		A369C57A18EDEC290000CF09 /* NameStreamFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NameStreamFormatter.h; sourceTree = "<group>"; };
 		A369C58218EDFDEE0000CF09 /* EmailStreamFormatter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EmailStreamFormatter.cpp; sourceTree = "<group>"; };
 		A369C58318EDFDEE0000CF09 /* EmailStreamFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EmailStreamFormatter.h; sourceTree = "<group>"; };
+		A369C58518EE02980000CF09 /* Contacts.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Contacts.cpp; sourceTree = "<group>"; };
+		A369C58618EE02980000CF09 /* Contacts.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Contacts.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,6 +75,8 @@
 			children = (
 				A369C57318EDE5B60000CF09 /* Contact.cpp */,
 				A369C57418EDE5B60000CF09 /* Contact.h */,
+				A369C58518EE02980000CF09 /* Contacts.cpp */,
+				A369C58618EE02980000CF09 /* Contacts.h */,
 				A369C57618EDE9AD0000CF09 /* ContactStreamFormatter.cpp */,
 				A369C57718EDE9AD0000CF09 /* ContactStreamFormatter.h */,
 				A369C58218EDFDEE0000CF09 /* EmailStreamFormatter.cpp */,
@@ -133,6 +138,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A369C58718EE02980000CF09 /* Contacts.cpp in Sources */,
 				A369C58418EDFDEE0000CF09 /* EmailStreamFormatter.cpp in Sources */,
 				A369C57518EDE5B60000CF09 /* Contact.cpp in Sources */,
 				A369C57B18EDEC290000CF09 /* NameStreamFormatter.cpp in Sources */,

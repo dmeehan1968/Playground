@@ -9,6 +9,7 @@
 #include "Contact.h"
 #include "Contacts.h"
 #include "ContactStreamFormatter.h"
+#include "ContactsStreamFormatter.h"
 
 #include <iostream>
 #include <stdio.h>
@@ -20,6 +21,8 @@ int main(int argc, char *argv[]) {
     contacts.create({"David", "John"},
                     {"Meehan"},
                     {"dave.meehan@test.com", "dave.meehan@another.com"});
+    
+    std::cout << ContactsStreamFormatter(contacts);
     
     return 0;
     

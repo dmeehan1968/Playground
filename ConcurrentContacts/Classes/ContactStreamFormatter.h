@@ -32,7 +32,7 @@ public:
         
         _contact.emails(EmailStreamFormatter(stream, ", ", "Email: "));
         
-        stream << std::endl;
+        stream << std::endl << std::endl;
         
         return stream;
     }

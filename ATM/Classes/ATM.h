@@ -96,25 +96,43 @@ public:
 protected:
     
     void operator() () {
+
+        _state = &ATM::waiting_for_card;
         
         while ( ! _cancelled) {
             
-            auto msg = wait();
-            
-            if (msg) {
-                (*msg).handle<insert_card>([&](insert_card const &msg) {
-                    
-                    std::cout << "Card Inserted" << std::endl;
-                    
-                })
-                .handle<digit>([&](digit const &msg) {
-                   
-                    std::cout << "Digit = " << msg.value() << std::endl;
-                    
-                });
-            }
+            (this->*_state)();
             
         }
+    }
+    
+    void waiting_for_card() {
+        
+        auto msg = wait();
+    
+        if (!msg) return;
+        
+        (*msg).handle<insert_card>([&](insert_card const &msg) {
+            
+            std::cout << "Card Inserted" << std::endl;
+            _state = &ATM::waiting_for_pin;
+            
+        });
+        
+    }
+    
+    void waiting_for_pin() {
+        
+        auto msg = wait();
+        
+        if (!msg) return;
+        
+        (*msg).handle<digit>([&](digit const &msg) {
+            
+            std::cout << "Digit = " << msg.value() << std::endl;
+            
+        });
+        
     }
     
     std::shared_ptr<atm_message> wait() {
@@ -138,6 +156,7 @@ private:
     bool _cancelled;
     std::queue<std::shared_ptr<atm_message>> _queue;
     std::thread _thread;
+    void (ATM::*_state)();
     
 };
 

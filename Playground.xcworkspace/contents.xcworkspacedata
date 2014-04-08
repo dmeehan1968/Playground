@@ -2,6 +2,18 @@
 <Workspace
    version = "1.0">
    <FileRef
+<<<<<<< Updated upstream
+=======
+      location = "group:PolymorphicContainer/PolymorphicContainer.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:ATM/ATM.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:ConcurrentContacts/ConcurrentContacts.xcodeproj">
+   </FileRef>
+   <FileRef
+>>>>>>> Stashed changes
       location = "group:Concurrency/Concurrency.xcodeproj">
    </FileRef>
    <FileRef

@@ -122,38 +122,23 @@ namespace Messaging {
         
     };
     
-    class REP {
+    class Socket {
         
     public:
         
-        REP() : _queue(std::make_shared<MessageQueue>()) {}
+        Socket() : _queue(std::make_shared<MessageQueue>()) {}
         
-        REP(Messaging::Context &ctx, const std::string &uri)
+        Socket(Messaging::Context &ctx, const std::string &uri)
         :
             _queue(ctx.getQueue(uri))
         {}
         
-        Dispatcher wait() {
+        Dispatcher receive() {
             
             Dispatcher dispatcher( _queue->pop() );
             
             return dispatcher;
         }
-        
-    private:
-
-        std::shared_ptr<MessageQueue> _queue;
-        
-    };
-    
-    class REQ {
-      
-    public:
-        
-        REQ(Messaging::Context &ctx, const std::string &uri)
-        :
-            _queue(ctx.getQueue(uri))
-        {}
         
         template <class T>
         void send(T &&msg) {
@@ -163,12 +148,41 @@ namespace Messaging {
         }
         
     private:
-        
+
         std::shared_ptr<MessageQueue> _queue;
         
     };
     
 }
+
+
+class BANK {
+    
+public:
+    
+    class getAccount : public Messaging::Message {
+      
+    public:
+        
+        getAccount(const std::string &account) {}
+        
+    };
+    
+    class accountDetails : public Messaging::Message {
+        
+    public:
+        
+        const std::string &name() const {
+            return _name;
+        }
+        
+    private:
+        
+        std::string _name;
+    };
+    
+};
+
 
 class ATM {
 
@@ -235,7 +249,8 @@ protected:
     
     void init() {
         
-        _requests = Messaging::REP(_ctx, "shmem://atm");
+        _customer = Messaging::Socket(_ctx, "shmem://atm");
+        _bank = Messaging::Socket(_ctx, "shmem://bank");
         
         _state = &ATM::wait_card;
         
@@ -245,9 +260,15 @@ protected:
         
         std::cout << "Please insert your card" << std::endl;
         
-        _requests.wait().handle<card>([&](const card &msg) {
+        _customer.receive().handle<card>([&](const card &msg) {
             
-            std::cout << "Hello " << msg.account() << ", how are you today?" << std::endl;
+            _bank.send(BANK::getAccount(msg.account()));
+            
+            _bank.receive().handle<BANK::accountDetails>([&](const BANK::accountDetails &msg) {
+
+                std::cout << "Hello " << msg.name() << ", how are you today?" << std::endl;
+                
+            });
             
             _state = &ATM::wait_pin;
             
@@ -258,7 +279,7 @@ protected:
         
         std::cout << "Please enter your PIN" << std::endl;
         
-        _requests.wait().handle<pin>([&](const pin &msg) {
+        _customer.receive().handle<pin>([&](const pin &msg) {
             
             std::cout << "Validating PIN, please wait..." << std::endl;
             
@@ -271,7 +292,8 @@ private:
     
     state _state;
     Messaging::Context _ctx;
-    Messaging::REP _requests;
+    Messaging::Socket _customer;
+    Messaging::Socket _bank;
     
 };
 

@@ -18,7 +18,7 @@ int main(int argc, char *argv[]) {
     
     auto atm = std::thread(ATM(ctx));
     
-    Messaging::REQ q(ctx, "shmem://atm");
+    Messaging::Socket q(ctx, "shmem://atm");
     
     q.send(ATM::card("0123456789"));
     

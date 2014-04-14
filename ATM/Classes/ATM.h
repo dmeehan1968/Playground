@@ -15,12 +15,19 @@
 
 namespace Messaging {
     
-    template <typename T>
-    class Queue {
+    class Message {
         
     public:
         
-        std::shared_ptr<T> pop() {
+        virtual ~Message() {}
+        
+    };
+    
+    class MessageQueue {
+        
+    public:
+        
+        std::shared_ptr<Message> pop() {
             
             std::unique_lock<std::mutex> lock(_mutex);
             
@@ -30,7 +37,7 @@ namespace Messaging {
                 
             });
             
-            std::shared_ptr<T> value = _queue.front();
+            std::shared_ptr<Message> value = _queue.front();
             _queue.pop();
             
             return value;
@@ -49,17 +56,9 @@ namespace Messaging {
         
     private:
         
-        std::queue<std::shared_ptr<T>> _queue;
+        std::queue<std::shared_ptr<Message>> _queue;
         std::mutex _mutex;
         std::condition_variable _cv;
-        
-    };
-    
-    class Message {
-        
-    public:
-        
-        virtual ~Message() {}
         
     };
     
@@ -67,8 +66,7 @@ namespace Messaging {
       
     public:
         
-        using queue_type = Queue<Message>;
-        using shared_queue_type = std::shared_ptr<queue_type>;
+        using shared_queue_type = std::shared_ptr<MessageQueue>;
         using uri = std::string;
         using queue_map = std::map<uri, shared_queue_type>;
 
@@ -85,7 +83,7 @@ namespace Messaging {
                 return found->second;
             }
             
-            return _queues->emplace(uri, std::make_shared<queue_type>()).first->second;
+            return _queues->emplace(uri, std::make_shared<MessageQueue>()).first->second;
             
         }
         
@@ -128,7 +126,7 @@ namespace Messaging {
         
     public:
         
-        REP() : _queue(std::make_shared<Queue<Message>>()) {}
+        REP() : _queue(std::make_shared<MessageQueue>()) {}
         
         REP(Messaging::Context &ctx, const std::string &uri)
         :
@@ -144,7 +142,7 @@ namespace Messaging {
         
     private:
 
-        std::shared_ptr<Queue<Message>> _queue;
+        std::shared_ptr<MessageQueue> _queue;
         
     };
     
@@ -166,7 +164,7 @@ namespace Messaging {
         
     private:
         
-        std::shared_ptr<Queue<Message>> _queue;
+        std::shared_ptr<MessageQueue> _queue;
         
     };
     

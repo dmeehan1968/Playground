@@ -8,21 +8,23 @@
 
 #include "ATM.h"
 
-#include <future>
+#include <thread>
 
 #include <stdio.h>
 
 int main(int argc, char *argv[]) {
 
-    ATM atm;
+    Messaging::Context ctx;
     
-    atm.run();
+    auto atm = std::thread(ATM(ctx));
     
-    atm << ATM::insert_card();
+    Messaging::REQ q(ctx, "shmem://atm");
     
-    atm << ATM::digit(1) << ATM::digit(2);
+    q.send(ATM::card("0123456789"));
     
-    std::this_thread::sleep_for(std::chrono::seconds(1));
+    q.send(ATM::pin("1234"));
+    
+    atm.join();
     
     return 0;
     

@@ -9,154 +9,270 @@
 #ifndef __ATM__ATM__
 #define __ATM__ATM__
 
-#include <memory>
-#include <mutex>
-#include <queue>
-#include <thread>
 #include <iostream>
+#include <queue>
+#include <map>
 
-class ATM {
+namespace Messaging {
     
-public:
-    
-    ATM()
-    :
-        _cancelled(false)
-    {}
-    
-    ~ATM() {
-        cancel();
-        
-        if (_thread.joinable()) {
-            _thread.join();
-        }
-    }
-    
-    class atm_message {
+    template <typename T>
+    class Queue {
         
     public:
         
-        template <class T, class F>
-        atm_message &handle(F f) {
-            auto p = dynamic_cast<T*>(this);
-            if (p) {
-                f(*p);
-            }
-            return *this;
-        }
-
-        virtual ~atm_message() {}
-        
-        virtual std::shared_ptr<atm_message> clone() const {
-            return std::make_shared<atm_message>(*this);
-        }
-    };
-    
-    class insert_card : public atm_message {
-        
-    public:
-        virtual std::shared_ptr<atm_message> clone() const {
-            return std::make_shared<insert_card>(*this);
+        T pop() {
+            
+            std::unique_lock<std::mutex> lock(_mutex);
+            
+            _cv.wait(lock, [&]{
+                
+                return ! _queue.empty();
+                
+            });
+            
+            T value = _queue.front();
+            _queue.pop();
+            
+            return value;
         }
         
-    };
-    
-    class digit : public atm_message {
-    
-    public:
-        digit(unsigned value) : _value(value) {}
-
-        unsigned value() const {
-            return _value;
-        }
-        
-        virtual std::shared_ptr<atm_message> clone() const {
-            return std::make_shared<digit>(*this);
+        void push(const T &value) {
+            
+            std::lock_guard<std::mutex> lock(_mutex);
+            
+            _queue.push(value);
+            
+            _cv.notify_one();
+            
         }
         
     private:
-        unsigned _value;
-
+        
+        std::queue<T> _queue;
+        std::mutex _mutex;
+        std::condition_variable _cv;
+        
     };
     
-    
-    ATM &operator << (const atm_message &msg) {
+    class Message {
         
-        _queue.push(std::shared_ptr<atm_message>(msg.clone()));
+    public:
         
-        return *this;
-    }
-    
-    void run() {
+        virtual ~Message() {}
         
-        _thread = std::thread([&]{ (*this)(); });
+    };
+    
+    class Context {
+      
+    public:
         
-    }
-    
-protected:
-    
-    void operator() () {
+        using queue_type = Queue<std::shared_ptr<Message>>;
+        using shared_queue_type = std::shared_ptr<queue_type>;
+        using uri = std::string;
+        using queue_map = std::map<uri, shared_queue_type>;
 
-        _state = &ATM::waiting_for_card;
+        Context()
+        :
+            _queues(std::make_shared<queue_map>())
+        {}
         
-        while ( ! _cancelled) {
+        shared_queue_type getQueue(const std::string &uri) {
+            
+            auto found = _queues->find(uri);
+            
+            if (found != _queues->end()) {
+                return found->second;
+            }
+            
+            return _queues->emplace(uri, std::make_shared<queue_type>()).first->second;
+            
+        }
+        
+    private:
+        
+        std::shared_ptr<queue_map> _queues;
+        
+    };
+    
+    class Dispatcher {
+
+    public:
+        
+        Dispatcher(const std::shared_ptr<Message> &msg)
+        :
+            _msg(msg)
+        {}
+        
+        template <class T>
+        Dispatcher &handle(std::function<void(const T&)> func) {
+            
+            auto msg = std::dynamic_pointer_cast<T>(_msg);
+            
+            if (msg) {
+                
+                func(*msg);
+                
+            }
+            
+            return *this;
+        }
+        
+    private:
+        
+        std::shared_ptr<Message> _msg;
+        
+    };
+    
+    class REP {
+        
+    public:
+        
+        REP() : _queue(std::make_shared<Queue<std::shared_ptr<Message>>>()) {}
+        
+        REP(Messaging::Context &ctx, const std::string &uri)
+        :
+            _queue(ctx.getQueue(uri))
+        {}
+        
+        Dispatcher wait() {
+            
+            Dispatcher dispatcher( _queue->pop() );
+            
+            return dispatcher;
+        }
+        
+    private:
+
+        std::shared_ptr<Queue<std::shared_ptr<Message>>> _queue;
+        
+    };
+    
+    class REQ {
+      
+    public:
+        
+        REQ(Messaging::Context &ctx, const std::string &uri)
+        :
+            _queue(ctx.getQueue(uri))
+        {}
+        
+        template <class T>
+        void send(T &&msg) {
+            
+            _queue->push(std::make_shared<T>(std::forward<T>(msg)));
+            
+        }
+        
+    private:
+        
+        std::shared_ptr<Queue<std::shared_ptr<Message>>> _queue;
+        
+    };
+    
+}
+
+class ATM {
+
+public:
+    
+    ATM(const Messaging::Context &ctx)
+    :
+        _ctx(ctx)
+    {}
+    
+    using state = void (ATM::*)();
+    
+    void operator()() {
+
+        _state = &ATM::init;
+        
+        while (_state) {
             
             (this->*_state)();
             
         }
-    }
-    
-    void waiting_for_card() {
-        
-        auto msg = wait();
-    
-        if (!msg) return;
-        
-        (*msg).handle<insert_card>([&](insert_card const &msg) {
-            
-            std::cout << "Card Inserted" << std::endl;
-            _state = &ATM::waiting_for_pin;
-            
-        });
         
     }
     
-    void waiting_for_pin() {
+    class card : public Messaging::Message {
         
-        auto msg = wait();
+    public:
         
-        if (!msg) return;
+        card(const std::string &account)
+        :
+            _account(account)
+        {}
         
-        (*msg).handle<digit>([&](digit const &msg) {
-            
-            std::cout << "Digit = " << msg.value() << std::endl;
-            
-        });
-        
-    }
-    
-    std::shared_ptr<atm_message> wait() {
-        
-        if (_queue.empty()) {
-            return nullptr;
+        const std::string &account() const {
+            return _account;
         }
         
-        auto result = _queue.front();
-        _queue.pop();
-        return result;
+    private:
+        
+        std::string _account;
+        
+    };
+    
+    class pin : public Messaging::Message {
+        
+    public:
+        
+        pin(const std::string &number)
+        :
+            _number(number)
+        {}
+        
+        const std::string &number() const {
+            return _number;
+        }
+        
+    private:
+        
+        std::string _number;
+        
+    };
+    
+protected:
+    
+    void init() {
+        
+        _requests = Messaging::REP(_ctx, "shmem://atm");
+        
+        _state = &ATM::wait_card;
         
     }
     
-    void cancel() {
-        _cancelled = true;
+    void wait_card() {
+        
+        std::cout << "Please insert your card" << std::endl;
+        
+        _requests.wait().handle<card>([&](const card &msg) {
+            
+            std::cout << "Hello " << msg.account() << ", how are you today?" << std::endl;
+            
+            _state = &ATM::wait_pin;
+            
+        });
+    }
+    
+    void wait_pin() {
+        
+        std::cout << "Please enter your PIN" << std::endl;
+        
+        _requests.wait().handle<pin>([&](const pin &msg) {
+            
+            std::cout << "Validating PIN, please wait..." << std::endl;
+            
+            _state = nullptr;
+            
+        });
     }
     
 private:
     
-    bool _cancelled;
-    std::queue<std::shared_ptr<atm_message>> _queue;
-    std::thread _thread;
-    void (ATM::*_state)();
+    state _state;
+    Messaging::Context _ctx;
+    Messaging::REP _requests;
     
 };
 

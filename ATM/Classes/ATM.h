@@ -20,7 +20,7 @@ namespace Messaging {
         
     public:
         
-        T pop() {
+        std::shared_ptr<T> pop() {
             
             std::unique_lock<std::mutex> lock(_mutex);
             
@@ -30,17 +30,18 @@ namespace Messaging {
                 
             });
             
-            T value = _queue.front();
+            std::shared_ptr<T> value = _queue.front();
             _queue.pop();
             
             return value;
         }
         
-        void push(const T &value) {
+        template <class M>
+        void push(M &&value) {
             
             std::lock_guard<std::mutex> lock(_mutex);
             
-            _queue.push(value);
+            _queue.push(std::make_shared<M>(std::forward<M>(value)));
             
             _cv.notify_one();
             
@@ -48,7 +49,7 @@ namespace Messaging {
         
     private:
         
-        std::queue<T> _queue;
+        std::queue<std::shared_ptr<T>> _queue;
         std::mutex _mutex;
         std::condition_variable _cv;
         
@@ -66,7 +67,7 @@ namespace Messaging {
       
     public:
         
-        using queue_type = Queue<std::shared_ptr<Message>>;
+        using queue_type = Queue<Message>;
         using shared_queue_type = std::shared_ptr<queue_type>;
         using uri = std::string;
         using queue_map = std::map<uri, shared_queue_type>;
@@ -127,7 +128,7 @@ namespace Messaging {
         
     public:
         
-        REP() : _queue(std::make_shared<Queue<std::shared_ptr<Message>>>()) {}
+        REP() : _queue(std::make_shared<Queue<Message>>()) {}
         
         REP(Messaging::Context &ctx, const std::string &uri)
         :
@@ -143,7 +144,7 @@ namespace Messaging {
         
     private:
 
-        std::shared_ptr<Queue<std::shared_ptr<Message>>> _queue;
+        std::shared_ptr<Queue<Message>> _queue;
         
     };
     
@@ -159,13 +160,13 @@ namespace Messaging {
         template <class T>
         void send(T &&msg) {
             
-            _queue->push(std::make_shared<T>(std::forward<T>(msg)));
+            _queue->push(std::forward<T>(msg));
             
         }
         
     private:
         
-        std::shared_ptr<Queue<std::shared_ptr<Message>>> _queue;
+        std::shared_ptr<Queue<Message>> _queue;
         
     };
     

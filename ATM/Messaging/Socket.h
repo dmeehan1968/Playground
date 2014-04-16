@@ -14,6 +14,7 @@
 #include "ISerialisable.h"
 #include "MessageIterator.h"
 #include "Dispatcher.h"
+#include "NilFactory.h"
 
 #include <string>
 #include <functional>
@@ -84,18 +85,6 @@ namespace Messaging {
             return len;
             
         }
-        
-        class NilFactory {
-            
-        public:
-            using value_type = void;
-            using pointer_type = std::shared_ptr<void>;
-            
-            static pointer_type create(MessageIterator &) {
-                return pointer_type(nullptr);
-            }
-            
-        };
         
         template <class Factory = NilFactory>
         Dispatcher<typename Factory::value_type> receive(const int flags = 0) const {

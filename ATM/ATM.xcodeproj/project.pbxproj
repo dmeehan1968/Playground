@@ -15,6 +15,7 @@
 		A3B1F99518FEFDA100DA0C90 /* Message.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3B1F99318FEFDA100DA0C90 /* Message.cpp */; };
 		A3B1F99818FEFDEA00DA0C90 /* Socket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3B1F99618FEFDEA00DA0C90 /* Socket.cpp */; };
 		A3B1F99B18FEFEAF00DA0C90 /* ISerialisable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3B1F99918FEFEAF00DA0C90 /* ISerialisable.cpp */; };
+		A3B1F99E18FF00E500DA0C90 /* MessageIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3B1F99C18FF00E500DA0C90 /* MessageIterator.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -46,6 +47,8 @@
 		A3B1F99718FEFDEA00DA0C90 /* Socket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Socket.h; sourceTree = "<group>"; };
 		A3B1F99918FEFEAF00DA0C90 /* ISerialisable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ISerialisable.cpp; sourceTree = "<group>"; };
 		A3B1F99A18FEFEAF00DA0C90 /* ISerialisable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISerialisable.h; sourceTree = "<group>"; };
+		A3B1F99C18FF00E500DA0C90 /* MessageIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessageIterator.cpp; sourceTree = "<group>"; };
+		A3B1F99D18FF00E500DA0C90 /* MessageIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageIterator.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,6 +98,8 @@
 				A3B1F99A18FEFEAF00DA0C90 /* ISerialisable.h */,
 				A3B1F99318FEFDA100DA0C90 /* Message.cpp */,
 				A3B1F99418FEFDA100DA0C90 /* Message.h */,
+				A3B1F99C18FF00E500DA0C90 /* MessageIterator.cpp */,
+				A3B1F99D18FF00E500DA0C90 /* MessageIterator.h */,
 				A3B1F99018FEFD3600DA0C90 /* Exception.cpp */,
 				A3B1F99118FEFD3600DA0C90 /* Exception.h */,
 				A3B1F98D18FEFD0700DA0C90 /* Context.cpp */,
@@ -162,6 +167,7 @@
 				A3B1F99B18FEFEAF00DA0C90 /* ISerialisable.cpp in Sources */,
 				A369C5D918F40B7F0000CF09 /* ATM.cpp in Sources */,
 				A3B1F99218FEFD3600DA0C90 /* Exception.cpp in Sources */,
+				A3B1F99E18FF00E500DA0C90 /* MessageIterator.cpp in Sources */,
 				A369C5D618F40AE50000CF09 /* main.cpp in Sources */,
 				A3B1F99518FEFDA100DA0C90 /* Message.cpp in Sources */,
 			);

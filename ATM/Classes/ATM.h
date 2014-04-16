@@ -51,7 +51,7 @@ namespace ATM {
         
         }
         
-        static std::shared_ptr<WithdrawlRequest> deserialise(Messaging::Socket::MessageIterator &iterator) {
+        static std::shared_ptr<WithdrawlRequest> deserialise(Messaging::MessageIterator &iterator) {
         
             if (memcmp(iterator.data(), "WITHDRAWL", 9) == 0) {
         
@@ -98,7 +98,7 @@ namespace ATM {
         using value_type = Messaging::Message;
         using pointer_type = std::shared_ptr<value_type>;
         
-        static pointer_type create(Messaging::Socket::MessageIterator &iterator) {
+        static pointer_type create(Messaging::MessageIterator &iterator) {
             
             pointer_type msg;
             

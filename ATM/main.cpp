@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
     
     Messaging::Socket atm(context, ZMQ_REQ);
     
-    atm.bind("tcp://*:5555");
+    atm.bind("inproc://atm");
     
     atm.send(ATM::WithdrawlRequest());
     

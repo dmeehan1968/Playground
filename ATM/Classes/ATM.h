@@ -9,293 +9,459 @@
 #ifndef __ATM__ATM__
 #define __ATM__ATM__
 
+#include <string>
 #include <iostream>
-#include <queue>
 #include <map>
+#include <mutex>
+#include <queue>
+#include <thread>
+#include <zmq.h>
+#include <functional>
 
 namespace Messaging {
-    
-    class Message {
-        
-    public:
-        
-        virtual ~Message() {}
-        
-    };
-    
-    class MessageQueue {
-        
-    public:
-        
-        std::shared_ptr<Message> pop() {
-            
-            std::unique_lock<std::mutex> lock(_mutex);
-            
-            _cv.wait(lock, [&]{
-                
-                return ! _queue.empty();
-                
-            });
-            
-            std::shared_ptr<Message> value = _queue.front();
-            _queue.pop();
-            
-            return value;
-        }
-        
-        template <class M>
-        void push(M &&value) {
-            
-            std::lock_guard<std::mutex> lock(_mutex);
-            
-            _queue.push(std::make_shared<M>(std::forward<M>(value)));
-            
-            _cv.notify_one();
-            
-        }
-        
-    private:
-        
-        std::queue<std::shared_ptr<Message>> _queue;
-        std::mutex _mutex;
-        std::condition_variable _cv;
-        
-    };
-    
-    class Context {
-      
-    public:
-        
-        using shared_queue_type = std::shared_ptr<MessageQueue>;
-        using uri = std::string;
-        using queue_map = std::map<uri, shared_queue_type>;
 
+    class Context {
+    
+    public:
+        
         Context()
         :
-            _queues(std::make_shared<queue_map>())
+            _context(std::shared_ptr<void>(zmq_ctx_new(),&zmq_ctx_destroy))
         {}
         
-        shared_queue_type getQueue(const std::string &uri) {
-            
-            auto found = _queues->find(uri);
-            
-            if (found != _queues->end()) {
-                return found->second;
-            }
-            
-            return _queues->emplace(uri, std::make_shared<MessageQueue>()).first->second;
-            
+        void *get() const {
+            return _context.get();
         }
         
     private:
         
-        std::shared_ptr<queue_map> _queues;
+        std::shared_ptr<void> _context;
+    
+    };
+    
+    class Exception : public std::runtime_error {
+        
+    public:
+        
+        Exception(const std::string &what, const errno_t error_number = errno)
+        :
+            std::runtime_error(what + std::string(" - ") + std::string(zmq_strerror(error_number)))
+        {}
         
     };
     
-    class Dispatcher {
-
+    class Socket;
+    
+    class ISerialisable {
+        
     public:
         
-        Dispatcher(const std::shared_ptr<Message> &msg)
-        :
-            _msg(msg)
-        {}
-        
-        template <class T>
-        Dispatcher &handle(std::function<void(const T&)> func) {
-            
-            auto msg = std::dynamic_pointer_cast<T>(_msg);
-            
-            if (msg) {
-                
-                func(*msg);
-                
-            }
-            
-            return *this;
-        }
-        
-    private:
-        
-        std::shared_ptr<Message> _msg;
-        
+        virtual int serialise(Socket &socket, const int flags = 0) const = 0;
+
     };
     
     class Socket {
-        
+    
     public:
         
-        Socket() : _queue(std::make_shared<MessageQueue>()) {}
-        
-        Socket(Messaging::Context &ctx, const std::string &uri)
+        Socket(const Context &context, const int type)
         :
-            _queue(ctx.getQueue(uri))
+            _socket(std::shared_ptr<void>(zmq_socket(context.get(), type), &zmq_close))
         {}
         
-        Dispatcher receive() {
+        void bind(const std::string &address) const {
             
-            Dispatcher dispatcher( _queue->pop() );
+            auto rc = zmq_bind(_socket.get(), address.c_str());
             
-            return dispatcher;
+            if (rc != 0) {
+                throw Exception("Binding to '" + address + "'");
+            }
+            
         }
+        
+        void connect(const std::string &address) const {
+            
+            auto rc = zmq_connect(_socket.get(), address.c_str());
+            
+            if (rc != 0) {
+                throw Exception("Connecting to '" + address + "'");
+            }
+            
+        }
+    
+        int send(const std::string &data, const int flags = 0) const {
+            
+            return zmq_send(_socket.get(), data.c_str(), data.size(), flags);
+            
+        }
+        
+        int send(const ISerialisable &message) {
+           
+            return message.serialise(*this);
+            
+        }
+        
+        class MessageIterator {
+            
+        public:
+            MessageIterator(const std::shared_ptr<void> &socket, const int flags = 0)
+            :
+                _socket(socket),
+                _flags(flags),
+                _valid(false),
+                _close_msg(false)
+            {
+                _valid = receive();
+            }
+            
+            MessageIterator(const MessageIterator &) = delete;
+            
+            ~MessageIterator() {
+                
+                if (_valid) {
+                    while (more()) {
+                        // dump remainder of message
+                    }
+                }
+                
+                if (_close_msg) {
+                    zmq_msg_close(&_msg);
+                }
+                
+            }
+            
+            const void *data() {
+                
+                if (_valid) {
+                    return zmq_msg_data(&_msg);
+                }
+                
+                return nullptr;
+                
+            }
+            
+            const size_t size() {
+                
+                if (_valid) {
+                    return zmq_msg_size(&_msg);
+                }
+                
+                return 0;
+                
+            }
+            
+            operator bool() const {
+                
+                return _valid;
+                
+            }
+
+            bool more() {
+                
+                _valid = receive();
+                
+                return _valid;
+                
+            }
+            
+        protected:
+            
+            bool receive() {
+                
+                if (_close_msg) {
+                    
+                    auto more = zmq_msg_more(&_msg);
+
+                    zmq_msg_close(&_msg);
+                    
+                    _close_msg = false;
+                    
+                    if ( ! more) {
+                        return more;
+                    }
+                }
+                
+                zmq_msg_init(&_msg);
+                _close_msg = true;
+                
+                auto len = zmq_msg_recv(&_msg, _socket.get(), _flags);
+                
+                if (len < 0) {
+                    if (len == EAGAIN) {
+                        return false;
+                    }
+                    
+                    throw Exception("Receiving message part");
+                }
+                
+//                std::cout << std::this_thread::get_id() << ": [" << std::string((char*)zmq_msg_data(&_msg),zmq_msg_size(&_msg)) << "]" << std::endl;
+                
+                return true;
+                
+            }
+            
+        private:
+            std::shared_ptr<void> _socket;
+            zmq_msg_t _msg;
+            int _flags;
+            bool _valid;
+            bool _close_msg;
+            
+        };
         
         template <class T>
-        void send(T &&msg) {
+        class Dispatcher {
             
-            _queue->push(std::forward<T>(msg));
+        public:
+            Dispatcher(const std::shared_ptr<T> msg)
+            :
+                _msg(msg),
+                _handled(false)
+            {}
             
+            template <class M>
+            Dispatcher &handle(const std::function<bool(const M&)> &func) {
+             
+                if ( ! _handled) {
+
+                    auto specific = std::dynamic_pointer_cast<M>(_msg);
+                    
+                    if (specific) {
+                        _handled = func(*specific);
+                    }
+                
+                }
+                
+                return *this;
+            }
+            
+        private:
+            
+            std::shared_ptr<T> _msg;
+            bool _handled;
+            
+        };
+        
+        class NilFactory {
+            
+        public:
+            using value_type = void;
+            using pointer_type = std::shared_ptr<void>;
+            
+            static pointer_type create(MessageIterator &) {
+                return pointer_type(nullptr);
+            }
+            
+        };
+        
+        template <class Factory = NilFactory>
+        Dispatcher<typename Factory::value_type> receive(const int flags = 0) const {
+            
+            MessageIterator iterator(_socket, flags);
+            
+            if (iterator) {
+                
+                return Factory::create(iterator);
+                
+            }
+            
+            return Dispatcher<typename Factory::value_type>(nullptr);
+
         }
         
     private:
-
-        std::shared_ptr<MessageQueue> _queue;
+        
+        std::shared_ptr<void> _socket;
         
     };
-    
 }
 
+namespace ATM {
 
-class BANK {
-    
-public:
-    
-    class getAccount : public Messaging::Message {
-      
-    public:
-        
-        getAccount(const std::string &account) {}
-        
-    };
-    
-    class accountDetails : public Messaging::Message {
+    class WithdrawlRequest : public Messaging::ISerialisable {
         
     public:
         
-        const std::string &name() const {
-            return _name;
-        }
+        enum class State {
+            Hello,
+            Account,
+            Pin,
+            Amount
+        };
         
-    private:
-        
-        std::string _name;
-    };
-    
-};
-
-
-class ATM {
-
-public:
-    
-    ATM(const Messaging::Context &ctx)
-    :
-        _ctx(ctx)
-    {}
-    
-    using state = void (ATM::*)();
-    
-    void operator()() {
-
-        _state = &ATM::init;
-        
-        while (_state) {
-            
-            (this->*_state)();
-            
-        }
-        
-    }
-    
-    class card : public Messaging::Message {
-        
-    public:
-        
-        card(const std::string &account)
+        WithdrawlRequest()
         :
-            _account(account)
+        _account(""),
+        _pin(""),
+        _amount(0),
+        _state(State::Hello)
         {}
-        
-        const std::string &account() const {
-            return _account;
-        }
         
     private:
         
         std::string _account;
+        std::string _pin;
+        unsigned _amount;
+        State _state;
         
     };
+
+    class Machine {
     
-    class pin : public Messaging::Message {
-        
     public:
         
-        pin(const std::string &number)
+        using state = void (Machine::*)();
+        
+        Machine(const Messaging::Context &context)
         :
-            _number(number)
+            _customer(context, ZMQ_REP)
         {}
         
-        const std::string &number() const {
-            return _number;
+        void operator()() {
+        
+            _customer.connect("tcp://localhost:5555");
+            
+            state state = &Machine::wait_hello;
+            
+            while (state) {
+                
+                (this->*state)();
+
+            }
+        }
+        
+        class Message {
+        
+        public:
+            virtual ~Message() {}
+        };
+        
+        class hello : public Message, public Messaging::ISerialisable {
+        
+        public:
+
+            static const std::string ident() {
+                static const std::string hello("HELLO");
+                return hello;
+            }
+            
+            static std::shared_ptr<hello> deserialise(Messaging::Socket::MessageIterator &iterator) {
+                
+                std::string string((char*)iterator.data(), iterator.size());
+                
+                if (string == ident()) {
+                    
+                    return std::make_shared<hello>();
+                    
+                }
+
+                return nullptr;
+            }
+        
+            int serialise(Messaging::Socket &socket, const int flags) const override {
+                
+                socket.send(ident(), flags);
+                
+                return 0;
+                
+            }
+        };
+        
+        class account : public Message, public Messaging::ISerialisable {
+            
+        public:
+            
+            static const std::string ident() {
+                static const std::string account("ACCOUNT");
+                return account;
+            }
+            
+            static std::shared_ptr<account> deserialise(Messaging::Socket::MessageIterator &iterator) {
+                
+                std::string string((char*)iterator.data(), iterator.size());
+                
+                if (string == ident()) {
+                    
+                    return std::make_shared<account>();
+                    
+                }
+                
+                return nullptr;
+                
+            }
+
+            int serialise(Messaging::Socket &socket, const int flags) const override {
+                
+                socket.send(ident(), flags);
+                
+                return 0;
+                
+            }
+        };
+
+        class MessageFactory {
+            
+        public:
+            
+            using value_type = Message;
+            using pointer_type = std::shared_ptr<Message>;
+          
+            static pointer_type create(Messaging::Socket::MessageIterator &iterator) {
+                
+                pointer_type msg;
+                
+                if ((msg = hello::deserialise(iterator))) {
+                    return msg;
+                }
+                
+                if ((msg = account::deserialise(iterator))) {
+                    return msg;
+                }
+                    
+                return std::make_shared<Message>();
+                
+            }
+            
+        };
+        
+        void wait_hello() {
+            
+            _customer.receive<MessageFactory>()
+            .handle<hello>([&](const hello &h) {
+                
+                std::cout << std::this_thread::get_id() << ": Hello!" << std::endl;
+                
+                _customer.send("OK");
+                
+                return true;
+                
+            }).handle<account>([&](const account &a) {
+              
+                std::cout << std::this_thread::get_id() << ": Account" << std::endl;
+                
+                _customer.send("OK");
+                
+                return true;
+                
+            }).handle<Message>([&](const Message &) {
+                
+                std::cout << std::this_thread::get_id() << ": Unrecognised Response" << std::endl;
+                
+                _customer.send("FAIL");
+                
+                return true;
+                
+            });
+            
         }
         
     private:
         
-        std::string _number;
+        Messaging::Socket _customer;
+        
         
     };
     
-protected:
-    
-    void init() {
-        
-        _customer = Messaging::Socket(_ctx, "shmem://atm");
-        _bank = Messaging::Socket(_ctx, "shmem://bank");
-        
-        _state = &ATM::wait_card;
-        
-    }
-    
-    void wait_card() {
-        
-        std::cout << "Please insert your card" << std::endl;
-        
-        _customer.receive().handle<card>([&](const card &msg) {
-            
-            _bank.send(BANK::getAccount(msg.account()));
-            
-            _bank.receive().handle<BANK::accountDetails>([&](const BANK::accountDetails &msg) {
-
-                std::cout << "Hello " << msg.name() << ", how are you today?" << std::endl;
-                
-            });
-            
-            _state = &ATM::wait_pin;
-            
-        });
-    }
-    
-    void wait_pin() {
-        
-        std::cout << "Please enter your PIN" << std::endl;
-        
-        _customer.receive().handle<pin>([&](const pin &msg) {
-            
-            std::cout << "Validating PIN, please wait..." << std::endl;
-            
-            _state = nullptr;
-            
-        });
-    }
-    
-private:
-    
-    state _state;
-    Messaging::Context _ctx;
-    Messaging::Socket _customer;
-    Messaging::Socket _bank;
-    
-};
-
+}
 
 #endif /* defined(__ATM__ATM__) */

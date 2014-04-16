@@ -13,18 +13,30 @@
 #include <stdio.h>
 
 int main(int argc, char *argv[]) {
+    
+    std::cout << "Starting" << std::endl;
+    
+    Messaging::Context context;
+    
+    std::vector<std::thread> threads;
 
-    Messaging::Context ctx;
+    threads.emplace_back(ATM::Machine(context));
     
-    auto atm = std::thread(ATM(ctx));
+    Messaging::Socket atm(context, ZMQ_REQ);
     
-    Messaging::Socket q(ctx, "shmem://atm");
+    atm.bind("tcp://*:5555");
     
-    q.send(ATM::card("0123456789"));
+    atm.send(ATM::WithdrawlRequest());
     
-    q.send(ATM::pin("1234"));
+    atm.receive<>();
     
-    atm.join();
+    atm.send("ACCOUNT");
+    
+    atm.receive<>();
+    
+    atm.send("BYE");
+    
+    std::for_each(threads.begin(), threads.end(), std::mem_fn(&std::thread::join));
     
     return 0;
     

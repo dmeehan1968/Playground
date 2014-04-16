@@ -16,6 +16,7 @@
 		A3B1F99818FEFDEA00DA0C90 /* Socket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3B1F99618FEFDEA00DA0C90 /* Socket.cpp */; };
 		A3B1F99B18FEFEAF00DA0C90 /* ISerialisable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3B1F99918FEFEAF00DA0C90 /* ISerialisable.cpp */; };
 		A3B1F99E18FF00E500DA0C90 /* MessageIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3B1F99C18FF00E500DA0C90 /* MessageIterator.cpp */; };
+		A3B1F9A118FF018500DA0C90 /* Dispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3B1F99F18FF018500DA0C90 /* Dispatcher.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -49,6 +50,8 @@
 		A3B1F99A18FEFEAF00DA0C90 /* ISerialisable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISerialisable.h; sourceTree = "<group>"; };
 		A3B1F99C18FF00E500DA0C90 /* MessageIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessageIterator.cpp; sourceTree = "<group>"; };
 		A3B1F99D18FF00E500DA0C90 /* MessageIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageIterator.h; sourceTree = "<group>"; };
+		A3B1F99F18FF018500DA0C90 /* Dispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Dispatcher.cpp; sourceTree = "<group>"; };
+		A3B1F9A018FF018500DA0C90 /* Dispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Dispatcher.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,6 +97,8 @@
 			children = (
 				A3B1F98A18FEFCCE00DA0C90 /* Messaging.cpp */,
 				A3B1F98B18FEFCCE00DA0C90 /* Messaging.h */,
+				A3B1F99F18FF018500DA0C90 /* Dispatcher.cpp */,
+				A3B1F9A018FF018500DA0C90 /* Dispatcher.h */,
 				A3B1F99918FEFEAF00DA0C90 /* ISerialisable.cpp */,
 				A3B1F99A18FEFEAF00DA0C90 /* ISerialisable.h */,
 				A3B1F99318FEFDA100DA0C90 /* Message.cpp */,
@@ -163,6 +168,7 @@
 			files = (
 				A3B1F98C18FEFCCE00DA0C90 /* Messaging.cpp in Sources */,
 				A3B1F99818FEFDEA00DA0C90 /* Socket.cpp in Sources */,
+				A3B1F9A118FF018500DA0C90 /* Dispatcher.cpp in Sources */,
 				A3B1F98F18FEFD0700DA0C90 /* Context.cpp in Sources */,
 				A3B1F99B18FEFEAF00DA0C90 /* ISerialisable.cpp in Sources */,
 				A369C5D918F40B7F0000CF09 /* ATM.cpp in Sources */,

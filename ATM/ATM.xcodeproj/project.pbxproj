@@ -18,6 +18,7 @@
 		A3B1F99E18FF00E500DA0C90 /* MessageIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3B1F99C18FF00E500DA0C90 /* MessageIterator.cpp */; };
 		A3B1F9A118FF018500DA0C90 /* Dispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3B1F99F18FF018500DA0C90 /* Dispatcher.cpp */; };
 		A3B1F9A418FF01CE00DA0C90 /* NilFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3B1F9A218FF01CE00DA0C90 /* NilFactory.cpp */; };
+		A3B1F9A718FF024F00DA0C90 /* WithdrawlRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3B1F9A518FF024F00DA0C90 /* WithdrawlRequest.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -55,6 +56,8 @@
 		A3B1F9A018FF018500DA0C90 /* Dispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Dispatcher.h; sourceTree = "<group>"; };
 		A3B1F9A218FF01CE00DA0C90 /* NilFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NilFactory.cpp; sourceTree = "<group>"; };
 		A3B1F9A318FF01CE00DA0C90 /* NilFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NilFactory.h; sourceTree = "<group>"; };
+		A3B1F9A518FF024F00DA0C90 /* WithdrawlRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WithdrawlRequest.cpp; sourceTree = "<group>"; };
+		A3B1F9A618FF024F00DA0C90 /* WithdrawlRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WithdrawlRequest.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,6 +94,8 @@
 			children = (
 				A369C5D718F40B7F0000CF09 /* ATM.cpp */,
 				A369C5D818F40B7F0000CF09 /* ATM.h */,
+				A3B1F9A518FF024F00DA0C90 /* WithdrawlRequest.cpp */,
+				A3B1F9A618FF024F00DA0C90 /* WithdrawlRequest.h */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -179,6 +184,7 @@
 				A3B1F99B18FEFEAF00DA0C90 /* ISerialisable.cpp in Sources */,
 				A369C5D918F40B7F0000CF09 /* ATM.cpp in Sources */,
 				A3B1F99218FEFD3600DA0C90 /* Exception.cpp in Sources */,
+				A3B1F9A718FF024F00DA0C90 /* WithdrawlRequest.cpp in Sources */,
 				A3B1F99E18FF00E500DA0C90 /* MessageIterator.cpp in Sources */,
 				A369C5D618F40AE50000CF09 /* main.cpp in Sources */,
 				A3B1F99518FEFDA100DA0C90 /* Message.cpp in Sources */,

@@ -9,6 +9,7 @@
 #include "ATM.h"
 
 #include <thread>
+#include <vector>
 
 #include <stdio.h>
 
@@ -28,13 +29,44 @@ int main(int argc, char *argv[]) {
     
     atm.send(ATM::WithdrawlRequest());
     
-    atm.receive<>();
+    atm.receive<ATM::MessageFactory>()
+    .handle<ATM::WithdrawlRequest>([&](const ATM::WithdrawlRequest &request) {
+        
+        auto response = request;
+        
+        response._account = "0123456789";
+        
+        atm.send(response);
+        
+        return true;
+        
+    });
     
-    atm.send("ACCOUNT");
+    atm.receive<ATM::MessageFactory>()
+    .handle<ATM::WithdrawlRequest>([&](const ATM::WithdrawlRequest &request) {
+        
+        auto response = request;
+        
+        response._pin = "1234";
+        
+        atm.send(response);
+        
+        return true;
+        
+    });
     
-    atm.receive<>();
-    
-    atm.send("BYE");
+    atm.receive<ATM::MessageFactory>()
+    .handle<ATM::WithdrawlRequest>([&](const ATM::WithdrawlRequest &request) {
+        
+        auto response = request;
+        
+        response._amount = 25;
+        
+        atm.send(response);
+        
+        return true;
+        
+    });
     
     std::for_each(threads.begin(), threads.end(), std::mem_fn(&std::thread::join));
     

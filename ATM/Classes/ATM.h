@@ -11,12 +11,9 @@
 
 #include <string>
 #include <iostream>
-#include <map>
-#include <mutex>
-#include <queue>
-#include <thread>
 #include <zmq.h>
-#include <functional>
+#include <sstream>
+#include <thread>
 
 namespace Messaging {
 
@@ -60,6 +57,12 @@ namespace Messaging {
 
     };
     
+    class Message {
+        
+    public:
+        virtual ~Message() {}
+    };
+    
     class Socket {
     
     public:
@@ -89,15 +92,39 @@ namespace Messaging {
             
         }
     
+        int send(const char ch, const int flags = 0) const {
+            
+            auto len = zmq_send(_socket.get(), &ch, sizeof(char), flags);
+            
+            if (len < 0) {
+                throw Exception("Sending byte");
+            }
+            
+            return len;
+            
+        }
+        
         int send(const std::string &data, const int flags = 0) const {
             
-            return zmq_send(_socket.get(), data.c_str(), data.size(), flags);
+            auto len = zmq_send(_socket.get(), data.c_str(), data.size(), flags);
+            
+            if (len < 0) {
+                throw Exception("Sending string");
+            }
+            
+            return len;
             
         }
         
         int send(const ISerialisable &message) {
            
-            return message.serialise(*this);
+            auto len = message.serialise(*this);
+            
+            if (len < 0) {
+                throw Exception("Sending serialisable");
+            }
+            
+            return len;
             
         }
         
@@ -235,6 +262,15 @@ namespace Messaging {
                 return *this;
             }
             
+            Dispatcher &handle(const std::function<bool()> &func) {
+                
+                if (!_handled) {
+                    _handled = func();
+                }
+                return *this;
+                
+            }
+            
         private:
             
             std::shared_ptr<T> _msg;
@@ -278,7 +314,7 @@ namespace Messaging {
 
 namespace ATM {
 
-    class WithdrawlRequest : public Messaging::ISerialisable {
+    class WithdrawlRequest : public Messaging::Message, public Messaging::ISerialisable {
         
     public:
         
@@ -286,18 +322,64 @@ namespace ATM {
             Hello,
             Account,
             Pin,
-            Amount
+            Amount,
+            Authorise
         };
         
         WithdrawlRequest()
         :
-        _account(""),
-        _pin(""),
-        _amount(0),
-        _state(State::Hello)
+            _account(""),
+            _pin(""),
+            _amount(0),
+            _state(State::Hello)
         {}
         
-    private:
+        virtual int serialise(Messaging::Socket &socket, const int flags) const {
+        
+            auto sent = socket.send("WITHDRAWL", flags | ZMQ_SNDMORE);
+            sent += socket.send((char)_state, flags | ZMQ_SNDMORE);
+            sent += socket.send(_account, flags | ZMQ_SNDMORE);
+            sent += socket.send(_pin, flags | ZMQ_SNDMORE);
+            std::ostringstream os;
+            os << _amount;
+            sent += socket.send(os.str(), flags);
+            
+            return sent;
+        
+        }
+        
+        static std::shared_ptr<WithdrawlRequest> deserialise(Messaging::Socket::MessageIterator &iterator) {
+        
+            if (memcmp(iterator.data(), "WITHDRAWL", 9) == 0) {
+        
+                auto request = std::make_shared<WithdrawlRequest>();
+                
+                iterator.more();
+                
+                request->_state = (State) * ((char *)iterator.data());
+                
+                iterator.more();
+                
+                request->_account = std::string((char*)iterator.data(), iterator.size());
+                
+                iterator.more();
+                
+                request->_pin = std::string((char*)iterator.data(), iterator.size());
+                
+                iterator.more();
+                
+                std::string amount((char*)iterator.data(), iterator.size());
+                
+                std::istringstream is(amount);
+                
+                is >> request->_amount;
+                
+                return request;
+                
+            }
+            return nullptr;
+            
+        }
         
         std::string _account;
         std::string _pin;
@@ -306,6 +388,27 @@ namespace ATM {
         
     };
 
+    class MessageFactory {
+        
+    public:
+        
+        using value_type = Messaging::Message;
+        using pointer_type = std::shared_ptr<value_type>;
+        
+        static pointer_type create(Messaging::Socket::MessageIterator &iterator) {
+            
+            pointer_type msg;
+            
+            if ((msg = WithdrawlRequest::deserialise(iterator))) {
+                return msg;
+            }
+            
+            return nullptr;
+            
+        }
+        
+    };
+    
     class Machine {
     
     public:
@@ -314,14 +417,14 @@ namespace ATM {
         
         Machine(const Messaging::Context &context)
         :
-            _customer(context, ZMQ_REP)
+            _customer(context, ZMQ_REQ)
         {}
         
         void operator()() {
         
             _customer.connect("tcp://localhost:5555");
             
-            state state = &Machine::wait_hello;
+            state state = &Machine::wait_message;
             
             while (state) {
                 
@@ -330,129 +433,71 @@ namespace ATM {
             }
         }
         
-        class Message {
-        
-        public:
-            virtual ~Message() {}
-        };
-        
-        class hello : public Message, public Messaging::ISerialisable {
-        
-        public:
-
-            static const std::string ident() {
-                static const std::string hello("HELLO");
-                return hello;
-            }
-            
-            static std::shared_ptr<hello> deserialise(Messaging::Socket::MessageIterator &iterator) {
-                
-                std::string string((char*)iterator.data(), iterator.size());
-                
-                if (string == ident()) {
-                    
-                    return std::make_shared<hello>();
-                    
-                }
-
-                return nullptr;
-            }
-        
-            int serialise(Messaging::Socket &socket, const int flags) const override {
-                
-                socket.send(ident(), flags);
-                
-                return 0;
-                
-            }
-        };
-        
-        class account : public Message, public Messaging::ISerialisable {
-            
-        public:
-            
-            static const std::string ident() {
-                static const std::string account("ACCOUNT");
-                return account;
-            }
-            
-            static std::shared_ptr<account> deserialise(Messaging::Socket::MessageIterator &iterator) {
-                
-                std::string string((char*)iterator.data(), iterator.size());
-                
-                if (string == ident()) {
-                    
-                    return std::make_shared<account>();
-                    
-                }
-                
-                return nullptr;
-                
-            }
-
-            int serialise(Messaging::Socket &socket, const int flags) const override {
-                
-                socket.send(ident(), flags);
-                
-                return 0;
-                
-            }
-        };
-
-        class MessageFactory {
-            
-        public:
-            
-            using value_type = Message;
-            using pointer_type = std::shared_ptr<Message>;
-          
-            static pointer_type create(Messaging::Socket::MessageIterator &iterator) {
-                
-                pointer_type msg;
-                
-                if ((msg = hello::deserialise(iterator))) {
-                    return msg;
-                }
-                
-                if ((msg = account::deserialise(iterator))) {
-                    return msg;
-                }
-                    
-                return std::make_shared<Message>();
-                
-            }
-            
-        };
-        
-        void wait_hello() {
+        void wait_message() {
             
             _customer.receive<MessageFactory>()
-            .handle<hello>([&](const hello &h) {
+            .handle<WithdrawlRequest>([&](const WithdrawlRequest &request) {
                 
-                std::cout << std::this_thread::get_id() << ": Hello!" << std::endl;
+                auto response = request;
                 
-                _customer.send("OK");
+                switch (request._state) {
+
+                    case WithdrawlRequest::State::Hello:
+                        
+                        std::cout << std::this_thread::get_id() << ": Please Insert Your Card" << std::endl;
+                        
+                        response._state = WithdrawlRequest::State::Account;
+                        break;
+                    
+                    case WithdrawlRequest::State::Account:
+                        
+                        if (request._account.size() == 10) {
+                            
+                            std::cout << std::this_thread::get_id() << ": Please Input Your PIN" << std::endl;
+                            
+                            response._state = WithdrawlRequest::State::Pin;
+                        }
+                        
+                    case WithdrawlRequest::State::Pin:
+                        
+                        if (request._pin.size() == 4) {
+                            
+                            std::cout << std::this_thread::get_id() << ": Please Input the Amount to Withdraw" << std::endl;
+                            
+                            response._state = WithdrawlRequest::State::Amount;
+                        }
+                        
+                    case WithdrawlRequest::State::Amount:
+                        
+                        if (request._amount > 0) {
+                            
+                            std::cout << std::this_thread::get_id() << ": Please Wait, Authorising..." << std::endl;
+                            
+                            response._state = WithdrawlRequest::State::Authorise;
+                        }
+                        
+                    default:
+                        break;
+                }
+                
+                _customer.send(response);
                 
                 return true;
                 
-            }).handle<account>([&](const account &a) {
-              
-                std::cout << std::this_thread::get_id() << ": Account" << std::endl;
+            }).handle<Messaging::Message>([&](const Messaging::Message &msg) {
                 
-                _customer.send("OK");
-                
-                return true;
-                
-            }).handle<Message>([&](const Message &) {
-                
-                std::cout << std::this_thread::get_id() << ": Unrecognised Response" << std::endl;
-                
+                std::cout << std::this_thread::get_id() << ": Invalid!" << std::endl;
+
                 _customer.send("FAIL");
                 
                 return true;
                 
+            }).handle([&]() {
+                
+                _customer.send("");
+                return true;
+                
             });
-            
         }
         
     private:

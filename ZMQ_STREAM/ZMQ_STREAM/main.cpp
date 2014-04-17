@@ -8,11 +8,15 @@
 
 #include <iostream>
 
+#include <zmq.h>
+
 int main(int argc, const char * argv[])
 {
+    
+    void *context = zmq_ctx_new();
 
-    // insert code here...
-    std::cout << "Hello, World!\n";
+    std::cout << "Server starting..." << std::endl;
+    
     return 0;
 }
 

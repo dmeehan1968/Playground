@@ -7,6 +7,7 @@
 //
 
 #include "ATM.h"
+#include "Customer.h"
 
 #include <thread>
 #include <vector>
@@ -22,6 +23,12 @@ int main(int argc, char *argv[]) {
     std::vector<std::thread> threads;
 
     threads.emplace_back(ATM::Machine(context));
+    
+    ATM::Customer customer(context);
+    
+    auto cash = customer.getCash(25);
+    
+    std::cout << "Cash obtained: " << cash << std::endl;
     
     Messaging::Socket atm(context, ZMQ_REQ);
     

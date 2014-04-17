@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:ZMQ_STREAM/ZMQ_STREAM.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:PolymorphicContainer/PolymorphicContainer.xcodeproj">
    </FileRef>
    <FileRef

@@ -7,6 +7,7 @@
 //
 
 #include <iostream>
+#include <map>
 
 #include <zmq.h>
 
@@ -23,23 +24,75 @@ int main(int argc, const char * argv[])
         throw zmq_strerror(errno);
     }
     
+    std::map<std::string, std::string> client_map;
+    
     while (1) {
+
+        std::pair<std::string, std::string> pair;
         
-        zmq_msg_t msg;
+        for (int msg_index = 0 ; msg_index < 2; msg_index++) {
+            
+            zmq_msg_t msg;
+            
+            zmq_msg_init(&msg);
+            
+            auto size = zmq_msg_recv(&msg, socket, 0);
+            
+            if (size < 0) {
+                throw zmq_strerror(errno);
+            }
+            
+            std::string strmsg((char *)zmq_msg_data(&msg), zmq_msg_size(&msg));
         
-        zmq_msg_init(&msg);
+            if (msg_index == 0) {
+                pair.first = strmsg;
+            } else {
+                pair.second = strmsg;
+            }
+            
+            zmq_msg_close(&msg);
+            
+        }
+
+        std::cout << "[" << pair.first << "] ";
         
-        auto size = zmq_msg_recv(&msg, socket, 0);
-        
-        if (size < 0) {
-            throw zmq_strerror(errno);
+        if (pair.second.size() == 0) {
+            
+            auto found = client_map.find(pair.first);
+            
+            if (found != client_map.end()) {
+                
+                std::cout << "Disconnecting";
+                client_map.erase(found);
+                
+            } else {
+                
+                std::cout << "Connecting";
+                client_map[pair.first] = pair.second;
+                
+            }
+            
+        } else {
+            
+            std::cout << pair.second;
+            
         }
         
-        std::string strmsg((char *)zmq_msg_data(&msg), zmq_msg_size(&msg));
+        std::cout << std::endl;
         
-        std::cout << "[" << strmsg << "]" << std::endl;
+        // Echo it back
         
-        zmq_msg_close(&msg);
+        if (pair.second.size() > 0) {
+            
+            if (zmq_send(socket, pair.first.data(), pair.first.size(), ZMQ_SNDMORE) < 0) {
+                throw zmq_strerror(errno);
+            }
+            
+            if (zmq_send(socket, pair.second.data(), pair.second.size(), 0) < 0) {
+                throw zmq_strerror(errno);
+            }
+
+        }
         
     }
     

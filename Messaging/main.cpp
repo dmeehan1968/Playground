@@ -10,13 +10,13 @@
 
 #include <zmq.h>
 
+#include <ZingBDD/ZingBDD.h>
+
 int main(int argc, const char * argv[])
 {
-
-    void *ctx = zmq_ctx_new();
-    
-    // insert code here...
-    std::cout << "Hello, World!\n";
+	ZingBDD::StreamReporter reporter(std::cout);
+	ZingBDD::Runner::getInstance().run(reporter);
+	
     return 0;
 }
 

@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A3B1F9D0190168EA00DA0C90 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3B1F9CF190168EA00DA0C90 /* main.cpp */; };
+		A3B1F9DB19016AC700DA0C90 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3B1F9DA19016AC700DA0C90 /* main.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -24,7 +24,7 @@
 
 /* Begin PBXFileReference section */
 		A3B1F9CC190168EA00DA0C90 /* Messaging */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Messaging; sourceTree = BUILT_PRODUCTS_DIR; };
-		A3B1F9CF190168EA00DA0C90 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		A3B1F9DA19016AC700DA0C90 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -41,7 +41,9 @@
 		A3B1F9C3190168EA00DA0C90 = {
 			isa = PBXGroup;
 			children = (
-				A3B1F9CE190168EA00DA0C90 /* Messaging */,
+				A3B1F9DA19016AC700DA0C90 /* main.cpp */,
+				A3B1F9D819016A5A00DA0C90 /* Classes */,
+				A3B1F9D919016A6000DA0C90 /* Tests */,
 				A3B1F9CD190168EA00DA0C90 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -54,12 +56,18 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		A3B1F9CE190168EA00DA0C90 /* Messaging */ = {
+		A3B1F9D819016A5A00DA0C90 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				A3B1F9CF190168EA00DA0C90 /* main.cpp */,
 			);
-			path = Messaging;
+			path = Classes;
+			sourceTree = "<group>";
+		};
+		A3B1F9D919016A6000DA0C90 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Tests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -113,7 +121,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A3B1F9D0190168EA00DA0C90 /* main.cpp in Sources */,
+				A3B1F9DB19016AC700DA0C90 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -195,6 +203,7 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					../libzmq/include,
+					../ZingBDD,
 				);
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				OTHER_LDFLAGS = "-lzmq";
@@ -209,6 +218,7 @@
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					../libzmq/include,
+					../ZingBDD,
 				);
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				OTHER_LDFLAGS = "-lzmq";

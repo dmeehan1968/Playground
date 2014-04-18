@@ -4,3 +4,6 @@
 [submodule "libzmq"]
 	path = libzmq
 	url = https://github.com/zeromq/libzmq.git
+[submodule "ZingBDD"]
+	path = ZingBDD
+	url = https://github.com/dmeehan1968/ZingBDD.git

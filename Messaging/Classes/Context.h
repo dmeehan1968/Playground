@@ -48,6 +48,12 @@ namespace Messaging {
             
         }
         
+        void setMaxSockets(const int optval) {
+            
+            zmq_ctx_set(_context.get(), ZMQ_MAX_SOCKETS, optval);
+            
+        }
+        
     private:
         
         std::shared_ptr<void> _context;

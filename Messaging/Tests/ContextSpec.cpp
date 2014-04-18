@@ -83,6 +83,26 @@ namespace Messaging { namespace Specs {
                 
             });
             
+            context("can be changed", {
+                
+                auto expected = ZMQ_MAX_SOCKETS_DFLT == 1 ? 2 : 1;
+                
+                context.setMaxSockets(expected);
+                
+                it("gets the expected value", {
+                    
+                    expect(context.getMaxSockets()).should.equal(expected);
+                    
+                });
+                
+                it("gets the underlying context option", {
+                    
+                    expect(zmq_ctx_get(context.get(), ZMQ_MAX_SOCKETS)).should.equal(expected);
+                    
+                });
+                
+            });
+            
         });
         
         it("destroys context in destructor", {

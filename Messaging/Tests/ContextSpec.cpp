@@ -61,6 +61,18 @@ namespace Messaging { namespace Specs {
             
         });
         
+        context("max sockets", {
+        
+            it("should equal ZMQ default", {
+                
+                auto expected = zmq_ctx_get(context.get(), ZMQ_MAX_SOCKETS);
+                
+                expect(context.getMaxSockets()).should.equal(expected);
+                
+            });
+            
+        });
+        
         it("destroys context in destructor", {
            
             context.~Context();

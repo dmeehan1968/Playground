@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:Messaging/Messaging.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:ZMQ_STREAM/ZMQ_STREAM.xcodeproj">
    </FileRef>
    <FileRef

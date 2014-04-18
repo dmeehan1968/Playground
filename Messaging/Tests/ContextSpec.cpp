@@ -33,10 +33,39 @@ namespace Messaging { namespace Specs {
         context("io threads", {
             
             it("should equal ZMQ default", {
-                
-                expect(context.getIOThreads()).should.equal(ZMQ_IO_THREADS_DFLT);
+            
+                auto expected = zmq_ctx_get(context.get(), ZMQ_IO_THREADS);
+                expect(context.getIOThreads()).should.equal(expected);
                 
             });
+            
+            context("can be changed", {
+                
+                auto expected = ZMQ_IO_THREADS_DFLT == 1 ? 2 : 1;
+                
+                context.setIOThreads(expected);
+                
+                it("gets the expected value", {
+                    
+                    expect(context.getIOThreads()).should.equal(expected);
+
+                });
+                
+                it("sets the ZMQ context option", {
+                    
+                    expect(zmq_ctx_get(context.get(), ZMQ_IO_THREADS)).should.equal(expected);
+                    
+                });
+                
+            });
+            
+        });
+        
+        it("destroys context in destructor", {
+           
+            context.~Context();
+            
+            expect(context.get() == nullptr).should.beTrue();
             
         });
         

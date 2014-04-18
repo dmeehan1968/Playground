@@ -20,6 +20,10 @@ namespace Messaging {
         
         Context() : _context(std::shared_ptr<void>(zmq_ctx_new(), &zmq_ctx_destroy)) {}
         
+        ~Context() {
+            _context = nullptr;
+        }
+        
         void *get() const {
             
             return _context.get();
@@ -29,6 +33,12 @@ namespace Messaging {
         int getIOThreads() const {
             
             return zmq_ctx_get(_context.get(), ZMQ_IO_THREADS);
+            
+        }
+        
+        void setIOThreads(const int optval) {
+            
+            zmq_ctx_set(_context.get(), ZMQ_IO_THREADS, optval);
             
         }
         

@@ -70,6 +70,12 @@ namespace Messaging { namespace Specs {
         context("max sockets", {
         
             it("should equal ZMQ default", {
+
+                expect(context.getMaxSockets()).should.equal(ZMQ_MAX_SOCKETS_DFLT);
+                
+            });
+
+            it("gets the underlying value", {
                 
                 auto expected = zmq_ctx_get(context.get(), ZMQ_MAX_SOCKETS);
                 

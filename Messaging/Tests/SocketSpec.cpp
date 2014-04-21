@@ -53,6 +53,63 @@ namespace Messaging { namespace Specs {
             expect(socket == nullptr).should.beTrue();
             
         });
+        
+        context("bind", {
+            
+            it("throws on invalid protocol", {
+                
+                expect(theBlock({
+                    
+                    Socket socket(Context(), Socket::socket_type::request);
+                    
+                    socket.bind("xxx://xxx");
+                    
+                })).should.raise<Exception>("bind failed - Protocol not supported");
+                
+            });
+            
+            it("throws on malformed endpoint", {
+                
+                expect(theBlock({
+                    
+                    Socket socket(Context(), Socket::socket_type::request);
+                    
+                    socket.bind("inproc:/xxx");
+                    
+                })).should.raise<Exception>("bind failed - Invalid argument");
+                
+            });
+            
+        });
+        
+        context("connect", {
+            
+            it("throws on invalid protocol", {
+                
+                expect(theBlock({
+                    
+                    Socket socket(Context(), Socket::socket_type::request);
+                    
+                    socket.connect("xxx://xxx");
+                    
+                })).should.raise<Exception>("connect failed - Protocol not supported");
+                
+            });
+            
+            it("throws on malformed endpoint", {
+                
+                expect(theBlock({
+                    
+                    Socket socket(Context(), Socket::socket_type::request);
+                    
+                    socket.connect("inproc:/xxx");
+                    
+                })).should.raise<Exception>("connect failed - Invalid argument");
+                
+            });
+            
+        });
+        
     });
     
 } }

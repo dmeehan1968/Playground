@@ -71,7 +71,7 @@ namespace Messaging { namespace Specs {
         
             it("should equal ZMQ default", {
 
-                expect(context.getMaxSockets()).should.equal(ZMQ_MAX_SOCKETS_DFLT);
+                expect(context.maxSockets()).should.equal(ZMQ_MAX_SOCKETS_DFLT);
                 
             });
 
@@ -79,7 +79,7 @@ namespace Messaging { namespace Specs {
                 
                 auto expected = zmq_ctx_get(context, ZMQ_MAX_SOCKETS);
                 
-                expect(context.getMaxSockets()).should.equal(expected);
+                expect(context.maxSockets()).should.equal(expected);
                 
             });
             
@@ -91,7 +91,7 @@ namespace Messaging { namespace Specs {
                 
                 it("gets the expected value", {
                     
-                    expect(context.getMaxSockets()).should.equal(expected);
+                    expect(context.maxSockets()).should.equal(expected);
                     
                 });
                 

@@ -42,7 +42,7 @@ namespace Messaging {
             
         }
         
-        int getMaxSockets() const {
+        int maxSockets() const {
             
             return zmq_ctx_get(_context.get(), ZMQ_MAX_SOCKETS);
             

@@ -14,6 +14,10 @@
 
 namespace Messaging {
 
+    namespace Specs {
+        class ContextSpec;
+    }
+    
     class Context {
       
     public:
@@ -23,12 +27,6 @@ namespace Messaging {
         ~Context() {
             _context = nullptr;
         }
-        
-        operator void *() const {
-            
-            return _context.get();
-            
-        };
         
         int getIOThreads() const {
             
@@ -53,6 +51,17 @@ namespace Messaging {
             zmq_ctx_set(_context.get(), ZMQ_MAX_SOCKETS, optval);
             
         }
+
+    protected:
+
+        friend class Specs::ContextSpec;
+        friend class Socket;
+        
+        operator void *() const {
+            
+            return _context.get();
+            
+        };
         
     private:
         

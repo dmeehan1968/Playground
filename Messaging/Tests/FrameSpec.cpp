@@ -64,6 +64,32 @@ namespace Messaging { namespace Specs {
             
         });
         
+        context("transmission", {
+        
+            Context ctx;
+            Socket request(ctx, Socket::socket_type::request);
+            Socket reply(ctx, Socket::socket_type::reply);
+            
+            reply.bind("inproc://test");
+            request.connect("inproc://test");
+            
+            it("can send and receive", {
+               
+                char expectedData[] = "this is a test";
+                
+                Frame outbound(expectedData);
+                
+                outbound.send(request, Frame::block::none, Frame::more::none);
+                
+                Frame inbound;
+                
+                inbound.receive(reply, Frame::block::none);
+                
+                expect(strcmp(inbound.data<char>(), expectedData)).should.equal(0);
+            });
+            
+        });
+        
     });
     
 } }

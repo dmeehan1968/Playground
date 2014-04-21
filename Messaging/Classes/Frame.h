@@ -10,6 +10,7 @@
 #define __Messaging__Frame__
 
 #include "Socket.h"
+
 #include <cstdlib>
 
 namespace Messaging {
@@ -46,6 +47,57 @@ namespace Messaging {
         template <typename T>
         T *data() const {
             return (T *)zmq_msg_data(&_msg);
+        }
+        
+        enum class block {
+            none,
+            blocking
+        };
+        
+        enum class more {
+            none,
+            more
+        };
+        
+        size_t send(Socket &socket, const block block_type, const more more_type) {
+        
+            int flags = 0;
+            flags |= block_type == block::none ? ZMQ_DONTWAIT : 0;
+            flags |= more_type == more::more ? ZMQ_SNDMORE : 0;
+            
+            auto len = zmq_msg_send(&_msg, socket, flags);
+            
+            if (len < 0) {
+
+                if (errno == EAGAIN) {
+                    return 0;
+                }
+                
+                throw Exception("send failed");
+            }
+            
+            return len;
+            
+        }
+        
+        size_t receive(Socket &socket, const block block_type) {
+            
+            int flags = 0;
+            flags |= block_type == block::none ? ZMQ_DONTWAIT : 0;
+            
+            auto len = zmq_msg_recv(&_msg, socket, flags);
+            
+            if (len < 0) {
+                
+                if (errno == EAGAIN) {
+                    return 0;
+                }
+                
+                throw Exception("receive failed");
+                
+            }
+            
+            return len;
         }
         
     private:

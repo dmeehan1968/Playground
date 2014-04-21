@@ -63,9 +63,32 @@ namespace Messaging {
             return (socket_type) type;
         }
 
+        using endpoint = std::string;
+        
+        void bind(const endpoint &endpoint) {
+    
+            auto rc = zmq_bind(*this, endpoint.c_str());
+            
+            if (rc < 0) {
+                throw Exception("bind failed");
+            }
+        
+        }
+        
+        void connect(const endpoint &endpoint) {
+        
+            auto rc = zmq_connect(*this, endpoint.c_str());
+            
+            if (rc < 0) {
+                throw Exception("connect failed");
+            }
+            
+        }
+        
     protected:
 
         friend class Specs::SocketSpec;
+        friend class Frame;
         
         operator void *() const {
             return _socket.get();

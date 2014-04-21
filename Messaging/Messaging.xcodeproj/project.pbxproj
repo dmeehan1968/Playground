@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A30B45BC19053CA50058F066 /* FrameSpec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30B45BB19053CA50058F066 /* FrameSpec.cpp */; };
+		A30B45BF19053CDC0058F066 /* Frame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30B45BD19053CDC0058F066 /* Frame.cpp */; };
 		A3B1F9DB19016AC700DA0C90 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3B1F9DA19016AC700DA0C90 /* main.cpp */; };
 		A3B1F9DD19016B1D00DA0C90 /* ContextSpec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3B1F9DC19016B1D00DA0C90 /* ContextSpec.cpp */; };
 		A3B1F9E019016C4000DA0C90 /* Context.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3B1F9DE19016C4000DA0C90 /* Context.cpp */; };
@@ -27,6 +29,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		A30B45BB19053CA50058F066 /* FrameSpec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrameSpec.cpp; sourceTree = "<group>"; };
+		A30B45BD19053CDC0058F066 /* Frame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Frame.cpp; sourceTree = "<group>"; };
+		A30B45BE19053CDC0058F066 /* Frame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Frame.h; sourceTree = "<group>"; };
 		A3B1F9CC190168EA00DA0C90 /* Messaging */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Messaging; sourceTree = BUILT_PRODUCTS_DIR; };
 		A3B1F9DA19016AC700DA0C90 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		A3B1F9DC19016B1D00DA0C90 /* ContextSpec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContextSpec.cpp; sourceTree = "<group>"; };
@@ -71,6 +76,8 @@
 			children = (
 				A3B1F9DE19016C4000DA0C90 /* Context.cpp */,
 				A3B1F9DF19016C4000DA0C90 /* Context.h */,
+				A30B45BD19053CDC0058F066 /* Frame.cpp */,
+				A30B45BE19053CDC0058F066 /* Frame.h */,
 				A3B1F9E31905300600DA0C90 /* Socket.cpp */,
 				A3B1F9E41905300600DA0C90 /* Socket.h */,
 			);
@@ -82,6 +89,7 @@
 			children = (
 				A3B1F9DC19016B1D00DA0C90 /* ContextSpec.cpp */,
 				A3B1F9E119052FD300DA0C90 /* SocketSpec.cpp */,
+				A30B45BB19053CA50058F066 /* FrameSpec.cpp */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -141,6 +149,8 @@
 				A3B1F9DD19016B1D00DA0C90 /* ContextSpec.cpp in Sources */,
 				A3B1F9DB19016AC700DA0C90 /* main.cpp in Sources */,
 				A3B1F9E219052FD300DA0C90 /* SocketSpec.cpp in Sources */,
+				A30B45BF19053CDC0058F066 /* Frame.cpp in Sources */,
+				A30B45BC19053CA50058F066 /* FrameSpec.cpp in Sources */,
 				A3B1F9E51905300600DA0C90 /* Socket.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

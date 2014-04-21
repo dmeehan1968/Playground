@@ -14,12 +14,45 @@ namespace Messaging { namespace Specs {
     
     describe(Socket, {
         
-        it("exists", {
+        Context ctx;
+        Socket::socket_type expectedType = Socket::socket_type::request;
+        
+        Socket socket(ctx, expectedType);
+        
+        it("creates socket", {
             
-            Socket s;
+            expect(socket == nullptr).should.beFalse();
             
         });
         
+        context("socket type", {
+            
+            it("returns expected type", {
+                
+                expect(socket.type() == expectedType).should.beTrue();
+                
+            });
+            
+            it("sets underlying type", {
+               
+                int type;
+                size_t type_size = sizeof(type);
+                
+                zmq_getsockopt(socket, ZMQ_TYPE, &type, &type_size);
+                
+                expect(type).should.equal((int)expectedType);
+                
+            });
+            
+        });
+        
+        it("closes socket in destructor", {
+            
+            socket.~Socket();
+            
+            expect(socket == nullptr).should.beTrue();
+            
+        });
     });
     
 } }

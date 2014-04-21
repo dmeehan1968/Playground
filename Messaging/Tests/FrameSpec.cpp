@@ -67,11 +67,11 @@ namespace Messaging { namespace Specs {
         context("transmission", {
         
             Context ctx;
-            Socket request(ctx, Socket::socket_type::request);
-            Socket reply(ctx, Socket::socket_type::reply);
+            Socket client(ctx, Socket::socket_type::request);
+            Socket server(ctx, Socket::socket_type::reply);
             
-            reply.bind("inproc://test");
-            request.connect("inproc://test");
+            server.bind("inproc://test");
+            client.connect("inproc://test");
             
             it("can send and receive", {
                
@@ -79,11 +79,11 @@ namespace Messaging { namespace Specs {
                 
                 Frame outbound(expectedData);
                 
-                outbound.send(request, Frame::block::none, Frame::more::none);
+                outbound.send(client, Frame::block::none, Frame::more::none);
                 
                 Frame inbound;
                 
-                inbound.receive(reply, Frame::block::none);
+                inbound.receive(server, Frame::block::none);
                 
                 expect(strcmp(inbound.data<char>(), expectedData)).should.equal(0);
             });

@@ -14,7 +14,30 @@ namespace Messaging { namespace Specs {
   
     describe(Message, {
     
-        Message msg;
+        context("default constructor", {
+            
+            Message msg;
+
+            it("has no frames", {
+                
+                expect(msg.frames()).should.equal(0);
+                
+            });
+            
+            it("raises if sent", {
+            
+                Socket socket(Context(), Socket::socket_type::push);
+                socket.bind("inproc://test");
+                
+                expect(theBlock({
+                    
+                    msg.send(socket, Message::block::none);
+                    
+                })).should.raise<Exception>("cannot send an empty message");
+                
+            });
+            
+        });
         
     });
     

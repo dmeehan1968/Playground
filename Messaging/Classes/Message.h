@@ -9,11 +9,45 @@
 #ifndef __Messaging__Message__
 #define __Messaging__Message__
 
-#include "Socket.h"
+#include "Frame.h"
+
+#include <deque>
 
 namespace Messaging {
     
-    class Message {
+    class Message : public std::deque<Frame> {
+      
+    public:
+        
+        using block = Frame::block;
+        
+        size_t frames() const {
+            return size();
+        }
+        
+        size_t send(Socket &socket, const block block_type) {
+        
+            size_t size = 0;
+            
+            if (frames() == 0) {
+                throw Exception("cannot send an empty message", 0);
+            }
+            
+            while (frames() > 0) {
+            
+                Frame::more more_type = frames() > 1 ? Frame::more::more : Frame::more::none;
+                
+                size += front().send(socket, block_type, more_type);
+
+                pop_front();
+                
+            }
+            
+            return size;
+            
+        }
+        
+    private:
         
     };
     

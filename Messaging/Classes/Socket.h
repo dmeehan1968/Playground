@@ -10,10 +10,9 @@
 #define __Messaging__Socket__
 
 #include "Context.h"
+#include "Exception.h"
 
 #include <zmq.h>
-#include <stdexcept>
-#include <string>
 
 
 namespace Messaging {
@@ -22,16 +21,6 @@ namespace Messaging {
         class SocketSpec;
     }
 
-    class Exception : public std::runtime_error {
-    
-    public:
-        Exception(const char *what, errno_t error = errno)
-        :
-            std::runtime_error(std::string(what) + zmq_strerror(error))
-        {}
-        
-    };
-    
     class Socket {
         
     public:
@@ -42,13 +31,15 @@ namespace Messaging {
             reply       = ZMQ_REP,
             publisher   = ZMQ_PUB,
             subscriber  = ZMQ_SUB,
+            push        = ZMQ_PUSH,
+            pull        = ZMQ_PULL,
             dealer      = ZMQ_DEALER,
             router      = ZMQ_ROUTER,
             stream      = ZMQ_STREAM
             
         };
         
-        Socket(Context &ctx, const socket_type type)
+        Socket(const Context &ctx, const socket_type type)
         :
             _ctx(ctx),
             _socket(std::shared_ptr<void>(zmq_socket(_ctx, (int)type), &zmq_close))

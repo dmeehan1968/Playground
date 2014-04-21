@@ -18,7 +18,7 @@ namespace Messaging { namespace Specs {
         
         it("returns a void pointer to a context", {
             
-            expect(context.get() != nullptr).should.beTrue();
+            expect(context != nullptr).should.beTrue();
             
         });
         
@@ -26,7 +26,7 @@ namespace Messaging { namespace Specs {
             
             auto other = context;
             
-            expect(other.get() == context.get()).should.beTrue();
+            expect(other == context).should.beTrue();
             
         });
        
@@ -40,7 +40,7 @@ namespace Messaging { namespace Specs {
 
             it("should return underlying value", {
             
-                auto expected = zmq_ctx_get(context.get(), ZMQ_IO_THREADS);
+                auto expected = zmq_ctx_get(context, ZMQ_IO_THREADS);
                 expect(context.getIOThreads()).should.equal(expected);
 
             });
@@ -59,7 +59,7 @@ namespace Messaging { namespace Specs {
                 
                 it("sets the ZMQ context option", {
                     
-                    expect(zmq_ctx_get(context.get(), ZMQ_IO_THREADS)).should.equal(expected);
+                    expect(zmq_ctx_get(context, ZMQ_IO_THREADS)).should.equal(expected);
                     
                 });
                 
@@ -77,7 +77,7 @@ namespace Messaging { namespace Specs {
 
             it("gets the underlying value", {
                 
-                auto expected = zmq_ctx_get(context.get(), ZMQ_MAX_SOCKETS);
+                auto expected = zmq_ctx_get(context, ZMQ_MAX_SOCKETS);
                 
                 expect(context.getMaxSockets()).should.equal(expected);
                 
@@ -97,7 +97,7 @@ namespace Messaging { namespace Specs {
                 
                 it("gets the underlying context option", {
                     
-                    expect(zmq_ctx_get(context.get(), ZMQ_MAX_SOCKETS)).should.equal(expected);
+                    expect(zmq_ctx_get(context, ZMQ_MAX_SOCKETS)).should.equal(expected);
                     
                 });
                 
@@ -109,7 +109,7 @@ namespace Messaging { namespace Specs {
            
             context.~Context();
             
-            expect(context.get() == nullptr).should.beTrue();
+            expect(context == nullptr).should.beTrue();
             
         });
         

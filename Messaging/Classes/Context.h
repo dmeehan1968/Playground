@@ -24,7 +24,7 @@ namespace Messaging {
             _context = nullptr;
         }
         
-        void *get() const {
+        operator void *() const {
             
             return _context.get();
             

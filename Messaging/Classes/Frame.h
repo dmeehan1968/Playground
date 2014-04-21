@@ -12,6 +12,7 @@
 #include "Socket.h"
 
 #include <cstdlib>
+#include <iostream>
 
 namespace Messaging {
 
@@ -29,17 +30,21 @@ namespace Messaging {
         
         Frame(const std::string &string) {
             
-            auto size = string.size();
-            void *data = new char(size);
-            memcpy(data, string.data(), size);
-            
-            zmq_msg_init_data(&_msg, data, size, &Frame::free_msg_data, NULL);
+            zmq_msg_init_size(&_msg, string.size());
+            memcpy(zmq_msg_data(&_msg), string.data(), string.size());
+
         }
 
         ~Frame() {
             zmq_msg_close(&_msg);
         }
 
+        Frame(const Frame &) = delete;
+        Frame & operator = (const Frame &) = delete;
+        
+        Frame(Frame &&) = default;
+        Frame & operator = (Frame &&) = default;
+        
         size_t size() const {
             return zmq_msg_size(&_msg);
         }
@@ -100,11 +105,11 @@ namespace Messaging {
             return len;
         }
         
-    private:
-        
-        static void free_msg_data(void *ptr, void *hint) {
-            delete (char *)ptr;
+        bool hasMore() const {
+            return zmq_msg_more(&_msg);
         }
+        
+    private:
         
         mutable zmq_msg_t _msg;
         

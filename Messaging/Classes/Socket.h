@@ -14,7 +14,6 @@
 
 #include <zmq.h>
 
-
 namespace Messaging {
     
     namespace Specs {

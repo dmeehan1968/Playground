@@ -47,6 +47,31 @@ namespace Messaging {
             
         }
         
+        size_t receive(Socket &socket, const block block_type) {
+            
+            size_t size = 0;
+            auto more = false;
+            
+            if (frames() > 0) {
+                throw Exception("cannot receive into message that already has frames", 0);
+            }
+            
+            do {
+                
+                Frame frame;
+                
+                size += frame.receive(socket, block_type);
+                
+                more = frame.hasMore();
+                
+                push_back(std::move(frame));
+                
+            } while (more);
+            
+            return size;
+            
+        }
+        
     private:
         
     };

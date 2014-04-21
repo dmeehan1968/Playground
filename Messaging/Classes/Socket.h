@@ -38,7 +38,12 @@ namespace Messaging {
         
         enum class socket_type {
             request = ZMQ_REQ,
-            reply = ZMQ_REP
+            reply = ZMQ_REP,
+            publisher = ZMQ_PUB,
+            subscriber = ZMQ_SUB,
+            dealer = ZMQ_DEALER,
+            router = ZMQ_ROUTER,
+            stream = ZMQ_STREAM
         };
         
         Socket(Context &ctx, const socket_type type)

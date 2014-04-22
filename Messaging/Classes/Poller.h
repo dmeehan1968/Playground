@@ -133,7 +133,7 @@ namespace Messaging {
             bool error;
         };
         
-        Event receivedEvents(const Socket &socket) const {
+        Event operator()(Socket &socket) const {
         
             unsigned index;
             decltype(_sockets.begin()) iter;

@@ -107,23 +107,24 @@ namespace Messaging { namespace Specs {
             
             if (poller.events(client).writable) {
 
+                it("should raise when testing for client after removal", {
+                    
+                    poller.remove(client, { Poller::event::writable });
+                    
+                    expect(theBlock({
+                        
+                        poller.events(client);
+                        
+                    })).should.raise<Exception>("socket not found");
+                    
+                });
+                
                 context("server readable", {
                     
                     Frame frame("HELLO");
                     
                     frame.send(client, Frame::block::none, Frame::more::none);
                     
-                    poller.remove(client, { Poller::event::writable });
-                    
-                    it("should raise when testing for client", {
-                        
-                        expect(theBlock({
-                            
-                            poller.events(client);
-                            
-                        })).should.raise<Exception>("");
-                        
-                    });
                     
                     it("should have one socket with event", {
                         

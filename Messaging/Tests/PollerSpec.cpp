@@ -35,15 +35,15 @@ namespace Messaging { namespace Specs {
                     
                     expect(theBlock({
                         
-                        poller.add(socket, { });
+                        poller.observe(socket, { });
                         
-                    })).should.raise<Exception>("no events supplied");
+                    })).should.raise<Exception>("no events specified");
                     
                 });
                 
                 it("has one socket after add", {
                     
-                    poller.add(socket, { Poller::event::readable });
+                    poller.observe(socket, { Poller::event::readable });
                     
                     expect(poller.socketCount()).should.equal(1);
                     
@@ -85,8 +85,8 @@ namespace Messaging { namespace Specs {
             Socket client(context, Socket::socket_type::push);
             client.connect("inproc://test");
             
-            poller.add(client, { Poller::event::writable });
-            poller.add(server, { Poller::event::readable });
+            poller.observe(client, { Poller::event::writable });
+            poller.observe(server, { Poller::event::readable });
             
             context("client writable", {
                 
@@ -109,7 +109,7 @@ namespace Messaging { namespace Specs {
 
                 it("should raise when testing for client after removal", {
                     
-                    poller.remove(client, { Poller::event::writable });
+                    poller.observe(client, { Poller::event::none });
                     
                     expect(theBlock({
                         

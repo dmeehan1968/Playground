@@ -38,71 +38,45 @@ namespace Messaging {
             all
         };
         
-        void add(Socket &socket, const std::initializer_list<event> &events = { event::readable } ) {
+        void observe(Socket &socket, const std::initializer_list<event> &events = { event::none } ) {
             
             auto event_mask = eventMaskFromEnums(events);
         
-            if (event_mask == 0) {
-                throw Exception("no events supplied", 0);
-            }
-            
             auto index = 0;
             for (auto &s : _sockets) {
                 
                 if (s == socket) {
                     
-                    _items[index].events |= event_mask;
+                    if (event_mask == 0) {
                     
-                }
-                
-                index++;
-                
-            }
-            
-            if (index >= _sockets.size()) {
-                
-                zmq_pollitem_t poll = { socket, 0, event_mask, 0 };
-                
-                _items.push_back(poll);
-                _sockets.push_back(socket);
-
-            }
-            
-        }
-        
-        void remove(Socket &socket, const std::initializer_list<event> &events = { event::all }) {
-            
-            auto event_mask = eventMaskFromEnums(events);
-            
-            auto index = 0;
-            
-            for (auto &s : _sockets) {
-            
-                if (s == socket) {
-                    
-                    _items[index].events &= ~event_mask;
-
-                    if (_items[index].events == 0) {
-                        
                         _items.erase(_items.begin()+index);
                         _sockets.erase(_sockets.begin()+index);
-                        
+                    
                     } else {
                         
+                        _items[index].events = event_mask;
                         _items[index].revents = 0;
                         
                     }
                     
                     return;
+                    
                 }
                 
                 index++;
+                
             }
             
-            if (index >= _items.size()) {
-                throw Exception("socket not found", 0);
+            if (event_mask == 0) {
+                throw Exception("no events specified", 0);
             }
-    
+            
+            zmq_pollitem_t poll = { socket, 0, event_mask, 0 };
+            
+            _items.push_back(poll);
+            _sockets.push_back(socket);
+            
+            
         }
         
         struct event_flags {
@@ -169,6 +143,11 @@ namespace Messaging {
                     case event::all:
                         
                         event_mask |= ZMQ_POLLIN | ZMQ_POLLOUT | ZMQ_POLLERR;
+                        break;
+                        
+                    case event::none:
+                        
+                        event_mask = 0;
                         break;
                         
                     default:

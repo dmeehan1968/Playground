@@ -28,6 +28,12 @@ namespace Messaging {
             _context = nullptr;
         }
         
+        bool operator == (const Context &other) const {
+            
+            return _context.get() == other._context.get();
+            
+        }
+        
         int getIOThreads() const {
             
             return zmq_ctx_get(_context.get(), ZMQ_IO_THREADS);
@@ -57,7 +63,7 @@ namespace Messaging {
         friend class Specs::ContextSpec;
         friend class Socket;
         
-        operator void *() const {
+        void *get() const {
             
             return _context.get();
             

@@ -41,7 +41,7 @@ namespace Messaging {
         Socket(const Context &ctx, const socket_type type)
         :
             _ctx(ctx),
-            _socket(std::shared_ptr<void>(zmq_socket(_ctx, (int)type), &zmq_close))
+            _socket(std::shared_ptr<void>(zmq_socket(_ctx.get(), (int)type), &zmq_close))
         {}
         
         ~Socket() {

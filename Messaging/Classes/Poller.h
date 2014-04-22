@@ -94,7 +94,7 @@ namespace Messaging {
         
         void observe(Socket &socket, const Event &events = Event().read() ) {
             
-            auto index = socketIndex(socket);
+            auto index = getSocketIndex(socket);
 
             if (index == -1) {
                 
@@ -135,7 +135,7 @@ namespace Messaging {
         
         Event operator()(Socket &socket) const {
         
-            auto index = socketIndex(socket);
+            auto index = getSocketIndex(socket);
             
             if (index >= 0) {
                 return Event(_items[index].revents);
@@ -176,7 +176,7 @@ namespace Messaging {
         
     protected:
         
-        long socketIndex(Socket &socket) const {
+        long getSocketIndex(Socket &socket) const {
             
             auto found = std::find(_sockets.begin(), _sockets.end(), socket);
             

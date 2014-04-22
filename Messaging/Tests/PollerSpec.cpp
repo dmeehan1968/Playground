@@ -9,7 +9,7 @@
 #include <ZingBDD/ZingBDD.h>
 
 #include "Poller.h"
-#include "Frame.h"
+#include "Message.h"
 
 #include <thread>
 

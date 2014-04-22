@@ -94,10 +94,6 @@ namespace Messaging {
             
             if (len < 0) {
                 
-                if (errno == EAGAIN) {
-                    return 0;
-                }
-                
                 throw Exception("receive failed");
                 
             }

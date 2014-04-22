@@ -117,6 +117,23 @@ namespace Messaging {
             
         }
         
+        void dispatch(const std::function<void(Socket &socket, const event_flags &events)> &functor) {
+         
+            auto index = 0;
+            
+            for (auto &socket : _sockets) {
+            
+                auto event_mask = _items[index].revents;
+
+                if (event_mask != 0) {
+                 
+                    functor(socket, eventFlagsFromMask(event_mask));
+                    
+                }
+                index++;
+            }
+        }
+        
     protected:
         
         short eventMaskFromEnums(const std::vector<event> &events) const {

@@ -60,7 +60,24 @@ namespace Messaging {
                 
                 Frame frame;
                 
-                size += frame.receive(socket, block_type);
+                try {
+                    
+                    size += frame.receive(socket, block_type);
+                    
+                } catch( Exception &e ) {
+                    
+                    if (e.errorCode() == EAGAIN) {
+                      
+                        if (more) {
+                            errno = EFAULT;
+                            throw Exception("unable to read when more expected");
+                        }
+                        
+                        break;
+                    }
+                    
+                    throw;
+                }
                 
                 more = frame.hasMore();
                 

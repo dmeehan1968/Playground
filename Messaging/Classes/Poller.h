@@ -80,7 +80,7 @@ namespace Messaging {
             
                 if (s == socket) {
                     
-                    _items[index].events ^= event_mask;
+                    _items[index].events &= ~event_mask;
 
                     if (_items[index].events == 0) {
                         

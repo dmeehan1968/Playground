@@ -40,21 +40,21 @@ namespace Messaging {
             
             if (_poller.poll(timeout)) {
                 
-                if (_poller.events(_frontend).isWritable()) {
+                if (_poller.receivedEvents(_frontend).isWritable()) {
                     
                     _poller.observe(_frontend, Poller::Event().none());
                     _poller.observe(_backend, Poller::Event().read());
                     
                 }
                 
-                if (_poller.events(_backend).isWritable()) {
+                if (_poller.receivedEvents(_backend).isWritable()) {
                     
                     _poller.observe(_backend, Poller::Event().none());
                     _poller.observe(_frontend, Poller::Event().read());
                     
                 }
                 
-                if (_poller.events(_frontend).isReadable()) {
+                if (_poller.receivedEvents(_frontend).isReadable()) {
                     
                     forward(_frontend, _backend);
                     
@@ -63,7 +63,7 @@ namespace Messaging {
                     
                 }
                 
-                if (_poller.events(_backend).isReadable()) {
+                if (_poller.receivedEvents(_backend).isReadable()) {
                     
                     forward(_backend, _frontend);
                     

@@ -32,9 +32,9 @@ namespace Messaging {
             
             Event(const short event_mask)
             :
-            _readable(event_mask & ZMQ_POLLIN),
-            _writable(event_mask & ZMQ_POLLOUT),
-            _error(event_mask & ZMQ_POLLERR)
+                _readable(event_mask & ZMQ_POLLIN),
+                _writable(event_mask & ZMQ_POLLOUT),
+                _error(event_mask & ZMQ_POLLERR)
             {}
             
             Event &none() {
@@ -133,7 +133,7 @@ namespace Messaging {
             bool error;
         };
         
-        Event events(const Socket &socket) const {
+        Event receivedEvents(const Socket &socket) const {
         
             unsigned index;
             decltype(_sockets.begin()) iter;

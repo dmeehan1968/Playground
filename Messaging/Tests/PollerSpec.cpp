@@ -119,6 +119,12 @@ namespace Messaging { namespace Specs {
                     
                 });
                 
+                it("should have one socket left", {
+                    
+                    expect(poller.socketCount()).should.equal(1);
+                    
+                });
+                
                 context("server readable", {
                     
                     Frame frame("HELLO");

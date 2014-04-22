@@ -135,18 +135,10 @@ namespace Messaging {
         
         Event operator()(Socket &socket) const {
         
-            unsigned index;
-            decltype(_sockets.begin()) iter;
+            auto index = socketIndex(socket);
             
-            for (   index = 0, iter = _sockets.begin();
-                    iter != _sockets.end() ;
-                    iter++, index++) {
-                
-                if (*iter == socket) {
-                    
-                    return Event(_items[index].revents);
-                    
-                }
+            if (index >= 0) {
+                return Event(_items[index].revents);
             }
             
             throw Exception("socket not found", 0);
@@ -184,7 +176,7 @@ namespace Messaging {
         
     protected:
         
-        long socketIndex(Socket &socket) {
+        long socketIndex(Socket &socket) const {
             
             auto found = std::find(_sockets.begin(), _sockets.end(), socket);
             

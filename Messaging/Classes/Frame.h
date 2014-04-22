@@ -70,7 +70,7 @@ namespace Messaging {
             flags |= block_type == block::none ? ZMQ_DONTWAIT : 0;
             flags |= more_type == more::more ? ZMQ_SNDMORE : 0;
             
-            auto len = zmq_msg_send(&_msg, socket, flags);
+            auto len = zmq_msg_send(&_msg, socket.get(), flags);
             
             if (len < 0) {
 
@@ -90,7 +90,7 @@ namespace Messaging {
             int flags = 0;
             flags |= block_type == block::none ? ZMQ_DONTWAIT : 0;
             
-            auto len = zmq_msg_recv(&_msg, socket, flags);
+            auto len = zmq_msg_recv(&_msg, socket.get(), flags);
             
             if (len < 0) {
                 

@@ -71,7 +71,7 @@ namespace Messaging {
                 throw Exception("no events specified", 0);
             }
             
-            zmq_pollitem_t poll = { socket, 0, event_mask, 0 };
+            zmq_pollitem_t poll = { socket.get(), 0, event_mask, 0 };
             
             _items.push_back(poll);
             _sockets.push_back(socket);

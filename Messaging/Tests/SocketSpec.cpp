@@ -21,7 +21,7 @@ namespace Messaging { namespace Specs {
         
         it("creates socket", {
             
-            expect(socket == nullptr).should.beFalse();
+            expect(socket.get() == nullptr).should.beFalse();
             
         });
         
@@ -38,7 +38,7 @@ namespace Messaging { namespace Specs {
                 int type;
                 size_t type_size = sizeof(type);
                 
-                zmq_getsockopt(socket, ZMQ_TYPE, &type, &type_size);
+                zmq_getsockopt(socket.get(), ZMQ_TYPE, &type, &type_size);
                 
                 expect(type).should.equal((int)expectedType);
                 
@@ -50,7 +50,7 @@ namespace Messaging { namespace Specs {
             
             socket.~Socket();
             
-            expect(socket == nullptr).should.beTrue();
+            expect(socket.get() == nullptr).should.beTrue();
             
         });
         

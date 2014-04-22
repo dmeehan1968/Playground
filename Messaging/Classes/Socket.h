@@ -48,12 +48,16 @@ namespace Messaging {
             _socket = nullptr;
         }
         
+        bool operator == (const Socket &other) const {
+            return _ctx == other._ctx && _socket == other._socket;
+        }
+        
         socket_type type() const {
             
             int type;
             size_t type_size = sizeof(type);
             
-            if (zmq_getsockopt(*this, ZMQ_TYPE, &type, &type_size) < 0) {
+            if (zmq_getsockopt(get(), ZMQ_TYPE, &type, &type_size) < 0) {
                 throw Exception("Get socket option");
             }
             
@@ -64,7 +68,7 @@ namespace Messaging {
         
         void bind(const endpoint &endpoint) {
     
-            auto rc = zmq_bind(*this, endpoint.c_str());
+            auto rc = zmq_bind(get(), endpoint.c_str());
             
             if (rc < 0) {
                 throw Exception("bind failed");
@@ -74,7 +78,7 @@ namespace Messaging {
         
         void connect(const endpoint &endpoint) {
         
-            auto rc = zmq_connect(*this, endpoint.c_str());
+            auto rc = zmq_connect(get(), endpoint.c_str());
             
             if (rc < 0) {
                 throw Exception("connect failed");
@@ -88,7 +92,7 @@ namespace Messaging {
         friend class Frame;
         friend class Poller;
         
-        operator void *() const {
+        void *get() const {
             return _socket.get();
         }
 

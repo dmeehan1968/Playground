@@ -42,23 +42,23 @@ namespace Messaging {
                 
                 _poller.dispatch([&](Socket &socket, const Poller::event_flags &events) {
                     
-                    //                    if (socket == _frontend) {
-                    //
-                    //                        if (events.writable) {
-                    //                            _poller.observe(_frontend, {});
-                    //                            _poller.observe(_backend, { Poller::event::readable });
-                    //                        }
-                    //
-                    //                        if (events.readable) {
-                    //
-                    //                            forward(_frontend, _backend);
-                    //
-                    //                            _poller.observe(_frontend, {});
-                    //                            _poller.observe(_backend, { Poller::event::writable });
-                    //
-                    //                        }
-                    //
-                    //                    }
+                    if (socket == _frontend) {
+
+                        if (events.writable) {
+                            _poller.observe(_frontend, {});
+                            _poller.observe(_backend, { Poller::event::readable });
+                        }
+
+                        if (events.readable) {
+
+                            forward(_frontend, _backend);
+
+                            _poller.observe(_frontend, {});
+                            _poller.observe(_backend, { Poller::event::writable });
+
+                        }
+
+                    }
                     
                 });
                 

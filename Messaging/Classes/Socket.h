@@ -86,6 +86,7 @@ namespace Messaging {
 
         friend class Specs::SocketSpec;
         friend class Frame;
+        friend class Poller;
         
         operator void *() const {
             return _socket.get();

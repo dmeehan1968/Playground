@@ -167,7 +167,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				A3B1F9E019016C4000DA0C90 /* Context.cpp in Sources */,
-				A30B45CC19057FFA0058F066 /* Poller.cpp in Sources */,
 				A3B1F9DD19016B1D00DA0C90 /* ContextSpec.cpp in Sources */,
 				A3B1F9DB19016AC700DA0C90 /* main.cpp in Sources */,
 				A30B45C719055FA20058F066 /* Exception.cpp in Sources */,
@@ -175,9 +174,10 @@
 				A30B45BF19053CDC0058F066 /* Frame.cpp in Sources */,
 				A30B45BC19053CA50058F066 /* FrameSpec.cpp in Sources */,
 				A3B1F9E51905300600DA0C90 /* Socket.cpp in Sources */,
-				A30B45C919057FB30058F066 /* PollerSpec.cpp in Sources */,
 				A30B45C419055BEB0058F066 /* Message.cpp in Sources */,
 				A30B45C119055BBD0058F066 /* MessageSpec.cpp in Sources */,
+				A30B45CC19057FFA0058F066 /* Poller.cpp in Sources */,
+				A30B45C919057FB30058F066 /* PollerSpec.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

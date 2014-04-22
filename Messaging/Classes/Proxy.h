@@ -24,8 +24,8 @@ namespace Messaging {
             _frontend(frontend),
             _backend(backend)
         {
-            _poller.observe(frontend, { Poller::event::writable });
-            _poller.observe(backend, { Poller::event::writable });
+            _poller.observe(frontend, Poller::Event().write());
+            _poller.observe(backend, Poller::Event().write());
         }
         
         void run() {
@@ -40,57 +40,35 @@ namespace Messaging {
             
             if (_poller.poll(timeout)) {
                 
-                _poller.dispatch([&](Socket &socket, const Poller::event_flags &events) {
+                if (_poller.events(_frontend).isWritable()) {
                     
-                    if (socket == _frontend) {
-
-                        if (events.writable) {
-                            _poller.observe(_frontend, {});
-                            _poller.observe(_backend, { Poller::event::readable });
-                        }
-
-                        if (events.readable) {
-
-                            forward(_frontend, _backend);
-
-                            _poller.observe(_frontend, {});
-                            _poller.observe(_backend, { Poller::event::writable });
-
-                        }
-
-                    }
-                    
-                });
-                
-                if (_poller.events(_frontend).writable) {
-                    
-                    _poller.observe(_frontend, {});
-                    _poller.observe(_backend, { Poller::event::readable });
+                    _poller.observe(_frontend, Poller::Event().none());
+                    _poller.observe(_backend, Poller::Event().read());
                     
                 }
                 
-                if (_poller.events(_backend).writable) {
+                if (_poller.events(_backend).isWritable()) {
                     
-                    _poller.observe(_backend, {});
-                    _poller.observe(_frontend, { Poller::event::readable });
+                    _poller.observe(_backend, Poller::Event().none());
+                    _poller.observe(_frontend, Poller::Event().read());
                     
                 }
                 
-                if (_poller.events(_frontend).readable) {
+                if (_poller.events(_frontend).isReadable()) {
                     
                     forward(_frontend, _backend);
                     
-                    _poller.observe(_frontend, {});
-                    _poller.observe(_backend, { Poller::event::writable });
+                    _poller.observe(_frontend, Poller::Event().none());
+                    _poller.observe(_backend, Poller::Event().write());
                     
                 }
                 
-                if (_poller.events(_backend).readable) {
+                if (_poller.events(_backend).isReadable()) {
                     
                     forward(_backend, _frontend);
                     
-                    _poller.observe(_backend, {});
-                    _poller.observe(_frontend, { Poller::event::writable });
+                    _poller.observe(_backend, Poller::Event().none());
+                    _poller.observe(_frontend, Poller::Event().write());
                     
                 }
                 

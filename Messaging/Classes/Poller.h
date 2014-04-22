@@ -24,58 +24,106 @@ namespace Messaging {
         Poller(const Poller &) = delete;
         Poller & operator= (const Poller &) = delete;
         
+        class Event {
+
+        public:
+            
+            Event() : _readable(false), _writable(false), _error(false) {}
+            
+            Event(const short event_mask)
+            :
+            _readable(event_mask & ZMQ_POLLIN),
+            _writable(event_mask & ZMQ_POLLOUT),
+            _error(event_mask & ZMQ_POLLERR)
+            {}
+            
+            Event &none() {
+                return *this;
+            }
+            
+            Event &read() {
+                _readable = true;
+                return *this;
+            }
+            
+            bool isReadable() const {
+                return _readable;
+            }
+            
+            Event &write() {
+                _writable = true;
+                return *this;
+            }
+            
+            bool isWritable() const {
+                return _writable;
+            }
+            
+            Event &error() {
+                _error = true;
+                return *this;
+            }
+            
+            bool isError() const {
+                return _error;
+            }
+            
+            bool isClear() const {
+                return !_readable && !_writable && !_error;
+            }
+            
+            short eventMask() const {
+                short mask = 0;
+                mask |= _readable ? ZMQ_POLLIN : 0;
+                mask |= _writable ? ZMQ_POLLOUT : 0;
+                mask |= _error ? ZMQ_POLLERR : 0;
+                return mask;
+            }
+            
+        private:
+            bool _readable;
+            bool _writable;
+            bool _error;
+        };
+        
         size_t socketCount() const {
             
             return _sockets.size();
             
         }
         
-        enum class event {
-            none,
-            readable,
-            writable,
-            error,
-            all
-        };
-        
-        void observe(Socket &socket, const std::initializer_list<event> &events = { event::none } ) {
+        void observe(Socket &socket, const Event &events = Event().read() ) {
             
-            auto event_mask = eventMaskFromEnums(events);
-        
-            auto index = 0;
-            for (auto &s : _sockets) {
+            auto index = socketIndex(socket);
+
+            if (index == -1) {
                 
-                if (s == socket) {
+                if (events.isClear()) {
                     
-                    if (event_mask == 0) {
-                    
-                        _items.erase(_items.begin()+index);
-                        _sockets.erase(_sockets.begin()+index);
-                    
-                    } else {
-                        
-                        _items[index].events = event_mask;
-                        _items[index].revents = 0;
-                        
-                    }
-                    
-                    return;
+                    throw Exception("no events specified", 0);
                     
                 }
                 
-                index++;
+                zmq_pollitem_t poll = { socket.get(), 0, events.eventMask(), 0 };
+                
+                _items.push_back(poll);
+                _sockets.push_back(socket);
+
+                return;
                 
             }
-            
-            if (event_mask == 0) {
-                throw Exception("no events specified", 0);
+
+            if (events.isClear()) {
+                
+                _sockets.erase(_sockets.begin()+index);
+                _items.erase(_items.begin()+index);
+                
+            } else {
+                
+                _items[index].events = events.eventMask();
+                _items[index].revents = 0;
+                
             }
-            
-            zmq_pollitem_t poll = { socket.get(), 0, event_mask, 0 };
-            
-            _items.push_back(poll);
-            _sockets.push_back(socket);
-            
             
         }
         
@@ -85,7 +133,7 @@ namespace Messaging {
             bool error;
         };
         
-        event_flags events(const Socket &socket) const {
+        Event events(const Socket &socket) const {
         
             unsigned index;
             decltype(_sockets.begin()) iter;
@@ -96,7 +144,7 @@ namespace Messaging {
                 
                 if (*iter == socket) {
                     
-                    return eventFlagsFromMask(_items[index].revents);
+                    return Event(_items[index].revents);
                     
                 }
             }
@@ -117,17 +165,17 @@ namespace Messaging {
             
         }
         
-        void dispatch(const std::function<void(Socket &socket, const event_flags &events)> &functor) {
+        void dispatch(const std::function<void(Socket &socket, const Event &events)> &functor) {
          
             auto index = 0;
             
             for (auto &socket : _sockets) {
             
-                auto event_mask = _items[index].revents;
-
-                if (event_mask != 0) {
+                auto events = Event(_items[index].revents);
+                
+                if ( ! events.isClear()) {
                  
-                    functor(socket, eventFlagsFromMask(event_mask));
+                    functor(socket, events);
                     
                 }
                 index++;
@@ -136,58 +184,15 @@ namespace Messaging {
         
     protected:
         
-        short eventMaskFromEnums(const std::vector<event> &events) const {
+        long socketIndex(Socket &socket) {
             
-            short event_mask = 0;
+            auto found = std::find(_sockets.begin(), _sockets.end(), socket);
             
-            for (auto &event : events) {
-                switch (event) {
-                    case event::readable:
-                        
-                        event_mask |= ZMQ_POLLIN;
-                        break;
-                        
-                    case event::writable:
-                        
-                        event_mask |= ZMQ_POLLOUT;
-                        break;
-                        
-                    case event::error:
-                        
-                        event_mask |= ZMQ_POLLERR;
-                        break;
-                        
-                    case event::all:
-                        
-                        event_mask |= ZMQ_POLLIN | ZMQ_POLLOUT | ZMQ_POLLERR;
-                        break;
-                        
-                    case event::none:
-                        
-                        event_mask = 0;
-                        break;
-                        
-                    default:
-                        
-                        throw Exception("Unrecognised event type", 0);
-                        
-                }
+            if (found == _sockets.end()) {
+                return -1;
             }
             
-            return event_mask;
-            
-        }
-
-        event_flags eventFlagsFromMask(const short event_mask) const {
-            
-            event_flags flags;
-            
-            flags.readable = event_mask & ZMQ_POLLIN ? true : false;
-            flags.writable = event_mask & ZMQ_POLLOUT ? true : false;
-            flags.error = event_mask & ZMQ_POLLERR ? true : false;
-            
-            return flags;
-            
+            return found - _sockets.begin();
         }
         
     private:
@@ -197,16 +202,16 @@ namespace Messaging {
         
     };
     
-    inline std::ostream &operator<< (std::ostream &stream, const Poller::event &event) {
+    inline std::ostream &operator<< (std::ostream &stream, const Poller::Event &events) {
         
-        if (event == Poller::event::readable) {
-            stream << "Readable";
-        } else if (event == Poller::event::writable) {
-            stream << "Writable";
-        } else if (event == Poller::event::error) {
+        if (events.isReadable()) {
+            stream << "Read";
+        }
+        if (events.isWritable()) {
+            stream << "Write";
+        }
+        if (events.isError()) {
             stream << "Error";
-        } else {
-            stream << "Unrecognised";
         }
         return stream;
         

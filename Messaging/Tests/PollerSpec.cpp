@@ -43,7 +43,7 @@ namespace Messaging { namespace Specs {
                 
                 it("has one socket after add", {
                     
-                    poller.observe(socket, { Poller::event::readable });
+                    poller.observe(socket, Poller::Event().read());
                     
                     expect(poller.socketCount()).should.equal(1);
                     
@@ -53,19 +53,19 @@ namespace Messaging { namespace Specs {
                     
                     it("is not readable", {
                         
-                        expect(poller.events(socket).readable).should.beFalse();
+                        expect(poller.events(socket).isReadable()).should.beFalse();
                         
                     });
                     
                     it("is not writable", {
                         
-                        expect(poller.events(socket).writable).should.beFalse();
+                        expect(poller.events(socket).isWritable()).should.beFalse();
                         
                     });
 
                     it("is not in error", {
                         
-                        expect(poller.events(socket).error).should.beFalse();
+                        expect(poller.events(socket).isError()).should.beFalse();
                         
                     });
                 });
@@ -85,8 +85,8 @@ namespace Messaging { namespace Specs {
             Socket client(context, Socket::socket_type::push);
             client.connect("inproc://test");
             
-            poller.observe(client, { Poller::event::writable });
-            poller.observe(server, { Poller::event::readable });
+            poller.observe(client, Poller::Event().write());
+            poller.observe(server, Poller::Event().read());
             
             context("client writable", {
                 
@@ -99,17 +99,17 @@ namespace Messaging { namespace Specs {
                 
                 it("should have writable event for client", {
                     
-                    expect(poller.events(client).writable).should.beTrue();
+                    expect(poller.events(client).isWritable()).should.beTrue();
                     
                 });
                 
             });
             
-            if (poller.events(client).writable) {
+            if (poller.events(client).isWritable()) {
 
                 it("should raise when testing for client after removal", {
                     
-                    poller.observe(client, { Poller::event::none });
+                    poller.observe(client, {});
                     
                     expect(theBlock({
                         
@@ -140,7 +140,7 @@ namespace Messaging { namespace Specs {
                     
                     it("should have readable event for server", {
                         
-                        expect(poller.events(server).readable).should.beTrue();
+                        expect(poller.events(server).isReadable()).should.beTrue();
                         
                     });
                     

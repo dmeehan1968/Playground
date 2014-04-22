@@ -46,10 +46,27 @@ namespace Messaging {
                 throw Exception("no events supplied", 0);
             }
             
-            zmq_pollitem_t poll = { socket, 0, event_mask, 0 };
+            auto index = 0;
+            for (auto &s : _sockets) {
+                
+                if (s == socket) {
+                    
+                    _items[index].events |= event_mask;
+                    
+                }
+                
+                index++;
+                
+            }
             
-            _items.push_back(poll);
-            _sockets.push_back(socket);
+            if (index >= _sockets.size()) {
+                
+                zmq_pollitem_t poll = { socket, 0, event_mask, 0 };
+                
+                _items.push_back(poll);
+                _sockets.push_back(socket);
+
+            }
             
         }
         

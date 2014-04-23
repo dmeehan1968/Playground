@@ -11,11 +11,12 @@
 
 #include "Socket.h"
 
+#include <set>
 #include <vector>
 #include <ostream>
 
 namespace Messaging {
-    
+
     class Poller {
         
     public:
@@ -24,73 +25,63 @@ namespace Messaging {
         Poller(const Poller &) = delete;
         Poller & operator= (const Poller &) = delete;
         
-        class Events {
-
+        enum class Event {
+            Readable,
+            Writable,
+            Error
+        };
+        
+        class Events : public std::set<Event> {
+            
         public:
             
-            static const Events None;
-            static const Events Readable;
-            static const Events Writable;
-            static const Events Error;
-            static const Events All;
+            using container = std::set<Event>;
             
-            operator bool() const {
-                return _flags != 0;
-            }
-
-            std::string toString() const {
-                
-                std::string string;
-                
-                if (*this & Readable) {
-                    string += "Read";
-                }
-                if (*this & Writable) {
-                    string += "Write";
-                }
-                if (*this & Error) {
-                    string += "Error";
-                }
-                return string;
-            }
+            Events(const std::initializer_list<Event> &events)
+            :
+                std::set<Event>(events)
+            {}
             
-            Events operator| (const Events &other) const {
-
-                return Events(_flags | other._flags);
-                
-            }
-            
-            Events operator& (const Events &other) const {
-                
-                return Events(_flags & other._flags);
-                
-            }
-            
-            bool isReadable() {
-                return *this == Readable;
-            }
-            
-            bool isWritable() {
-                return *this == Writable;
-            }
-            
-            bool isError() {
-                return *this == Error;
+            bool is(const Event &event) const {
+                return container::find(event) != container::end();
             }
             
         protected:
             
             friend class Poller;
-
-            constexpr Events(const short type) : _flags(type) {}
             
-            short get() const {
-                return _flags;
+            Events(const short bitmask) {
+                if (bitmask & ZMQ_POLLIN) {
+                    container::emplace(Event::Readable);
+                }
+                if (bitmask & ZMQ_POLLOUT) {
+                    container::emplace(Event::Writable);
+                }
+                if (bitmask & ZMQ_POLLERR) {
+                    container::emplace(Event::Error);
+                }
             }
             
-        private:
-            
-            short _flags;
+            short bitmask() const {
+                
+                short mask = 0;
+                
+                for (auto &event : *this) {
+                    switch (event) {
+                        case Event::Readable:
+                            mask |= ZMQ_POLLIN;
+                            break;
+                        case Event::Writable:
+                            mask |= ZMQ_POLLOUT;
+                            break;
+                        case Event::Error:
+                            mask |= ZMQ_POLLERR;
+                            break;
+                    }
+                }
+                
+                return mask;
+            }
         };
         
         size_t socketCount() const {
@@ -99,19 +90,19 @@ namespace Messaging {
             
         }
         
-        void observe(Socket &socket, const Events &events = Events::Readable ) {
+        void observe(Socket &socket, const Events &events = { Event::Readable }) {
             
             auto index = getSocketIndex(socket);
 
             if (index == -1) {
                 
-                if ( ! events ) {
+                if ( events.empty() ) {
                     
                     throw Exception("no events specified", 0);
                     
                 }
                 
-                zmq_pollitem_t poll = { socket.get(), 0, events.get(), 0 };
+                zmq_pollitem_t poll = { socket.get(), 0, events.bitmask(), 0 };
                 
                 _items.push_back(poll);
                 _sockets.push_back(socket);
@@ -120,14 +111,14 @@ namespace Messaging {
                 
             }
 
-            if ( ! events ) {
+            if ( events.empty() ) {
                 
                 _sockets.erase(_sockets.begin()+index);
                 _items.erase(_items.begin()+index);
                 
             } else {
                 
-                _items[index].events = events.get();
+                _items[index].events = events.bitmask();
                 _items[index].revents = 0;
                 
             }
@@ -166,7 +157,7 @@ namespace Messaging {
             
                 auto events = Events(_items[index].revents);
                 
-                if ( events ) {
+                if ( ! events.empty() ) {
                  
                     functor(socket, events);
                     
@@ -195,13 +186,34 @@ namespace Messaging {
         
     };
     
+    inline std::ostream &operator<< (std::ostream &stream, const Poller::Event &event) {
+        
+        switch (event) {
+            case Poller::Event::Readable:
+                stream << "Readable";
+                break;
+                
+            case Poller::Event::Writable:
+                stream << "Writable";
+                break;
+                
+            case Poller::Event::Error:
+                stream << "Error";
+                break;
+        }
+        return stream;
+    }
+    
     inline std::ostream &operator<< (std::ostream &stream, const Poller::Events &events) {
         
-        stream << events.toString();
+        for (auto &event : events) {
+            stream << event;
+        }
 
         return stream;
         
     }
+    
 }
 
 #endif /* defined(__Messaging__Poller__) */

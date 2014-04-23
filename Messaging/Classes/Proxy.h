@@ -24,8 +24,8 @@ namespace Messaging {
             _frontend(frontend),
             _backend(backend)
         {
-            _poller.observe(frontend, Poller::Event().write());
-            _poller.observe(backend, Poller::Event().write());
+            _poller.observe(frontend, Poller::Events::Writable);
+            _poller.observe(backend, Poller::Events::Writable);
         }
         
         void run() {
@@ -42,15 +42,15 @@ namespace Messaging {
                 
                 if (_poller(_frontend).isWritable()) {
                     
-                    _poller.observe(_frontend, Poller::Event().none());
-                    _poller.observe(_backend, Poller::Event().read());
+                    _poller.observe(_frontend, Poller::Events::None);
+                    _poller.observe(_backend, Poller::Events::Readable);
                     
                 }
                 
                 if (_poller(_backend).isWritable()) {
                     
-                    _poller.observe(_backend, Poller::Event().none());
-                    _poller.observe(_frontend, Poller::Event().read());
+                    _poller.observe(_backend, Poller::Events::None);
+                    _poller.observe(_frontend, Poller::Events::Readable);
                     
                 }
                 
@@ -58,8 +58,8 @@ namespace Messaging {
                     
                     forward(_frontend, _backend);
                     
-                    _poller.observe(_frontend, Poller::Event().none());
-                    _poller.observe(_backend, Poller::Event().write());
+                    _poller.observe(_frontend, Poller::Events::None);
+                    _poller.observe(_backend, Poller::Events::Writable);
                     
                 }
                 
@@ -67,8 +67,8 @@ namespace Messaging {
                     
                     forward(_backend, _frontend);
                     
-                    _poller.observe(_backend, Poller::Event().none());
-                    _poller.observe(_frontend, Poller::Event().write());
+                    _poller.observe(_backend, Poller::Events::None);
+                    _poller.observe(_frontend, Poller::Events::Writable);
                     
                 }
                 

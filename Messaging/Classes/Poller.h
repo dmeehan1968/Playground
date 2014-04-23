@@ -24,66 +24,73 @@ namespace Messaging {
         Poller(const Poller &) = delete;
         Poller & operator= (const Poller &) = delete;
         
-        class Event {
+        class Events {
 
         public:
             
-            Event() : _readable(false), _writable(false), _error(false) {}
+            static const Events None;
+            static const Events Readable;
+            static const Events Writable;
+            static const Events Error;
+            static const Events All;
             
-            Event(const short event_mask)
-            :
-                _readable(event_mask & ZMQ_POLLIN),
-                _writable(event_mask & ZMQ_POLLOUT),
-                _error(event_mask & ZMQ_POLLERR)
-            {}
-            
-            Event &none() {
-                return *this;
+            operator bool() const {
+                return _flags != 0;
+            }
+
+            std::string toString() const {
+                
+                std::string string;
+                
+                if (*this & Readable) {
+                    string += "Read";
+                }
+                if (*this & Writable) {
+                    string += "Write";
+                }
+                if (*this & Error) {
+                    string += "Error";
+                }
+                return string;
             }
             
-            Event &read() {
-                _readable = true;
-                return *this;
+            Events operator| (const Events &other) const {
+
+                return Events(_flags | other._flags);
+                
             }
             
-            bool isReadable() const {
-                return _readable;
+            Events operator& (const Events &other) const {
+                
+                return Events(_flags & other._flags);
+                
             }
             
-            Event &write() {
-                _writable = true;
-                return *this;
+            bool isReadable() {
+                return *this == Readable;
             }
             
-            bool isWritable() const {
-                return _writable;
+            bool isWritable() {
+                return *this == Writable;
             }
             
-            Event &error() {
-                _error = true;
-                return *this;
+            bool isError() {
+                return *this == Error;
             }
             
-            bool isError() const {
-                return _error;
-            }
+        protected:
             
-            bool isClear() const {
-                return !_readable && !_writable && !_error;
-            }
+            friend class Poller;
+
+            constexpr Events(const short type) : _flags(type) {}
             
-            short eventMask() const {
-                short mask = 0;
-                mask |= _readable ? ZMQ_POLLIN : 0;
-                mask |= _writable ? ZMQ_POLLOUT : 0;
-                mask |= _error ? ZMQ_POLLERR : 0;
-                return mask;
+            short get() const {
+                return _flags;
             }
             
         private:
-            bool _readable;
-            bool _writable;
-            bool _error;
+            
+            short _flags;
         };
         
         size_t socketCount() const {
@@ -92,19 +99,19 @@ namespace Messaging {
             
         }
         
-        void observe(Socket &socket, const Event &events = Event().read() ) {
+        void observe(Socket &socket, const Events &events = Events::Readable ) {
             
             auto index = getSocketIndex(socket);
 
             if (index == -1) {
                 
-                if (events.isClear()) {
+                if ( ! events ) {
                     
                     throw Exception("no events specified", 0);
                     
                 }
                 
-                zmq_pollitem_t poll = { socket.get(), 0, events.eventMask(), 0 };
+                zmq_pollitem_t poll = { socket.get(), 0, events.get(), 0 };
                 
                 _items.push_back(poll);
                 _sockets.push_back(socket);
@@ -113,32 +120,26 @@ namespace Messaging {
                 
             }
 
-            if (events.isClear()) {
+            if ( ! events ) {
                 
                 _sockets.erase(_sockets.begin()+index);
                 _items.erase(_items.begin()+index);
                 
             } else {
                 
-                _items[index].events = events.eventMask();
+                _items[index].events = events.get();
                 _items[index].revents = 0;
                 
             }
             
         }
         
-        struct event_flags {
-            bool readable;
-            bool writable;
-            bool error;
-        };
-        
-        Event operator()(Socket &socket) const {
+        Events operator()(Socket &socket) const {
         
             auto index = getSocketIndex(socket);
             
             if (index >= 0) {
-                return Event(_items[index].revents);
+                return Events(_items[index].revents);
             }
             
             throw Exception("socket not found", 0);
@@ -157,15 +158,15 @@ namespace Messaging {
             
         }
         
-        void dispatch(const std::function<void(Socket &socket, const Event &events)> &functor) {
+        void dispatch(const std::function<void(Socket &socket, const Events &events)> &functor) {
          
             auto index = 0;
             
             for (auto &socket : _sockets) {
             
-                auto events = Event(_items[index].revents);
+                auto events = Events(_items[index].revents);
                 
-                if ( ! events.isClear()) {
+                if ( events ) {
                  
                     functor(socket, events);
                     
@@ -194,17 +195,10 @@ namespace Messaging {
         
     };
     
-    inline std::ostream &operator<< (std::ostream &stream, const Poller::Event &events) {
+    inline std::ostream &operator<< (std::ostream &stream, const Poller::Events &events) {
         
-        if (events.isReadable()) {
-            stream << "Read";
-        }
-        if (events.isWritable()) {
-            stream << "Write";
-        }
-        if (events.isError()) {
-            stream << "Error";
-        }
+        stream << events.toString();
+
         return stream;
         
     }

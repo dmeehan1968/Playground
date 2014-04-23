@@ -7,6 +7,7 @@
 //
 
 #include <iostream>
+#include <unordered_set>
 
 class Week {
     
@@ -91,6 +92,59 @@ constexpr Week::Day Week::Day::Fri(4);
 constexpr Week::Day Week::Day::Sat(5);
 constexpr Week::Day Week::Day::Sun(6);
 
+enum class Event {
+    Readable,
+    Writable,
+    Error
+};
+
+namespace std {
+    template <> struct hash<Event> {
+        size_t operator()(const Event &event) const {
+            return (size_t)event;
+        }
+    };
+}
+
+class Events : public std::unordered_set<Event> {
+
+public:
+    Events(const std::initializer_list<Event> &events) : std::unordered_set<Event>(events) {}
+    
+    bool is(const Event &event) {
+        return (std::unordered_set<Event>::find(event) != std::unordered_set<Event>::end());
+    }
+};
+
+
+inline std::ostream & operator << (std::ostream &stream, const Event &event) {
+
+    switch (event) {
+        case Event::Readable:
+            stream << "Readable";
+            break;
+        case Event::Writable:
+            stream << "Writable";
+            break;
+        case Event::Error:
+            stream << "Error";
+            break;
+            
+        default:
+            break;
+    }
+    return stream;
+}
+
+inline std::ostream & operator << (std::ostream &stream, const Events &events) {
+
+    int count = 0;
+    for (auto &event : events) {
+        stream << (count++ > 0 ? " " : "") << event;
+    }
+    return stream;
+}
+
 int main(int argc, const char * argv[])
 {
     Week::Day day(Week::Day::Sun);
@@ -104,6 +158,18 @@ int main(int argc, const char * argv[])
     } else {
         std::cout << "EEK! It's not Monday" << std::endl;
     }
+    
+    Events events({ Event::Readable });
+    
+    std::cout << "Events: " << events << std::endl;
+    
+    events.emplace(Event::Writable);
+    
+    std::cout << "Events: " << events << std::endl;
+
+    std::cout << "It is " << (events.is(Event::Readable) ? "" : "NOT ") << Event::Readable << std::endl;
+    
+    std::cout << "It is " << (events.is(Event::Error) ? "" : "NOT ") << Event::Error << std::endl;
     
     return 0;
     

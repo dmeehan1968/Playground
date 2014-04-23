@@ -2,10 +2,10 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:AltEnum/AltEnum.xcodeproj">
+      location = "group:Messaging/Messaging.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:Messaging/Messaging.xcodeproj">
+      location = "group:AltEnum/AltEnum.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:ZMQ_STREAM/ZMQ_STREAM.xcodeproj">

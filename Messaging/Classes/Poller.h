@@ -153,7 +153,9 @@ namespace Messaging {
          
             auto index = 0;
             
-            for (auto &socket : _sockets) {
+            auto socketsCopy = _sockets;
+            
+            for (auto &socket : socketsCopy) {
             
                 auto events = Events(_items[index].revents);
                 

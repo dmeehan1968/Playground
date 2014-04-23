@@ -28,7 +28,7 @@ namespace Messaging { namespace Specs {
             
             it("raises if sent", {
             
-                Socket socket(Context(), Socket::socket_type::push);
+                Socket socket(Context(), Socket::Type::push);
                 socket.bind("inproc://test");
                 
                 expect(theBlock({
@@ -50,8 +50,8 @@ namespace Messaging { namespace Specs {
             
             beforeEach({
                 
-                client = std::make_shared<Socket>(ctx, Socket::socket_type::request);
-                server = std::make_shared<Socket>(ctx, Socket::socket_type::reply);
+                client = std::make_shared<Socket>(ctx, Socket::Type::request);
+                server = std::make_shared<Socket>(ctx, Socket::Type::reply);
                 
                 server->bind("inproc://test");
                 client->connect("inproc://test");

@@ -29,7 +29,7 @@ namespace Messaging { namespace Specs {
 
             context("add socket", {
             
-                Socket socket(Context(), Socket::socket_type::request);
+                Socket socket(Context(), Socket::Type::request);
 
                 it("throws without events", {
                     
@@ -79,10 +79,10 @@ namespace Messaging { namespace Specs {
 
             Poller poller;
             Context context;
-            Socket server(context, Socket::socket_type::pull);
+            Socket server(context, Socket::Type::pull);
             server.bind("inproc://test");
             
-            Socket client(context, Socket::socket_type::push);
+            Socket client(context, Socket::Type::push);
             client.connect("inproc://test");
             
             poller.observe(client, Poller::Event().write());

@@ -15,7 +15,7 @@ namespace Messaging { namespace Specs {
     describe(Socket, {
         
         Context ctx;
-        Socket::socket_type expectedType = Socket::socket_type::request;
+        auto expectedType = Socket::Type::request;
         
         Socket socket(ctx, expectedType);
         
@@ -60,7 +60,7 @@ namespace Messaging { namespace Specs {
                 
                 expect(theBlock({
                     
-                    Socket socket(Context(), Socket::socket_type::request);
+                    Socket socket(Context(), Socket::Type::request);
                     
                     socket.bind("xxx://xxx");
                     
@@ -72,7 +72,7 @@ namespace Messaging { namespace Specs {
                 
                 expect(theBlock({
                     
-                    Socket socket(Context(), Socket::socket_type::request);
+                    Socket socket(Context(), Socket::Type::request);
                     
                     socket.bind("inproc:/xxx");
                     
@@ -88,7 +88,7 @@ namespace Messaging { namespace Specs {
                 
                 expect(theBlock({
                     
-                    Socket socket(Context(), Socket::socket_type::request);
+                    Socket socket(Context(), Socket::Type::request);
                     
                     socket.connect("xxx://xxx");
                     
@@ -100,7 +100,7 @@ namespace Messaging { namespace Specs {
                 
                 expect(theBlock({
                     
-                    Socket socket(Context(), Socket::socket_type::request);
+                    Socket socket(Context(), Socket::Type::request);
                     
                     socket.connect("inproc:/xxx");
                     

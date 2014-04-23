@@ -67,8 +67,8 @@ namespace Messaging { namespace Specs {
         context("transmission", {
         
             Context ctx;
-            Socket client(ctx, Socket::socket_type::request);
-            Socket server(ctx, Socket::socket_type::reply);
+            Socket client(ctx, Socket::Type::request);
+            Socket server(ctx, Socket::Type::reply);
             
             server.bind("inproc://test");
             client.connect("inproc://test");

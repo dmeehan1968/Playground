@@ -24,7 +24,7 @@ namespace Messaging {
         
     public:
         
-        enum class socket_type {
+        enum class Type {
             
             request     = ZMQ_REQ,
             reply       = ZMQ_REP,
@@ -38,7 +38,7 @@ namespace Messaging {
             
         };
         
-        Socket(const Context &ctx, const socket_type type)
+        Socket(const Context &ctx, const Type type)
         :
             _ctx(ctx),
             _socket(std::shared_ptr<void>(zmq_socket(_ctx.get(), (int)type), &zmq_close))
@@ -52,7 +52,7 @@ namespace Messaging {
             return _ctx == other._ctx && _socket == other._socket;
         }
         
-        socket_type type() const {
+        Type type() const {
             
             int type;
             size_t type_size = sizeof(type);
@@ -61,7 +61,7 @@ namespace Messaging {
                 throw Exception("Get socket option");
             }
             
-            return (socket_type) type;
+            return (Type) type;
         }
 
         using endpoint = std::string;

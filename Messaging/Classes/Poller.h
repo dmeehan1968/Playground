@@ -37,7 +37,7 @@ namespace Messaging {
             
             using container = std::set<Event>;
             
-            Events(const std::initializer_list<Event> &events)
+            Events(const std::initializer_list<Event> &events = {})
             :
                 std::set<Event>(events)
             {}

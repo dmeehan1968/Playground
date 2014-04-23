@@ -75,6 +75,103 @@ namespace Messaging { namespace Specs {
             
         });
         
+        context("events", {
+           
+            Poller::Events events;
+            
+            context("no events in constructor", {
+                
+                beforeEach({
+                    
+                    events = Poller::Events();
+                    
+                });
+                
+                it("is empty", {
+                    
+                    expect(events).should.equal({});
+                    
+                });
+                
+                it("has one item when one added", {
+                    
+                    events.emplace(Poller::Event::Readable);
+                    
+                    expect(events.size()).should.equal(1);
+                    
+                });
+                
+                it("can take all known events", {
+                    
+                    events.emplace(Poller::Event::Readable);
+                    events.emplace(Poller::Event::Writable);
+                    events.emplace(Poller::Event::Error);
+                    
+                    expect(events.size()).should.equal(3);
+                    
+                });
+                
+                context("event tests", {
+                    
+                    beforeEach({
+                        
+                        events.emplace(Poller::Event::Readable);
+                        
+                    });
+                    
+                    it("is readable", {
+                        
+                        expect(events.is(Poller::Event::Readable)).should.beTrue();
+                        
+                    });
+                    
+                    it("is not writable", {
+                        
+                        expect(events.is(Poller::Event::Writable)).should.beFalse();
+                        
+                    });
+                    
+                    it("is not error", {
+                        
+                        expect(events.is(Poller::Event::Error)).should.beFalse();
+                        
+                    });
+                    
+                });
+            });
+            
+            context("three events in constructor", {
+               
+                Poller::Events events( { Poller::Event::Readable, Poller::Event::Writable, Poller::Event::Error });
+                
+                it("has 3 events", {
+                    
+                    expect(events.size()).should.equal(3);
+                    
+                });
+                
+                it("is readable", {
+                    
+                    expect(events.is(Poller::Event::Readable)).should.beTrue();
+                    
+                });
+                
+                it("is writable", {
+                    
+                    expect(events.is(Poller::Event::Writable)).should.beTrue();
+                    
+                });
+                
+                it("is error", {
+                    
+                    expect(events.is(Poller::Event::Error)).should.beTrue();
+                    
+                });
+                
+            });
+            
+        });
+        
         context("functional", {
 
             Poller poller;

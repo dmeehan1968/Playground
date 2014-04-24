@@ -28,10 +28,10 @@ namespace Messaging {
             _poller.observe(backend, { Poller::Event::Writable });
         }
         
-        void run() {
+        void run(const long interval) {
             
             while (! _done) {
-                runOnce(1000);
+                runOnce(interval);
             }
             
         }
@@ -97,6 +97,7 @@ namespace Messaging {
                 try {
                     
                     msg.receive(from, Message::block::none);
+                    count++;
                     
                 } catch( Exception &e ) {
                     

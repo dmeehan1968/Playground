@@ -112,10 +112,10 @@
 			isa = PBXGroup;
 			children = (
 				A3B1F9DC19016B1D00DA0C90 /* ContextSpec.cpp */,
-				A3B1F9E119052FD300DA0C90 /* SocketSpec.cpp */,
 				A30B45BB19053CA50058F066 /* FrameSpec.cpp */,
 				A30B45C019055BBD0058F066 /* MessageSpec.cpp */,
 				A30B45C819057FB30058F066 /* PollerSpec.cpp */,
+				A3B1F9E119052FD300DA0C90 /* SocketSpec.cpp */,
 			);
 			path = Tests;
 			sourceTree = "<group>";

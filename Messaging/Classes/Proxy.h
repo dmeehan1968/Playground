@@ -22,10 +22,11 @@ namespace Messaging {
         :
             _done(false),
             _frontend(frontend),
-            _backend(backend)
+            _backend(backend),
+            _poller(std::make_shared<Poller>())
         {
-            _poller.observe(frontend, { Poller::Event::Writable });
-            _poller.observe(backend, { Poller::Event::Writable });
+            _poller->observe(frontend, { Poller::Event::Writable });
+            _poller->observe(backend, { Poller::Event::Writable });
         }
         
         void run(const long interval) {
@@ -38,37 +39,37 @@ namespace Messaging {
         
         bool runOnce(const long timeout) {
             
-            if (_poller.poll(timeout)) {
+            if (_poller->poll(timeout)) {
                 
-                if (_poller(_frontend).is(Poller::Event::Writable)) {
+                if (_poller->events(_frontend).is(Poller::Event::Writable)) {
                     
-                    _poller.observe(_frontend, { });
-                    _poller.observe(_backend, { Poller::Event::Readable });
+                    _poller->observe(_frontend, { });
+                    _poller->observe(_backend, { Poller::Event::Readable });
                     
                 }
                 
-                if (_poller(_backend).is(Poller::Event::Writable)) {
+                if (_poller->events(_backend).is(Poller::Event::Writable)) {
                     
-                    _poller.observe(_backend, { });
-                    _poller.observe(_frontend, { Poller::Event::Readable });
+                    _poller->observe(_backend, { });
+                    _poller->observe(_frontend, { Poller::Event::Readable });
                     
                 }
                 
-                if (_poller(_frontend).is(Poller::Event::Readable)) {
+                if (_poller->events(_frontend).is(Poller::Event::Readable)) {
                     
                     forward(_frontend, _backend);
                     
-                    _poller.observe(_frontend, { });
-                    _poller.observe(_backend, { Poller::Event::Writable });
+                    _poller->observe(_frontend, { });
+                    _poller->observe(_backend, { Poller::Event::Writable });
                     
                 }
                 
-                if (_poller(_backend).is(Poller::Event::Readable)) {
+                if (_poller->events(_backend).is(Poller::Event::Readable)) {
                     
                     forward(_backend, _frontend);
                     
-                    _poller.observe(_backend, { });
-                    _poller.observe(_frontend, { Poller::Event::Writable });
+                    _poller->observe(_backend, { });
+                    _poller->observe(_frontend, { Poller::Event::Writable });
                     
                 }
                 
@@ -121,7 +122,7 @@ namespace Messaging {
         bool _done;
         Socket _frontend;
         Socket _backend;
-        Poller _poller;
+        std::shared_ptr<Poller> _poller;
         
     };
     

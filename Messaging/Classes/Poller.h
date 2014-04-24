@@ -125,7 +125,7 @@ namespace Messaging {
             
         }
         
-        Events operator()(Socket &socket) const {
+        Events events(Socket &socket) const {
         
             auto index = getSocketIndex(socket);
             

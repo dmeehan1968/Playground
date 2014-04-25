@@ -17,6 +17,8 @@
 		A30B45CF1906CBC30058F066 /* PollerProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30B45CD1906CBC30058F066 /* PollerProxy.cpp */; };
 		A3672F77190A615E00F9EE5E /* ReactorSpec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3672F76190A615E00F9EE5E /* ReactorSpec.cpp */; };
 		A3672F7A190A618D00F9EE5E /* Reactor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3672F78190A618D00F9EE5E /* Reactor.cpp */; };
+		A3672F7C190A754500F9EE5E /* ProxySpec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3672F7B190A754500F9EE5E /* ProxySpec.cpp */; };
+		A3672F7F190A758200F9EE5E /* Proxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3672F7D190A758200F9EE5E /* Proxy.cpp */; };
 		A3B1F9DB19016AC700DA0C90 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3B1F9DA19016AC700DA0C90 /* main.cpp */; };
 		A3B1F9DD19016B1D00DA0C90 /* ContextSpec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3B1F9DC19016B1D00DA0C90 /* ContextSpec.cpp */; };
 		A3B1F9E019016C4000DA0C90 /* Context.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3B1F9DE19016C4000DA0C90 /* Context.cpp */; };
@@ -53,6 +55,9 @@
 		A3672F76190A615E00F9EE5E /* ReactorSpec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReactorSpec.cpp; sourceTree = "<group>"; };
 		A3672F78190A618D00F9EE5E /* Reactor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Reactor.cpp; sourceTree = "<group>"; };
 		A3672F79190A618D00F9EE5E /* Reactor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reactor.h; sourceTree = "<group>"; };
+		A3672F7B190A754500F9EE5E /* ProxySpec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProxySpec.cpp; sourceTree = "<group>"; };
+		A3672F7D190A758200F9EE5E /* Proxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Proxy.cpp; sourceTree = "<group>"; };
+		A3672F7E190A758200F9EE5E /* Proxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Proxy.h; sourceTree = "<group>"; };
 		A3B1F9CC190168EA00DA0C90 /* Messaging */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Messaging; sourceTree = BUILT_PRODUCTS_DIR; };
 		A3B1F9DA19016AC700DA0C90 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		A3B1F9DC19016B1D00DA0C90 /* ContextSpec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContextSpec.cpp; sourceTree = "<group>"; };
@@ -107,6 +112,8 @@
 				A30B45CB19057FFA0058F066 /* Poller.h */,
 				A30B45CD1906CBC30058F066 /* PollerProxy.cpp */,
 				A30B45CE1906CBC30058F066 /* PollerProxy.h */,
+				A3672F7D190A758200F9EE5E /* Proxy.cpp */,
+				A3672F7E190A758200F9EE5E /* Proxy.h */,
 				A3672F78190A618D00F9EE5E /* Reactor.cpp */,
 				A3672F79190A618D00F9EE5E /* Reactor.h */,
 				A3B1F9E31905300600DA0C90 /* Socket.cpp */,
@@ -122,6 +129,7 @@
 				A30B45BB19053CA50058F066 /* FrameSpec.cpp */,
 				A30B45C019055BBD0058F066 /* MessageSpec.cpp */,
 				A30B45C819057FB30058F066 /* PollerSpec.cpp */,
+				A3672F7B190A754500F9EE5E /* ProxySpec.cpp */,
 				A3672F76190A615E00F9EE5E /* ReactorSpec.cpp */,
 				A3B1F9E119052FD300DA0C90 /* SocketSpec.cpp */,
 			);
@@ -187,9 +195,11 @@
 				A30B45BF19053CDC0058F066 /* Frame.cpp in Sources */,
 				A3672F7A190A618D00F9EE5E /* Reactor.cpp in Sources */,
 				A30B45BC19053CA50058F066 /* FrameSpec.cpp in Sources */,
+				A3672F7F190A758200F9EE5E /* Proxy.cpp in Sources */,
 				A3B1F9E51905300600DA0C90 /* Socket.cpp in Sources */,
 				A30B45CF1906CBC30058F066 /* PollerProxy.cpp in Sources */,
 				A30B45C419055BEB0058F066 /* Message.cpp in Sources */,
+				A3672F7C190A754500F9EE5E /* ProxySpec.cpp in Sources */,
 				A30B45C119055BBD0058F066 /* MessageSpec.cpp in Sources */,
 				A30B45CC19057FFA0058F066 /* Poller.cpp in Sources */,
 				A30B45C919057FB30058F066 /* PollerSpec.cpp in Sources */,

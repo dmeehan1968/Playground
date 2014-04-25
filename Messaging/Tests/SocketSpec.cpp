@@ -130,6 +130,18 @@ namespace Messaging { namespace Specs {
                 expect(actual).should.equal(expected);
             });
             
+            it("sets receive high water mark", {
+                
+                int expected = 10000;
+                socket->setReceiveHighWaterMark(expected);
+                
+                int actual;
+                auto size = sizeof(actual);
+                zmq_getsockopt(socket->get(), ZMQ_RCVHWM, &actual, &size);
+                
+                expect(actual).should.equal(expected);
+            });
+            
             it("sets receive timeout", {
                 
                 int expected = 1000;

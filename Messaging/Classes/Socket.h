@@ -120,6 +120,26 @@ namespace Messaging {
             
         }
         
+        void addSubscribeFilter(const void *data, const size_t len) {
+            
+            auto rc = zmq_setsockopt(get(), ZMQ_SUBSCRIBE, data, len);
+
+            if (rc < 0) {
+                throw Exception("add subscribe filter failed");
+            }
+            
+        }
+        
+        void removeSubscribeFilter(const void *data, const size_t len) {
+
+            auto rc = zmq_setsockopt(get(), ZMQ_UNSUBSCRIBE, data, len);
+            
+            if (rc < 0) {
+                throw Exception("remove subscribe filter failed");
+            }
+            
+        }
+        
         void setReceiveTimeout(const int timeout) {
             
             auto rc = zmq_setsockopt(get(), ZMQ_RCVTIMEO, &timeout, sizeof(timeout));

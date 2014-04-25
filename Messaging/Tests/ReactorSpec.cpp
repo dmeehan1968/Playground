@@ -41,15 +41,7 @@ namespace Messaging { namespace Specs {
         });
         
         context("addObserver", {
-            
-            beforeEach({
-                
-                reactor.addObserver(socket, Reactor::Event::Readable, [](Socket &socket, const Reactor::Event &event) {
-                    
-                });
-                
-            });
-            
+
             it("throws if observer is nullptr", {
                 
                 expect(theBlock({
@@ -59,30 +51,109 @@ namespace Messaging { namespace Specs {
                 })).should.raise<Exception>("observer cannot be null");
                 
             });
+
+        });
+
+        context("removeObserver", {
             
-            it("has one polled socket after addObserver for readable", {
+            it("throws if socket is not observing event", {
+                
+                expect(theBlock({
+                    
+                    reactor.removeObserver(socket, Reactor::Event::Readable);
+                    
+                })).should.raise<Exception>("event is not observed");
+                
+            });
+
+        });
+
+        context("add readable observer", {
+            
+            beforeEach({
+                
+                reactor.addObserver(socket, Reactor::Event::Readable, [](Socket &socket, const Reactor::Event &event) {
+                    
+                });
+                
+            });
+            
+            it("has one polled socket", {
                 
                 expect(poller->socketCount()).should.equal(1);
                 
             });
             
-            context("add same socket, different event", {
+            context("same socket", {
                 
-                beforeEach({
+                context("add writable observer", {
                     
-                    reactor.addObserver(socket, Reactor::Event::Writable, [](Socket &socket, const Reactor::Event &event) {
+                    beforeEach({
+                        
+                        reactor.addObserver(socket, Reactor::Event::Writable, [](Socket &socket, const Reactor::Event &event) {
+                            
+                        });
+                        
+                    });
+                    
+                    it("still has one polled socket", {
+                        
+                        expect(poller->socketCount()).should.equal(1);
                         
                     });
                     
                 });
                 
+            });
+
+            context("another socket", {
+                
+                Socket other(context, Socket::Type::pull);
+                
+                beforeEach({
+                    
+                    reactor.addObserver(other, Reactor::Event::Readable, [](Socket &, const Reactor::Event &) {
+                        
+                    });
+                    
+                });
+                
+                it("has two polled sockets", {
+                    
+                    expect(poller->socketCount()).should.equal(2);
+                    
+                });
+                
+            });
+            
+        });
+        
+        context("two events, same socket", {
+            
+            
+            beforeEach({
+                
+                reactor.addObserver(socket, Reactor::Event::Readable, [](Socket &, const Reactor::Event &) {});
+                
+                reactor.addObserver(socket, Reactor::Event::Writable, [](Socket &, const Reactor::Event &) {});
+                
+            });
+
+            context("remove readable", {
+                
+                beforeEach({
+                
+                    reactor.removeObserver(socket, Reactor::Event::Readable);
+                    
+                });
+
                 it("has one polled socket", {
                     
                     expect(poller->socketCount()).should.equal(1);
                     
                 });
 
-                context("remove writable observer", {
+                context("remove writable", {
                     
                     beforeEach({
                         
@@ -90,34 +161,18 @@ namespace Messaging { namespace Specs {
                         
                     });
                     
-                    it("has one polled socket", {
+                    it("has no polled events", {
                         
-                        expect(poller->socketCount()).should.equal(1);
+                        expect(poller->socketCount()).should.equal(0);
                         
-                    });
-                    
-                    context("remove readable observer", {
-                        
-                        beforeEach({
-                            
-                            reactor.removeObserver(socket, Reactor::Event::Readable);
-                            
-                        });
-
-                        it("has no polled sockets", {
-                            
-                            expect(poller->socketCount()).should.equal(0);
-                            
-                        });
-
                     });
 
                 });
-                
+
+
             });
-            
+
         });
-        
         
     });
     

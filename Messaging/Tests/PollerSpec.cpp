@@ -53,19 +53,19 @@ namespace Messaging { namespace Specs {
                     
                     it("is not readable", {
                         
-                        expect(poller.events(socket).is(Poller::Event::Readable)).should.beFalse();
+                        expect(poller.receivedEvents(socket).is(Poller::Event::Readable)).should.beFalse();
                         
                     });
                     
                     it("is not writable", {
                         
-                        expect(poller.events(socket).is(Poller::Event::Writable)).should.beFalse();
+                        expect(poller.receivedEvents(socket).is(Poller::Event::Writable)).should.beFalse();
                         
                     });
 
                     it("is not in error", {
                         
-                        expect(poller.events(socket).is(Poller::Event::Error)).should.beFalse();
+                        expect(poller.receivedEvents(socket).is(Poller::Event::Error)).should.beFalse();
                         
                     });
                 });
@@ -196,13 +196,13 @@ namespace Messaging { namespace Specs {
                 
                 it("should have writable event for client", {
                     
-                    expect(poller.events(client).is(Poller::Event::Writable)).should.beTrue();
+                    expect(poller.receivedEvents(client).is(Poller::Event::Writable)).should.beTrue();
                     
                 });
                 
             });
             
-            if (poller.events(client).is(Poller::Event::Writable)) {
+            if (poller.receivedEvents(client).is(Poller::Event::Writable)) {
 
                 it("should raise when testing for client after removal", {
                     
@@ -210,7 +210,7 @@ namespace Messaging { namespace Specs {
                     
                     expect(theBlock({
                         
-                        poller.events(client);
+                        poller.receivedEvents(client);
                         
                     })).should.raise<Exception>("socket not found");
                     
@@ -237,7 +237,7 @@ namespace Messaging { namespace Specs {
                     
                     it("should have readable event for server", {
                         
-                        expect(poller.events(server).is(Poller::Event::Readable)).should.beTrue();
+                        expect(poller.receivedEvents(server).is(Poller::Event::Readable)).should.beTrue();
                         
                     });
                     

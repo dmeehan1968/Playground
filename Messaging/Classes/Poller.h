@@ -90,7 +90,7 @@ namespace Messaging {
             
         }
         
-        void observe(Socket &socket, const Events &events = { Event::Readable }) {
+        void observe(const Socket &socket, const Events &events = { Event::Readable }) {
             
             auto index = getSocketIndex(socket);
 
@@ -125,8 +125,20 @@ namespace Messaging {
             
         }
         
-        Events events(Socket &socket) const {
+        Events observedEvents(const Socket &socket) const {
+            
+            auto index = getSocketIndex(socket);
+            
+            if (index >= 0) {
+                return Events(_items[index].events);
+            }
+            
+            return Events();
+            
+        }
         
+        Events receivedEvents(const Socket &socket) const {
+            
             auto index = getSocketIndex(socket);
             
             if (index >= 0) {
@@ -170,7 +182,7 @@ namespace Messaging {
         
     protected:
         
-        long getSocketIndex(Socket &socket) const {
+        long getSocketIndex(const Socket &socket) const {
             
             auto found = std::find(_sockets.begin(), _sockets.end(), socket);
             

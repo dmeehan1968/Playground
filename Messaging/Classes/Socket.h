@@ -52,6 +52,10 @@ namespace Messaging {
             return _ctx == other._ctx && _socket == other._socket;
         }
         
+        bool operator < (const Socket &other) const {
+            return _ctx == other._ctx && _socket < other._socket;
+        }
+        
         Type type() const {
             
             int type;

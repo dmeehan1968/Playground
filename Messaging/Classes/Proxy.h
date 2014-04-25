@@ -41,21 +41,21 @@ namespace Messaging {
             
             if (_poller->poll(timeout)) {
                 
-                if (_poller->events(_frontend).is(Poller::Event::Writable)) {
+                if (_poller->receivedEvents(_frontend).is(Poller::Event::Writable)) {
                     
                     _poller->observe(_frontend, { });
                     _poller->observe(_backend, { Poller::Event::Readable });
                     
                 }
                 
-                if (_poller->events(_backend).is(Poller::Event::Writable)) {
+                if (_poller->receivedEvents(_backend).is(Poller::Event::Writable)) {
                     
                     _poller->observe(_backend, { });
                     _poller->observe(_frontend, { Poller::Event::Readable });
                     
                 }
                 
-                if (_poller->events(_frontend).is(Poller::Event::Readable)) {
+                if (_poller->receivedEvents(_frontend).is(Poller::Event::Readable)) {
                     
                     forward(_frontend, _backend);
                     
@@ -64,7 +64,7 @@ namespace Messaging {
                     
                 }
                 
-                if (_poller->events(_backend).is(Poller::Event::Readable)) {
+                if (_poller->receivedEvents(_backend).is(Poller::Event::Readable)) {
                     
                     forward(_backend, _frontend);
                     

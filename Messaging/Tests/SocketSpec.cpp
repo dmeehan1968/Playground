@@ -110,6 +110,40 @@ namespace Messaging { namespace Specs {
             
         });
         
+        context("socket options", {
+
+            std::shared_ptr<Socket> socket;
+            
+            beforeEach({
+                socket = std::make_shared<Socket>(Context(), Socket::Type::request);
+            });
+
+            it("sets send high water mark", {
+                
+                int expected = 10000;
+                socket->setSendHighWaterMark(expected);
+                
+                int actual;
+                auto size = sizeof(actual);
+                zmq_getsockopt(socket->get(), ZMQ_SNDHWM, &actual, &size);
+                
+                expect(actual).should.equal(expected);
+            });
+            
+            it("sets receive timeout", {
+                
+                int expected = 1000;
+                socket->setReceiveTimeout(expected);
+                
+                int actual;
+                auto size = sizeof(actual);
+                zmq_getsockopt(socket->get(), ZMQ_RCVTIMEO, &actual, &size);
+                
+                expect(actual).should.equal(expected);
+            });
+            
+        });
+
     });
     
 } }

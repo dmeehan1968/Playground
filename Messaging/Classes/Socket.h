@@ -90,6 +90,16 @@ namespace Messaging {
             
         }
         
+        void setSendHighWaterMark(const int timeout) {
+            
+            auto rc = zmq_setsockopt(get(), ZMQ_SNDHWM, &timeout, sizeof(timeout));
+            
+            if (rc < 0) {
+                throw Exception("set send high water mark failed");
+            }
+            
+        }
+        
         void setReceiveTimeout(const int timeout) {
             
             auto rc = zmq_setsockopt(get(), ZMQ_RCVTIMEO, &timeout, sizeof(timeout));

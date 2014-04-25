@@ -1,24 +1,24 @@
 //
-//  Proxy.h
+//  PollerProxy.h
 //  Messaging
 //
 //  Created by Dave Meehan on 22/04/2014.
 //  Copyright (c) 2014 Replicated Solutions Limited. All rights reserved.
 //
 
-#ifndef __Messaging__Proxy__
-#define __Messaging__Proxy__
+#ifndef __Messaging__PollerProxy__
+#define __Messaging__PollerProxy__
 
 #include "Poller.h"
 #include "Message.h"
 
 namespace Messaging {
     
-    class Proxy {
+    class PollerProxy {
         
     public:
         
-        Proxy(Socket &frontend, Socket &backend)
+        PollerProxy(Socket &frontend, Socket &backend)
         :
             _done(false),
             _frontend(frontend),

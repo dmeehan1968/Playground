@@ -14,7 +14,7 @@
 		A30B45C719055FA20058F066 /* Exception.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30B45C519055FA20058F066 /* Exception.cpp */; };
 		A30B45C919057FB30058F066 /* PollerSpec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30B45C819057FB30058F066 /* PollerSpec.cpp */; };
 		A30B45CC19057FFA0058F066 /* Poller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30B45CA19057FFA0058F066 /* Poller.cpp */; };
-		A30B45CF1906CBC30058F066 /* Proxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30B45CD1906CBC30058F066 /* Proxy.cpp */; };
+		A30B45CF1906CBC30058F066 /* PollerProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30B45CD1906CBC30058F066 /* PollerProxy.cpp */; };
 		A3672F77190A615E00F9EE5E /* ReactorSpec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3672F76190A615E00F9EE5E /* ReactorSpec.cpp */; };
 		A3672F7A190A618D00F9EE5E /* Reactor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3672F78190A618D00F9EE5E /* Reactor.cpp */; };
 		A3B1F9DB19016AC700DA0C90 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3B1F9DA19016AC700DA0C90 /* main.cpp */; };
@@ -48,8 +48,8 @@
 		A30B45C819057FB30058F066 /* PollerSpec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PollerSpec.cpp; sourceTree = "<group>"; };
 		A30B45CA19057FFA0058F066 /* Poller.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Poller.cpp; sourceTree = "<group>"; };
 		A30B45CB19057FFA0058F066 /* Poller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Poller.h; sourceTree = "<group>"; };
-		A30B45CD1906CBC30058F066 /* Proxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Proxy.cpp; sourceTree = "<group>"; };
-		A30B45CE1906CBC30058F066 /* Proxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Proxy.h; sourceTree = "<group>"; };
+		A30B45CD1906CBC30058F066 /* PollerProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PollerProxy.cpp; sourceTree = "<group>"; };
+		A30B45CE1906CBC30058F066 /* PollerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PollerProxy.h; sourceTree = "<group>"; };
 		A3672F76190A615E00F9EE5E /* ReactorSpec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReactorSpec.cpp; sourceTree = "<group>"; };
 		A3672F78190A618D00F9EE5E /* Reactor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Reactor.cpp; sourceTree = "<group>"; };
 		A3672F79190A618D00F9EE5E /* Reactor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reactor.h; sourceTree = "<group>"; };
@@ -105,8 +105,8 @@
 				A30B45C319055BEB0058F066 /* Message.h */,
 				A30B45CA19057FFA0058F066 /* Poller.cpp */,
 				A30B45CB19057FFA0058F066 /* Poller.h */,
-				A30B45CD1906CBC30058F066 /* Proxy.cpp */,
-				A30B45CE1906CBC30058F066 /* Proxy.h */,
+				A30B45CD1906CBC30058F066 /* PollerProxy.cpp */,
+				A30B45CE1906CBC30058F066 /* PollerProxy.h */,
 				A3672F78190A618D00F9EE5E /* Reactor.cpp */,
 				A3672F79190A618D00F9EE5E /* Reactor.h */,
 				A3B1F9E31905300600DA0C90 /* Socket.cpp */,
@@ -188,7 +188,7 @@
 				A3672F7A190A618D00F9EE5E /* Reactor.cpp in Sources */,
 				A30B45BC19053CA50058F066 /* FrameSpec.cpp in Sources */,
 				A3B1F9E51905300600DA0C90 /* Socket.cpp in Sources */,
-				A30B45CF1906CBC30058F066 /* Proxy.cpp in Sources */,
+				A30B45CF1906CBC30058F066 /* PollerProxy.cpp in Sources */,
 				A30B45C419055BEB0058F066 /* Message.cpp in Sources */,
 				A30B45C119055BBD0058F066 /* MessageSpec.cpp in Sources */,
 				A30B45CC19057FFA0058F066 /* Poller.cpp in Sources */,

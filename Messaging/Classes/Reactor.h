@@ -24,11 +24,13 @@ namespace Messaging {
         
         Reactor()
         :
+            _done(false),
             _poller(new Poller)
         {}
         
         Reactor(const std::shared_ptr<Poller> &poller)
         :
+            _done(false),
             _poller(poller)
         {}
         
@@ -131,6 +133,18 @@ namespace Messaging {
             
         }
         
+        void run(const long interval) {
+            
+            while (! _done) {
+                runOnce(interval);
+            }
+            
+        }
+        
+        void stop() {
+            _done = true;
+        }
+        
     protected:
         
         void notify(const std::map<Socket, EventObserver> &observers, Socket &socket, const Event &event) {
@@ -146,7 +160,8 @@ namespace Messaging {
         }
         
     private:
-        
+
+        bool _done;
         std::shared_ptr<Poller> _poller;
         std::map<Socket, EventObserver> _readObservers;
         std::map<Socket, EventObserver> _writeObservers;

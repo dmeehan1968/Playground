@@ -90,6 +90,16 @@ namespace Messaging {
             
         }
         
+        void setReceiveTimeout(const int timeout) {
+            
+            auto rc = zmq_setsockopt(get(), ZMQ_RCVTIMEO, &timeout, sizeof(timeout));
+            
+            if (rc < 0) {
+                throw Exception("set receive timeout failed");
+            }
+            
+        }
+        
     protected:
 
         friend class Specs::SocketSpec;

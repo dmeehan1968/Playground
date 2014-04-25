@@ -73,7 +73,6 @@ namespace Messaging {
                             throw Exception("unable to read when more expected");
                         }
                         
-                        break;
                     }
                     
                     throw;

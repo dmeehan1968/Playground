@@ -199,11 +199,11 @@
 				A3B1F9E51905300600DA0C90 /* Socket.cpp in Sources */,
 				A30B45CF1906CBC30058F066 /* PollerProxy.cpp in Sources */,
 				A30B45C419055BEB0058F066 /* Message.cpp in Sources */,
-				A3672F7C190A754500F9EE5E /* ProxySpec.cpp in Sources */,
 				A30B45C119055BBD0058F066 /* MessageSpec.cpp in Sources */,
 				A30B45CC19057FFA0058F066 /* Poller.cpp in Sources */,
 				A30B45C919057FB30058F066 /* PollerSpec.cpp in Sources */,
 				A3672F77190A615E00F9EE5E /* ReactorSpec.cpp in Sources */,
+				A3672F7C190A754500F9EE5E /* ProxySpec.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

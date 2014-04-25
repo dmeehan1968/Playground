@@ -9,13 +9,15 @@
 #include <ZingBDD/ZingBDD.h>
 
 #include "Reactor.h"
+#include "Frame.h"
+
+#include <thread>
 
 namespace Messaging { namespace Specs {
   
     describe(Reactor, {
 
         Context context;
-        Socket socket(context, Socket::Type::pull);
         
         std::shared_ptr<Poller> poller;
         
@@ -44,6 +46,8 @@ namespace Messaging { namespace Specs {
 
             it("throws if observer is nullptr", {
                 
+                Socket socket(context, Socket::Type::pull);
+
                 expect(theBlock({
                     
                     reactor.addObserver(socket, Reactor::Event::Readable, nullptr);
@@ -58,6 +62,8 @@ namespace Messaging { namespace Specs {
             
             it("throws if socket is not observing event", {
                 
+                Socket socket(context, Socket::Type::pull);
+
                 expect(theBlock({
                     
                     reactor.removeObserver(socket, Reactor::Event::Readable);
@@ -70,6 +76,8 @@ namespace Messaging { namespace Specs {
 
         context("add readable observer", {
             
+            Socket socket(context, Socket::Type::pull);
+
             beforeEach({
                 
                 reactor.addObserver(socket, Reactor::Event::Readable, [](Socket &socket, const Reactor::Event &event) {
@@ -130,6 +138,7 @@ namespace Messaging { namespace Specs {
         
         context("two events, same socket", {
             
+            Socket socket(context, Socket::Type::pull);
             
             beforeEach({
                 
@@ -169,9 +178,85 @@ namespace Messaging { namespace Specs {
 
                 });
 
+            });
+
+        });
+        
+        context("functional", {
+            
+            std::shared_ptr<Socket> client;
+            std::shared_ptr<Socket> server;
+            
+            beforeEach({
+        
+                client = std::make_shared<Socket>(context, Socket::Type::push);
+                server = std::make_shared<Socket>(context, Socket::Type::pull);
+                
+                server->bind("inproc://test");
+                client->connect("inproc://test");
+                
+            });
+            
+            afterEach({
+                client = nullptr;
+                server = nullptr;
+                
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                
+            });
+
+            context("writable", {
+                
+                bool didNotify = false;
+                
+                beforeEach({
+                    
+                    reactor.addObserver(*client, Reactor::Event::Writable, [&](Socket &socket, const Reactor::Event &event) {
+                
+                        didNotify = true;
+                        
+                    });
+                    
+                });
+                
+                it("notifies writable", {
+                    
+                    reactor.runOnce(100);
+                    
+                    expect(didNotify).should.beTrue();
+                    
+                });
 
             });
 
+            context("readable", {
+                
+                bool didNotify = false;
+                
+                beforeEach({
+                    
+                    reactor.addObserver(*server, Reactor::Event::Readable, [&](Socket &socket, const Reactor::Event &event) {
+                    
+                        didNotify = true;
+                        
+                    });
+                    
+                    Frame frame("HELLO");
+   
+                    frame.send(*client, Frame::block::blocking, Frame::more::none);
+                    
+                });
+                
+                it("notifies readable", {
+                    
+                    reactor.runOnce(100);
+                    
+                    expect(didNotify).should.beTrue();
+                    
+                });
+
+            });
+            
         });
         
     });

@@ -97,6 +97,54 @@ namespace Messaging {
             
         }
         
+        bool runOnce(const long timeout) {
+            
+            if (_poller->poll(timeout) > 0) {
+                
+                _poller->dispatch([&](Socket &socket, const Poller::Events &events) {
+                
+                    if (events.is(Poller::Event::Readable)) {
+                        
+                        notify(_readObservers, socket, Poller::Event::Readable);
+                        
+                    }
+                    
+                    if (events.is(Poller::Event::Writable)) {
+                        
+                        notify(_writeObservers, socket, Poller::Event::Writable);
+                        
+                    }
+                    
+                    if (events.is(Poller::Event::Error)) {
+                        
+                        notify(_errorObservers, socket, Poller::Event::Error);
+                        
+                    }
+
+                });
+            
+                return true;
+                
+            }
+            
+            return false;
+            
+        }
+        
+    protected:
+        
+        void notify(const std::map<Socket, EventObserver> &observers, Socket &socket, const Event &event) {
+            
+            auto found = observers.find(socket);
+            
+            if (found != observers.end()) {
+                
+                (found->second)(socket, event);
+                
+            }
+            
+        }
+        
     private:
         
         std::shared_ptr<Poller> _poller;

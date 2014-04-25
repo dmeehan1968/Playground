@@ -90,9 +90,9 @@ namespace Messaging {
             
         }
         
-        void setSendHighWaterMark(const int timeout) {
+        void setSendHighWaterMark(const int hwm) {
             
-            auto rc = zmq_setsockopt(get(), ZMQ_SNDHWM, &timeout, sizeof(timeout));
+            auto rc = zmq_setsockopt(get(), ZMQ_SNDHWM, &hwm, sizeof(hwm));
             
             if (rc < 0) {
                 throw Exception("set send high water mark failed");
@@ -100,9 +100,19 @@ namespace Messaging {
             
         }
         
-        void setReceiveHighWaterMark(const int timeout) {
+        void setReceiveHighWaterMark(const int hwm) {
             
-            auto rc = zmq_setsockopt(get(), ZMQ_RCVHWM, &timeout, sizeof(timeout));
+            auto rc = zmq_setsockopt(get(), ZMQ_RCVHWM, &hwm, sizeof(hwm));
+            
+            if (rc < 0) {
+                throw Exception("set receive high water mark failed");
+            }
+            
+        }
+        
+        void setThreadAffinity(const uint64_t affinity) {
+            
+            auto rc = zmq_setsockopt(get(), ZMQ_AFFINITY, &affinity, sizeof(affinity));
             
             if (rc < 0) {
                 throw Exception("set receive high water mark failed");

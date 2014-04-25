@@ -142,6 +142,18 @@ namespace Messaging { namespace Specs {
                 expect(actual).should.equal(expected);
             });
             
+            it("sets thread affinity", {
+                
+                uint64_t expected = 0xFF;
+                socket->setThreadAffinity(expected);
+                
+                uint64_t actual;
+                auto size = sizeof(actual);
+                zmq_getsockopt(socket->get(), ZMQ_AFFINITY, &actual, &size);
+                
+                expect(actual).should.equal(expected);
+            });
+            
             it("sets receive timeout", {
                 
                 int expected = 1000;

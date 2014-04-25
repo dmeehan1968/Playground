@@ -166,6 +166,18 @@ namespace Messaging { namespace Specs {
                 expect(actual).should.equal(expected);
             });
             
+            it("sets send timeout", {
+                
+                int expected = 1000;
+                socket->setSendTimeout(expected);
+                
+                int actual;
+                auto size = sizeof(actual);
+                zmq_getsockopt(socket->get(), ZMQ_SNDTIMEO, &actual, &size);
+                
+                expect(actual).should.equal(expected);
+            });
+            
         });
 
     });

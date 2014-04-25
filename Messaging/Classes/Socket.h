@@ -150,6 +150,16 @@ namespace Messaging {
             
         }
         
+        void setSendTimeout(const int timeout) {
+            
+            auto rc = zmq_setsockopt(get(), ZMQ_SNDTIMEO, &timeout, sizeof(timeout));
+            
+            if (rc < 0) {
+                throw Exception("set send timeout failed");
+            }
+            
+        }
+        
     protected:
 
         friend class Specs::SocketSpec;

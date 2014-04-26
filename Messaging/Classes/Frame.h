@@ -54,6 +54,10 @@ namespace Messaging {
             return (T *)zmq_msg_data(&_msg);
         }
         
+        std::string str() const {
+            return std::string(data<char>(), size());
+        }
+        
         enum class block {
             none,
             blocking

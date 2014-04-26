@@ -25,7 +25,7 @@ namespace Messaging {
             return size();
         }
         
-        size_t send(Socket &socket, const block block_type) {
+        size_t send(Socket &socket, const block block_type = block::blocking) {
         
             size_t size = 0;
             
@@ -47,7 +47,7 @@ namespace Messaging {
             
         }
         
-        size_t receive(Socket &socket, const block block_type) {
+        size_t receive(Socket &socket, const block block_type = block::blocking) {
             
             size_t size = 0;
             auto more = false;

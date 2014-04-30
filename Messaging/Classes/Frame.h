@@ -41,20 +41,24 @@ namespace Messaging {
         }
 
         Frame(const Frame &other) {
+            zmq_msg_init(&_msg);
             copyFrom(other);
         }
         
         Frame & operator = (const Frame &other) {
+            zmq_msg_init(&_msg);
             copyFrom(other);
             return *this;
         }
         
         Frame(Frame &&other) {
-            moveFrom(other);
+            zmq_msg_init(&_msg);
+            moveFrom(std::move(other));
         }
         
         Frame & operator = (Frame &&other) {
-            moveFrom(other);
+            zmq_msg_init(&_msg);
+            moveFrom(std::move(other));
             return *this;
         }
         
@@ -137,7 +141,7 @@ namespace Messaging {
             memcpy(zmq_msg_data(&_msg), other.data<void>(), other.size());
         }
         
-        void moveFrom(const Frame &other) {
+        void moveFrom(Frame &&other) {
             zmq_msg_move(&_msg, &other._msg);
         }
         

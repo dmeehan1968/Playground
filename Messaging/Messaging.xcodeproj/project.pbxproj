@@ -18,8 +18,6 @@
 		A3672F7A190A618D00F9EE5E /* Reactor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3672F78190A618D00F9EE5E /* Reactor.cpp */; };
 		A3672F7C190A754500F9EE5E /* ProxySpec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3672F7B190A754500F9EE5E /* ProxySpec.cpp */; };
 		A3672F7F190A758200F9EE5E /* Proxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3672F7D190A758200F9EE5E /* Proxy.cpp */; };
-		A3672F84190AA53C00F9EE5E /* Customer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3672F82190AA53C00F9EE5E /* Customer.cpp */; };
-		A3672F86190AAB2A00F9EE5E /* ATMExample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3672F85190AAB2A00F9EE5E /* ATMExample.cpp */; };
 		A3B1F9DB19016AC700DA0C90 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3B1F9DA19016AC700DA0C90 /* main.cpp */; };
 		A3B1F9DD19016B1D00DA0C90 /* ContextSpec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3B1F9DC19016B1D00DA0C90 /* ContextSpec.cpp */; };
 		A3B1F9E019016C4000DA0C90 /* Context.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3B1F9DE19016C4000DA0C90 /* Context.cpp */; };
@@ -57,9 +55,6 @@
 		A3672F7B190A754500F9EE5E /* ProxySpec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProxySpec.cpp; sourceTree = "<group>"; };
 		A3672F7D190A758200F9EE5E /* Proxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Proxy.cpp; sourceTree = "<group>"; };
 		A3672F7E190A758200F9EE5E /* Proxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Proxy.h; sourceTree = "<group>"; };
-		A3672F82190AA53C00F9EE5E /* Customer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Customer.cpp; sourceTree = "<group>"; };
-		A3672F83190AA53C00F9EE5E /* Customer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Customer.h; sourceTree = "<group>"; };
-		A3672F85190AAB2A00F9EE5E /* ATMExample.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ATMExample.cpp; sourceTree = "<group>"; };
 		A3B1F9CC190168EA00DA0C90 /* Messaging */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Messaging; sourceTree = BUILT_PRODUCTS_DIR; };
 		A3B1F9DA19016AC700DA0C90 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		A3B1F9DC19016B1D00DA0C90 /* ContextSpec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContextSpec.cpp; sourceTree = "<group>"; };
@@ -84,19 +79,8 @@
 		A3672F80190AA4F600F9EE5E /* Examples */ = {
 			isa = PBXGroup;
 			children = (
-				A3672F81190AA51400F9EE5E /* ATM */,
 			);
 			path = Examples;
-			sourceTree = "<group>";
-		};
-		A3672F81190AA51400F9EE5E /* ATM */ = {
-			isa = PBXGroup;
-			children = (
-				A3672F82190AA53C00F9EE5E /* Customer.cpp */,
-				A3672F83190AA53C00F9EE5E /* Customer.h */,
-				A3672F85190AAB2A00F9EE5E /* ATMExample.cpp */,
-			);
-			path = ATM;
 			sourceTree = "<group>";
 		};
 		A3B1F9C3190168EA00DA0C90 = {
@@ -222,8 +206,6 @@
 				A3672F77190A615E00F9EE5E /* ReactorSpec.cpp in Sources */,
 				A3B1F9E219052FD300DA0C90 /* SocketSpec.cpp in Sources */,
 				A3672F7C190A754500F9EE5E /* ProxySpec.cpp in Sources */,
-				A3672F84190AA53C00F9EE5E /* Customer.cpp in Sources */,
-				A3672F86190AAB2A00F9EE5E /* ATMExample.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -13,6 +13,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <sstream>
 
 namespace Messaging {
 
@@ -39,11 +40,23 @@ namespace Messaging {
             zmq_msg_close(&_msg);
         }
 
-        Frame(const Frame &) = delete;
-        Frame & operator = (const Frame &) = delete;
+        Frame(const Frame &other) {
+            copyFrom(other);
+        }
         
-        Frame(Frame &&) = default;
-        Frame & operator = (Frame &&) = default;
+        Frame & operator = (const Frame &other) {
+            copyFrom(other);
+            return *this;
+        }
+        
+        Frame(Frame &&other) {
+            moveFrom(other);
+        }
+        
+        Frame & operator = (Frame &&other) {
+            moveFrom(other);
+            return *this;
+        }
         
         size_t size() const {
             return zmq_msg_size(&_msg);
@@ -56,6 +69,14 @@ namespace Messaging {
         
         std::string str() const {
             return std::string(data<char>(), size());
+        }
+        
+        int integer() const {
+            
+            int i = 0;
+            std::istringstream(str()) >> i;
+            
+            return i;
         }
         
         enum class block {
@@ -107,6 +128,17 @@ namespace Messaging {
         
         bool hasMore() const {
             return zmq_msg_more(&_msg);
+        }
+        
+    protected:
+        
+        void copyFrom(const Frame &other) {
+            zmq_msg_init_size(&_msg, other.size());
+            memcpy(zmq_msg_data(&_msg), other.data<void>(), other.size());
+        }
+        
+        void moveFrom(const Frame &other) {
+            zmq_msg_move(&_msg, &other._msg);
         }
         
     private:

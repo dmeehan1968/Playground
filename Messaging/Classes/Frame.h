@@ -12,8 +12,6 @@
 #include "Socket.h"
 
 #include <cstdlib>
-#include <iostream>
-#include <sstream>
 
 namespace Messaging {
 
@@ -77,10 +75,7 @@ namespace Messaging {
         
         int integer() const {
             
-            int i = 0;
-            std::istringstream(str()) >> i;
-            
-            return i;
+            return std::stoi(str(), nullptr, 10);
         }
         
         enum class block {

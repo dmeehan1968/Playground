@@ -22,7 +22,7 @@ namespace Messaging { namespace Specs {
 
             it("has no frames", {
                 
-                expect(msg.frames()).should.equal(0);
+                expect(msg.size()).should.equal(0);
                 
             });
             
@@ -95,7 +95,7 @@ namespace Messaging { namespace Specs {
                 
                 it("has two frames", {
                     
-                    expect(msg.frames()).should.equal(2);
+                    expect(msg.size()).should.equal(2);
                     
                 });
                 

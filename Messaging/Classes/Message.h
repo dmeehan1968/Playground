@@ -21,38 +21,34 @@ namespace Messaging {
         
         using block = Frame::block;
         
-        size_t frames() const {
-            return size();
-        }
-        
         size_t send(Socket &socket, const block block_type = block::blocking) {
         
-            size_t size = 0;
+            size_t len = 0;
             
-            if (frames() == 0) {
+            if (size() == 0) {
                 throw Exception("cannot send an empty message", 0);
             }
             
-            while (frames() > 0) {
+            while (size() > 0) {
             
-                Frame::more more_type = frames() > 1 ? Frame::more::more : Frame::more::none;
+                Frame::more more_type = size() > 1 ? Frame::more::more : Frame::more::none;
                 
-                size += front().send(socket, block_type, more_type);
+                len += front().send(socket, block_type, more_type);
 
                 pop_front();
                 
             }
             
-            return size;
+            return len;
             
         }
         
         size_t receive(Socket &socket, const block block_type = block::blocking) {
             
-            size_t size = 0;
+            size_t len = 0;
             auto more = false;
             
-            if (frames() > 0) {
+            if (size() > 0) {
                 throw Exception("cannot receive into message that already has frames", 0);
             }
             
@@ -62,7 +58,7 @@ namespace Messaging {
                 
                 try {
                     
-                    size += frame.receive(socket, block_type);
+                    len += frame.receive(socket, block_type);
                     
                 } catch( Exception &e ) {
                     
@@ -84,7 +80,7 @@ namespace Messaging {
                 
             } while (more);
             
-            return size;
+            return len;
             
         }
         

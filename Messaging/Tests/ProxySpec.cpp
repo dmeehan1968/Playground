@@ -42,7 +42,7 @@ namespace Messaging { namespace Specs {
             replier->setReceiveTimeout(100);
             replier->connect("inproc://dealer");
             
-            proxyThread = std::thread(&Proxy::run, proxy, 100);
+            proxyThread = std::thread(&Proxy::run, proxy, 10);
             
         });
 
@@ -57,7 +57,7 @@ namespace Messaging { namespace Specs {
             router = nullptr;
             dealer = nullptr;
             
-            std::this_thread::sleep_for(std::chrono::microseconds(100));
+            std::this_thread::sleep_for(std::chrono::microseconds(10));
             
         });
 

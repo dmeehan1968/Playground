@@ -57,6 +57,8 @@ namespace Messaging { namespace Specs {
             router = nullptr;
             dealer = nullptr;
             
+            std::this_thread::sleep_for(std::chrono::microseconds(100));
+            
         });
 
         context("request", {
@@ -98,13 +100,45 @@ namespace Messaging { namespace Specs {
                     
                 });
 
+            });
 
+        });
+
+        context("message intercept", {
+            
+            std::string expectedMsg("hello");
+            Frame request("HELLO");
+            Frame receivedFrame;
+            
+            beforeEach({
+                
+                proxy->onMessage = [&](const Socket &socket, Message &msg) {
+                
+                    Frame &frame = msg.back();
+                    
+                    for (int i=0 ; i < frame.size() ; i++) {
+                        
+                        frame.data<char>()[i] = std::tolower(frame.data<char>()[i]);
+                        
+                    }
+                    
+                };
+                
+                request.send(*requester, Frame::block::none, Frame::more::none);
+                
+                receivedFrame.receive(*replier, Frame::block::blocking);
+                
+            });
+            
+            it("converts to lowercase", {
+                
+                expect(receivedFrame.str()).should.equal(expectedMsg);
+                
             });
 
 
         });
-
-
+        
     });
-    
+
 } }

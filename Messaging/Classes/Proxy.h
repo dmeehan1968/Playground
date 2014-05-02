@@ -56,6 +56,8 @@ namespace Messaging {
             
         }
         
+        std::function<void(const Socket &socket, Message &msg)> onMessage;
+        
     protected:
         
         void init() {
@@ -127,6 +129,10 @@ namespace Messaging {
                     
                     throw;
                     
+                }
+                
+                if (onMessage) {
+                    onMessage(reader, msg);
                 }
                 
                 msg.send(writer, Message::block::blocking);

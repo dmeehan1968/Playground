@@ -132,12 +132,21 @@ namespace Messaging {
     protected:
         
         void copyFrom(const Frame &other) {
-            zmq_msg_init_size(&_msg, other.size());
+            auto rc = zmq_msg_init_size(&_msg, other.size());
+            
+            if (rc < 0) {
+                throw Exception("message init with size failed");
+            }
+            
             memcpy(zmq_msg_data(&_msg), other.data<void>(), other.size());
         }
         
         void moveFrom(Frame &&other) {
-            zmq_msg_move(&_msg, &other._msg);
+            auto rc = zmq_msg_move(&_msg, &other._msg);
+            
+            if (rc < 0) {
+                throw Exception("message move failed");
+            }
         }
         
     private:

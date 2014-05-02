@@ -14,23 +14,13 @@ namespace Messaging { namespace Examples {
 
     describe(StreamAdapter, {
         
-        Context ctx;
-        Socket stream(ctx, Socket::Type::stream);
-        Socket output(ctx, Socket::Type::push);
-        
-        it("exists", {
+        context("protocol", {
             
-            StreamAdapter::Device adapter(stream, output);
-            
-        });
-        
-        context("event factory", {
-            
-            StreamAdapter::EventFactory factory;
+            StreamAdapter::Protocol factory;
             
             beforeEach({
                 
-                factory = StreamAdapter::EventFactory();
+                factory = StreamAdapter::Protocol();
                 
             });
 

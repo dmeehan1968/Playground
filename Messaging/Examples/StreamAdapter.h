@@ -10,6 +10,7 @@
 #define __Messaging__StreamAdapter__
 
 #include "Frame.h"
+#include "Reactor.h"
 
 #include <stdexcept>
 #include <vector>
@@ -85,7 +86,7 @@ namespace Messaging { namespace Examples {
             
         };
         
-        class EventFactory {
+        class Protocol {
         
         public:
 
@@ -97,7 +98,7 @@ namespace Messaging { namespace Examples {
                 
             };
             
-            EventFactory() : _state(State::Init) {}
+            Protocol() : _state(State::Init) {}
             
             std::shared_ptr<Event> parse(const char *data, size_t size, bool more) {
                 
@@ -167,50 +168,60 @@ namespace Messaging { namespace Examples {
             
         };
         
+        class Dispatcher {
+            
+        public:
+            
+            Dispatcher(Event &event) : _event(event), _handled(false) {}
+            
+            template <class T>
+            Dispatcher &handle(const std::function<void(T&)> &functor) {
+            
+                if (functor && ! _handled) {
+                    try {
+                 
+                        functor(dynamic_cast<T&>(_event));
+                        _handled = true;
+                        
+                    } catch (std::bad_cast &) {
+                        // ignore
+                    }
+                }
+                
+                return *this;
+                
+            }
+            
+        private:
+            bool _handled;
+            Event &_event;
+            
+        };
+        
         class Device {
             
         public:
             
             Device(Socket &stream, Socket &output)
             :
+                _done(false),
                 _stream(stream),
                 _output(output)
             {}
             
             void operator()() {
                 
-                EventFactory factory;
-                
                 while ( ! _done ) {
-                    
-                    Frame frame;
-                    std::shared_ptr<Event> event;
-                    
-                    try {
-                    
-                        frame.receive(_stream, Frame::block::blocking);
-                    
-                        event = factory.parse(frame.data<char>(), frame.size(), frame.hasMore());
-                        
-                    } catch (Exception &e) {
-                        
-                        if (e.errorCode() == EAGAIN) {
-                            
-                            event = std::make_shared<TimeoutEvent>();
-                            
-                        }
-                    }
-                    
-                    
-                    if (event) {
-                        
-                        // dispatch
-                        
-                    }
                     
                 }
             }
-            
+
+            void dispatch(Event &event) {
+                
+                Dispatcher(event).handle<Event>([&](const Event &event) {
+                    
+                });
+            }
         private:
             
             bool        _done;

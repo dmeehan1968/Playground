@@ -14,8 +14,6 @@
 
 #include <functional>
 
-using namespace std::placeholders;
-
 namespace Messaging {
     
     class Proxy {
@@ -61,6 +59,8 @@ namespace Messaging {
     protected:
         
         void init() {
+            
+            using namespace std::placeholders;
             
             _frontendWriteObserver = std::bind(&Proxy::onFrontendWritable, this, _1, _2);
             _backendWriteObserver = std::bind(&Proxy::onBackendWritable, this, _1, _2);

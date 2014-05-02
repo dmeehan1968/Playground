@@ -17,65 +17,93 @@ namespace Messaging { namespace Specs {
     describe(Proxy, {
        
         Context context;
-        Socket requester(context, Socket::Type::request);
-        Socket replier(context, Socket::Type::reply);
-        Socket router(context, Socket::Type::router);
-        Socket dealer(context, Socket::Type::dealer);
         
-        router.bind("inproc://router");
-        dealer.bind("inproc://dealer");
-        Proxy proxy(router, dealer);
+        std::shared_ptr<Socket> requester;
+        std::shared_ptr<Socket> replier;
+        std::shared_ptr<Socket> router;
+        std::shared_ptr<Socket> dealer;
+        std::shared_ptr<Proxy> proxy;
+        std::thread proxyThread;
         
-        requester.setReceiveTimeout(100);
-        requester.connect("inproc://router");
+        beforeEach({
 
-        replier.setReceiveTimeout(100);
-        replier.connect("inproc://dealer");
-        
-        std::thread proxyThread = std::thread(&Proxy::run, proxy, 100);
+            requester = std::make_shared<Socket>(context, Socket::Type::request);
+            replier = std::make_shared<Socket>(context, Socket::Type::reply);
+            router = std::make_shared<Socket>(context, Socket::Type::router);
+            dealer = std::make_shared<Socket>(context, Socket::Type::dealer);
+            
+            router->bind("inproc://router");
+            dealer->bind("inproc://dealer");
+            proxy = std::make_shared<Proxy>(*router, *dealer);
 
-        bool doReply = false;
-        
-        it("requests", {
+            requester->setReceiveTimeout(100);
+            requester->connect("inproc://router");
             
-            Frame request("HELLO");
+            replier->setReceiveTimeout(100);
+            replier->connect("inproc://dealer");
             
-            request.send(requester, Frame::block::none, Frame::more::none);
-        
-            Frame inboundRequest;
-            
-            inboundRequest.receive(replier, Frame::block::blocking);
-
-            std::string msg(inboundRequest.data<char>(), inboundRequest.size());
-            
-            expect(msg).should.equal("HELLO");
-            
-            doReply = true;
+            proxyThread = std::thread(&Proxy::run, proxy, 100);
             
         });
 
-        if (doReply) {
+        afterEach({
             
-            it("replies", {
+            proxy->stop();
+            proxyThread.join();
+
+            proxy = nullptr;
+            requester = nullptr;
+            replier = nullptr;
+            router = nullptr;
+            dealer = nullptr;
+            
+        });
+
+        context("request", {
+            
+            std::string expectedMsg("HELLO");
+            Frame request(expectedMsg);
+            Frame receivedFrame;
+            
+            beforeEach({
                 
-                Frame reply("WORLD");
+                request.send(*requester, Frame::block::none, Frame::more::none);
+            
+                receivedFrame.receive(*replier, Frame::block::blocking);
                 
-                reply.send(replier, Frame::block::none, Frame::more::none);
+            });
+
+            it("receives request", {
                 
-                Frame inboundReply;
-                
-                inboundReply.receive(requester, Frame::block::blocking);
-                
-                std::string msg(inboundReply.data<char>(), inboundReply.size());
-                
-                expect(msg).should.equal("WORLD");
+                expect(receivedFrame.str()).should.equal(expectedMsg);
                 
             });
             
-        }
+            context("reply", {
+                
+                expectedMsg = "WORLD";
+                Frame reply(expectedMsg);
+                
+                beforeEach({
+                    
+                    reply.send(*replier, Frame::block::none, Frame::more::none);
+                    
+                    receivedFrame.receive(*requester, Frame::block::blocking);
+                    
+                });
+                
+                it("receives reply", {
+                    
+                    expect(receivedFrame.str()).should.equal(expectedMsg);
+                    
+                });
 
-        proxy.stop();
-        proxyThread.join();
+
+            });
+
+
+        });
+
 
     });
     

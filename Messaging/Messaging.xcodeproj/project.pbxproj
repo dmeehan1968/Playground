@@ -14,8 +14,6 @@
 		A30B45C719055FA20058F066 /* Exception.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30B45C519055FA20058F066 /* Exception.cpp */; };
 		A30B45C919057FB30058F066 /* PollerSpec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30B45C819057FB30058F066 /* PollerSpec.cpp */; };
 		A30B45CC19057FFA0058F066 /* Poller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30B45CA19057FFA0058F066 /* Poller.cpp */; };
-		A35F4440191178A300E57DAA /* StreamAdapterSpec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A35F443E191178A300E57DAA /* StreamAdapterSpec.cpp */; };
-		A35F44431911796000E57DAA /* StreamAdapter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A35F44411911796000E57DAA /* StreamAdapter.cpp */; };
 		A3672F77190A615E00F9EE5E /* ReactorSpec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3672F76190A615E00F9EE5E /* ReactorSpec.cpp */; };
 		A3672F7A190A618D00F9EE5E /* Reactor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3672F78190A618D00F9EE5E /* Reactor.cpp */; };
 		A3672F7C190A754500F9EE5E /* ProxySpec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3672F7B190A754500F9EE5E /* ProxySpec.cpp */; };
@@ -51,9 +49,6 @@
 		A30B45C819057FB30058F066 /* PollerSpec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PollerSpec.cpp; sourceTree = "<group>"; };
 		A30B45CA19057FFA0058F066 /* Poller.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Poller.cpp; sourceTree = "<group>"; };
 		A30B45CB19057FFA0058F066 /* Poller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Poller.h; sourceTree = "<group>"; };
-		A35F443E191178A300E57DAA /* StreamAdapterSpec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StreamAdapterSpec.cpp; sourceTree = "<group>"; };
-		A35F44411911796000E57DAA /* StreamAdapter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StreamAdapter.cpp; sourceTree = "<group>"; };
-		A35F44421911796000E57DAA /* StreamAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamAdapter.h; sourceTree = "<group>"; };
 		A3672F76190A615E00F9EE5E /* ReactorSpec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReactorSpec.cpp; sourceTree = "<group>"; };
 		A3672F78190A618D00F9EE5E /* Reactor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Reactor.cpp; sourceTree = "<group>"; };
 		A3672F79190A618D00F9EE5E /* Reactor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reactor.h; sourceTree = "<group>"; };
@@ -84,9 +79,6 @@
 		A3672F80190AA4F600F9EE5E /* Examples */ = {
 			isa = PBXGroup;
 			children = (
-				A35F443E191178A300E57DAA /* StreamAdapterSpec.cpp */,
-				A35F44411911796000E57DAA /* StreamAdapter.cpp */,
-				A35F44421911796000E57DAA /* StreamAdapter.h */,
 			);
 			path = Examples;
 			sourceTree = "<group>";
@@ -204,7 +196,6 @@
 				A30B45C719055FA20058F066 /* Exception.cpp in Sources */,
 				A30B45BF19053CDC0058F066 /* Frame.cpp in Sources */,
 				A3672F7A190A618D00F9EE5E /* Reactor.cpp in Sources */,
-				A35F44431911796000E57DAA /* StreamAdapter.cpp in Sources */,
 				A30B45BC19053CA50058F066 /* FrameSpec.cpp in Sources */,
 				A3672F7F190A758200F9EE5E /* Proxy.cpp in Sources */,
 				A3B1F9E51905300600DA0C90 /* Socket.cpp in Sources */,
@@ -215,7 +206,6 @@
 				A3672F77190A615E00F9EE5E /* ReactorSpec.cpp in Sources */,
 				A3B1F9E219052FD300DA0C90 /* SocketSpec.cpp in Sources */,
 				A3672F7C190A754500F9EE5E /* ProxySpec.cpp in Sources */,
-				A35F4440191178A300E57DAA /* StreamAdapterSpec.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

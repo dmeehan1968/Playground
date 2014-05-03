@@ -15,27 +15,34 @@
 
 namespace Messaging {
     
-    class Message : public std::deque<Frame> {
+    class Message {
       
-    public:
+        using Envelope = std::deque<Frame>;
+
+    private:
         
+        std::deque<Frame> _data;
+        std::deque<Frame> _envelope;
+
+    public:
+    
         using block = Frame::block;
         
         size_t send(Socket &socket, const block block_type = block::blocking) {
         
             size_t len = 0;
             
-            if (size() == 0) {
+            if (_data.size() == 0) {
                 throw Exception("cannot send an empty message", 0);
             }
             
-            while (size() > 0) {
+            while (_data.size() > 0) {
             
-                Frame::more more_type = size() > 1 ? Frame::more::more : Frame::more::none;
+                Frame::more more_type = _data.size() > 1 ? Frame::more::more : Frame::more::none;
                 
-                len += front().send(socket, block_type, more_type);
+                len += _data.front().send(socket, block_type, more_type);
 
-                pop_front();
+                _data.pop_front();
                 
             }
             
@@ -48,7 +55,7 @@ namespace Messaging {
             size_t len = 0;
             auto more = false;
             
-            if (size() > 0) {
+            if (_data.size() > 0) {
                 throw Exception("cannot receive into message that already has frames", 0);
             }
             
@@ -76,7 +83,7 @@ namespace Messaging {
                 
                 more = frame.hasMore();
                 
-                push_back(std::move(frame));
+                _data.push_back(std::move(frame));
                 
             } while (more);
             
@@ -84,8 +91,34 @@ namespace Messaging {
             
         }
         
-    private:
+        auto back() -> decltype(_data.back()) {
+            return _data.back();
+        }
         
+        auto back() const -> decltype(_data.back()) {
+            return _data.back();
+        }
+        
+        auto front() -> decltype(_data.front()) {
+            return _data.front();
+        }
+        
+        auto front() const -> decltype(_data.front()) {
+            return _data.front();
+        }
+        
+        auto size() const -> decltype(_data.size()) {
+            return _data.size();
+        }
+        
+        auto clear() -> decltype(_data.clear()) {
+            return _data.clear();
+        }
+        
+        template <class...T>
+        auto emplace_back(T &...Args) -> decltype(_data.emplace_back()) {
+            return _data.emplace_back(Args...);
+        }
     };
     
 }

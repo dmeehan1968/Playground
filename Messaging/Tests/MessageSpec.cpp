@@ -68,7 +68,7 @@ namespace Messaging { namespace Specs {
                 
             });
             
-            context("sending", {
+            context("receiving", {
                 
                 Message msg;
                 size_t size;
@@ -80,6 +80,7 @@ namespace Messaging { namespace Specs {
                     Frame f1("HELLO");
                     Frame f2("WORLD");
                     
+                    Frame().send(*client, Frame::block::none, Frame::more::more);
                     f1.send(*client, Frame::block::none, Frame::more::more);
                     f2.send(*client, Frame::block::none, Frame::more::none);
                     
@@ -117,9 +118,7 @@ namespace Messaging { namespace Specs {
 
             });
             
-            context("receiving", {
-
-                std::shared_ptr<Frame> frame;
+            context("sending", {
 
                 beforeEach({
                     
@@ -132,50 +131,60 @@ namespace Messaging { namespace Specs {
                     
                 });
                 
-                context("first frame", {
+                context("delimiter", {
                     
+                    Frame delim;
+
                     beforeEach({
 
-                        frame = std::make_shared<Frame>();
-                        
-                        frame->receive(*server, Frame::block::none);
-                        
-                    });
-                    
-                    it("gets HELLO for first frame", {
-                        
-                        std::string data(frame->data<char>(), frame->size());
-                        
-                        expect(data).should.equal("HELLO");
+                        delim.receive(*server, Frame::block::none);
                         
                     });
 
-                });
+                    it("has delimiter", {
+                        
+                        expect(delim.size()).should.equal(0);
+                        
+                    });
 
-                context("second frame", {
-
-                    beforeEach({
-                    
-                        // discard first
+                    context("first frame", {
+                        
                         Frame first;
-                        first.receive(*server, Frame::block::none);
                         
-                        // get second
-                        frame = std::make_shared<Frame>();
-                        frame->receive(*server, Frame::block::none);
+                        beforeEach({
+                            
+                            first.receive(*server, Frame::block::none);
+                            
+                        });
                         
-                    });
-                    
-                    it("gets WORLD for second frame", {
+                        it("gets HELLO for first frame", {
+                            
+                            expect(first.str()).should.equal("HELLO");
+                            
+                        });
                         
-                        std::string data(frame->data<char>(), frame->size());
-                        
-                        expect(data).should.equal("WORLD");
+                        context("second frame", {
+
+                            Frame second;
+                            
+                            beforeEach({
+                                
+                                second.receive(*server, Frame::block::none);
+                                
+                            });
+                            
+                            it("gets WORLD for second frame", {
+                                
+                                expect(second.str()).should.equal("WORLD");
+                                
+                            });
+                            
+                        });
                         
                     });
                     
                 });
-                
+
             });
             
         });

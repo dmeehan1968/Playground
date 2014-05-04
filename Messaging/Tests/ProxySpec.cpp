@@ -64,39 +64,48 @@ namespace Messaging { namespace Specs {
         context("request", {
             
             std::string expectedMsg("HELLO");
-            Frame request(expectedMsg);
-            Frame receivedFrame;
+            Message requestMsg;
+            Message receivedMsg;
             
             beforeEach({
-                
-                request.send(*requester, Frame::block::none, Frame::more::none);
             
-                receivedFrame.receive(*replier, Frame::block::blocking);
+                requestMsg.clear();
+
+                requestMsg.emplace_back(expectedMsg);
+                requestMsg.send(*requester);
+
+                receivedMsg.clear();
+                receivedMsg.receive(*replier);
                 
             });
 
             it("receives request", {
                 
-                expect(receivedFrame.str()).should.equal(expectedMsg);
+                expect(receivedMsg.back().str()).should.equal(expectedMsg);
                 
             });
             
             context("reply", {
                 
                 expectedMsg = "WORLD";
-                Frame reply(expectedMsg);
+                Message replyMsg;
+                Message receivedMsg;
                 
                 beforeEach({
+                
+                    replyMsg.clear();
                     
-                    reply.send(*replier, Frame::block::none, Frame::more::none);
-                    
-                    receivedFrame.receive(*requester, Frame::block::blocking);
+                    replyMsg.emplace_back(expectedMsg);
+                    replyMsg.send(*replier);
+                
+                    receivedMsg.clear();
+                    receivedMsg.receive(*requester);
                     
                 });
                 
                 it("receives reply", {
                     
-                    expect(receivedFrame.str()).should.equal(expectedMsg);
+                    expect(receivedMsg.back().str()).should.equal(expectedMsg);
                     
                 });
 
@@ -107,8 +116,8 @@ namespace Messaging { namespace Specs {
         context("message intercept", {
             
             std::string expectedMsg("hello");
-            Frame request("HELLO");
-            Frame receivedFrame;
+            Message request;
+            Message receivedMsg;
             
             beforeEach({
                 
@@ -123,16 +132,19 @@ namespace Messaging { namespace Specs {
                     }
                     
                 };
-                
-                request.send(*requester, Frame::block::none, Frame::more::none);
-                
-                receivedFrame.receive(*replier, Frame::block::blocking);
+
+                request.clear();
+                request.emplace_back("HELLO");
+                request.send(*requester);
+            
+                receivedMsg.clear();
+                receivedMsg.receive(*replier);
                 
             });
             
             it("converts to lowercase", {
                 
-                expect(receivedFrame.str()).should.equal(expectedMsg);
+                expect(receivedMsg.back().str()).should.equal(expectedMsg);
                 
             });
 

@@ -36,6 +36,16 @@ namespace Messaging {
                 throw Exception("cannot send an empty message", 0);
             }
             
+            while (_envelope.size() > 0) {
+                
+                _envelope.front().send(socket, block_type, Frame::more::more);
+                
+                _envelope.pop_front();
+                
+            }
+            
+            Frame().send(socket, block_type, Frame::more::more);
+            
             while (_data.size() > 0) {
             
                 Frame::more more_type = _data.size() > 1 ? Frame::more::more : Frame::more::none;
@@ -52,42 +62,19 @@ namespace Messaging {
         
         size_t receive(Socket &socket, const block block_type = block::blocking) {
             
-            size_t len = 0;
-            auto more = false;
-            
             if (_data.size() > 0) {
                 throw Exception("cannot receive into message that already has frames", 0);
             }
             
-            do {
-                
-                Frame frame;
-                
-                try {
-                    
-                    len += frame.receive(socket, block_type);
-                    
-                } catch( Exception &e ) {
-                    
-                    if (e.errorCode() == EAGAIN) {
-                      
-                        if (more) {
-                            errno = EFAULT;
-                            throw Exception("unable to read when more expected");
-                        }
-                        
-                    }
-                    
-                    throw;
-                }
-                
-                more = frame.hasMore();
-                
-                _data.push_back(std::move(frame));
-                
-            } while (more);
+            auto env = receiveEnvelope(socket, block_type);
             
-            return len;
+            if (env.second == false) {
+                throw Exception("no data after envelope", 0);
+            }
+            
+            auto len = receiveData(socket, env.first > 0 ? block_type : block::none);
+            
+            return env.first + len;
             
         }
         
@@ -119,6 +106,93 @@ namespace Messaging {
         auto emplace_back(T &...Args) -> decltype(_data.emplace_back()) {
             return _data.emplace_back(Args...);
         }
+        
+        auto push_back(decltype(_data)::value_type &value) -> decltype(_data.push_back(value)) {
+            _data.push_back(value);
+        }
+        
+        auto envelope() -> std::add_lvalue_reference<decltype(_envelope)>::type {
+            return _envelope;
+        }
+        
+    protected:
+        
+        std::pair<size_t, bool> receiveEnvelope(Socket &socket, block block_type) {
+        
+            size_t len = 0;
+            bool more = false;
+            
+            do {
+                
+                Frame frame;
+                
+                try {
+                    
+                    len += frame.receive(socket, block_type);
+                    
+                    block_type = block::none;
+                    
+                } catch (Exception &e) {
+                
+                    if (e.errorCode() == EAGAIN && more) {
+                        errno = EFAULT;
+                        throw Exception("unable to read when more expected");
+                    }
+                    
+                    throw;
+                    
+                }
+            
+                more = frame.hasMore();
+                
+                if (frame.size() > 0) {
+                    _envelope.push_back(std::move(frame));
+                } else {
+                    break;
+                }
+                
+            } while (more);
+            
+            return std::pair<size_t, bool>(len, more);
+            
+        }
+        
+        size_t receiveData(Socket &socket, block block_type) {
+
+            size_t len = 0;
+            bool more = false;
+            
+            do {
+                
+                Frame frame;
+                
+                try {
+                    
+                    len += frame.receive(socket, block_type);
+                    
+                    block_type = block::none;
+                    
+                } catch (Exception &e) {
+                    
+                    if (e.errorCode() == EAGAIN && more) {
+                        errno = EFAULT;
+                        throw Exception("unable to read when more expected");
+                    }
+                    
+                    throw;
+                    
+                }
+                
+                more = frame.hasMore();
+                
+                _data.push_back(std::move(frame));
+                
+            } while (more);
+            
+            return len;
+            
+        }
+        
     };
     
 }

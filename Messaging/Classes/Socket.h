@@ -160,6 +160,61 @@ namespace Messaging {
             
         }
         
+        void setBacklog(const int backlog) {
+            
+            auto rc = zmq_setsockopt(get(), ZMQ_BACKLOG, &backlog, sizeof(backlog));
+            
+            if (rc < 0) {
+                throw Exception("set backlog failed");
+            }
+            
+        }
+        
+        Socket::Type getSocketType() const {
+            
+            int type;
+            size_t size = sizeof(type);
+            
+            auto rc = zmq_getsockopt(get(), ZMQ_TYPE, &type, &size);
+            
+            if (rc < 0) {
+                throw Exception("get socket type failed");
+            }
+            
+            switch (type) {
+
+                case ZMQ_REQ:
+                    return Type::request;
+                    
+                case ZMQ_REP:
+                    return Type::reply;
+                    
+                case ZMQ_PUSH:
+                    return Type::push;
+                    
+                case ZMQ_PULL:
+                    return Type::pull;
+                    
+                case ZMQ_PUB:
+                    return Type::publisher;
+                    
+                case ZMQ_SUB:
+                    return Type::subscriber;
+                    
+                case ZMQ_DEALER:
+                    return Type::dealer;
+                    
+                case ZMQ_ROUTER:
+                    return Type::router;
+                    
+                case ZMQ_STREAM:
+                    return Type::stream;
+                    
+            }
+
+            throw Exception("unknown socket type", 0);
+        }
+        
     protected:
 
         friend class Specs::SocketSpec;

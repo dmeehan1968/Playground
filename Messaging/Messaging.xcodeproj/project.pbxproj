@@ -18,6 +18,7 @@
 		A3672F7A190A618D00F9EE5E /* Reactor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3672F78190A618D00F9EE5E /* Reactor.cpp */; };
 		A3672F7C190A754500F9EE5E /* ProxySpec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3672F7B190A754500F9EE5E /* ProxySpec.cpp */; };
 		A3672F7F190A758200F9EE5E /* Proxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3672F7D190A758200F9EE5E /* Proxy.cpp */; };
+		A36EDD951917F26500AD7925 /* PeerSpec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A36EDD941917F26500AD7925 /* PeerSpec.cpp */; };
 		A3B1F9DB19016AC700DA0C90 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3B1F9DA19016AC700DA0C90 /* main.cpp */; };
 		A3B1F9DD19016B1D00DA0C90 /* ContextSpec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3B1F9DC19016B1D00DA0C90 /* ContextSpec.cpp */; };
 		A3B1F9E019016C4000DA0C90 /* Context.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3B1F9DE19016C4000DA0C90 /* Context.cpp */; };
@@ -55,6 +56,7 @@
 		A3672F7B190A754500F9EE5E /* ProxySpec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProxySpec.cpp; sourceTree = "<group>"; };
 		A3672F7D190A758200F9EE5E /* Proxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Proxy.cpp; sourceTree = "<group>"; };
 		A3672F7E190A758200F9EE5E /* Proxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Proxy.h; sourceTree = "<group>"; };
+		A36EDD941917F26500AD7925 /* PeerSpec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PeerSpec.cpp; sourceTree = "<group>"; };
 		A3B1F9CC190168EA00DA0C90 /* Messaging */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Messaging; sourceTree = BUILT_PRODUCTS_DIR; };
 		A3B1F9DA19016AC700DA0C90 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		A3B1F9DC19016B1D00DA0C90 /* ContextSpec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContextSpec.cpp; sourceTree = "<group>"; };
@@ -83,11 +85,20 @@
 			path = Examples;
 			sourceTree = "<group>";
 		};
+		A36EDD931917ED9F00AD7925 /* Benchmark */ = {
+			isa = PBXGroup;
+			children = (
+				A36EDD941917F26500AD7925 /* PeerSpec.cpp */,
+			);
+			path = Benchmark;
+			sourceTree = "<group>";
+		};
 		A3B1F9C3190168EA00DA0C90 = {
 			isa = PBXGroup;
 			children = (
 				A3B1F9DA19016AC700DA0C90 /* main.cpp */,
 				A3B1F9D819016A5A00DA0C90 /* Classes */,
+				A36EDD931917ED9F00AD7925 /* Benchmark */,
 				A3672F80190AA4F600F9EE5E /* Examples */,
 				A3B1F9D919016A6000DA0C90 /* Tests */,
 				A3B1F9CD190168EA00DA0C90 /* Products */,
@@ -206,6 +217,7 @@
 				A3672F77190A615E00F9EE5E /* ReactorSpec.cpp in Sources */,
 				A3B1F9E219052FD300DA0C90 /* SocketSpec.cpp in Sources */,
 				A3672F7C190A754500F9EE5E /* ProxySpec.cpp in Sources */,
+				A36EDD951917F26500AD7925 /* PeerSpec.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

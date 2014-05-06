@@ -44,7 +44,9 @@ namespace Messaging {
                 
             }
             
-            Frame().send(socket, block_type, Frame::more::more);
+            if (socket.getSocketType() != Socket::Type::stream) {
+                Frame().send(socket, block_type, Frame::more::more);
+            }
             
             while (_data.size() > 0) {
             
@@ -72,7 +74,7 @@ namespace Messaging {
                 throw Exception("no data after envelope", 0);
             }
             
-            auto len = receiveData(socket, env.first > 0 ? block_type : block::none);
+            auto len = receiveData(socket, env.second ? block::none : block_type, env.second);
             
             return env.first + len;
             
@@ -122,6 +124,8 @@ namespace Messaging {
             size_t len = 0;
             bool more = false;
             
+            auto socketType = socket.getSocketType();
+            
             do {
                 
                 Frame frame;
@@ -151,16 +155,19 @@ namespace Messaging {
                     break;
                 }
                 
+                if (socketType == Socket::Type::stream) {
+                    break;
+                }
+                
             } while (more);
             
             return std::pair<size_t, bool>(len, more);
             
         }
         
-        size_t receiveData(Socket &socket, block block_type) {
+        size_t receiveData(Socket &socket, block block_type, bool more) {
 
             size_t len = 0;
-            bool more = false;
             
             do {
                 

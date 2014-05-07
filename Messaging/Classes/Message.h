@@ -105,8 +105,8 @@ namespace Messaging {
         }
         
         template <class...T>
-        auto emplace_back(T &...Args) -> decltype(_data.emplace_back()) {
-            return _data.emplace_back(Args...);
+        auto emplace_back(T &&...Args) -> decltype(_data.emplace_back()) {
+            return _data.emplace_back(std::forward<T...>(Args...));
         }
         
         auto push_back(decltype(_data)::value_type &value) -> decltype(_data.push_back(value)) {
@@ -150,7 +150,7 @@ namespace Messaging {
                 more = frame.hasMore();
                 
                 if (frame.size() > 0) {
-                    _envelope.push_back(std::move(frame));
+                    _envelope.emplace_back(std::move(frame));
                 } else {
                     break;
                 }
@@ -192,7 +192,7 @@ namespace Messaging {
                 
                 more = frame.hasMore();
                 
-                _data.push_back(std::move(frame));
+                _data.emplace_back(std::move(frame));
                 
             } while (more);
             

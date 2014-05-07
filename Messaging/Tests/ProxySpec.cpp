@@ -57,7 +57,7 @@ namespace Messaging { namespace Specs {
             router = nullptr;
             dealer = nullptr;
             
-            std::this_thread::sleep_for(std::chrono::microseconds(10));
+            std::this_thread::sleep_for(std::chrono::microseconds(100));
             
         });
 

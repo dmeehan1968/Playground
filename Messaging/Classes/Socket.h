@@ -42,7 +42,11 @@ namespace Messaging {
         :
             _ctx(ctx),
             _socket(std::shared_ptr<void>(zmq_socket(_ctx.get(), (int)type), &zmq_close))
-        {}
+        {
+            if (get() == nullptr) {
+                throw Exception("socket creation failed");
+            }
+        }
         
         ~Socket() {
             _socket = nullptr;
@@ -170,6 +174,26 @@ namespace Messaging {
             
         }
         
+        void setSendBufferSize(const int size) {
+            
+            auto rc = zmq_setsockopt(get(), ZMQ_SNDBUF, &size, sizeof(size));
+            
+            if (rc < 0) {
+                throw Exception("set send buffer failed");
+            }
+            
+        }
+        
+        void setReceiveBufferSize(const int size) {
+            
+            auto rc = zmq_setsockopt(get(), ZMQ_RCVBUF, &size, sizeof(size));
+            
+            if (rc < 0) {
+                throw Exception("set receive buffer failed");
+            }
+            
+        }
+
         Socket::Type getSocketType() const {
             
             int type;

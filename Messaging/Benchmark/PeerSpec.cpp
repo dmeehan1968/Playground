@@ -21,149 +21,214 @@ namespace Messaging { namespace Benchmark {
         Server(const Context &ctx)
         :
             _ctx(ctx),
+            _server(ctx, Socket::Type::stream),
             _done(false),
-            _maxConcurrentClients(0),
-            _totalClients(0),
-            _successClients(0)
+            _complete(0),
+            _maxConcurrentClients(0)
         {}
         
-        void operator() (const size_t expectedClients, const size_t messageBytes, const size_t expectedBytes) {
+        using State = void (Server::*)();
+        
+        void operator() () {
             
-            Socket server(_ctx, Socket::Type::stream);
+            _state = &Server::connecting;
             
-            server.setReceiveTimeout(1000);
-            server.setBacklog(2000);
-            
-            server.bind("tcp://*:5555");
-            
-            std::map<std::string, size_t> connectionBytes;
-            
-            auto start = std::chrono::high_resolution_clock::now();
-            size_t totalMessages = 0;
-            size_t totalBytes = 0;
-            const std::string okay("OK");
-            
-            while (!_done) {
+            while (_state != nullptr && ! _done) {
                 
-                Frame connectionId;
-                Frame data;
-                
-                try {
-                    
-                    connectionId.receive(server, Frame::block::blocking);
-                    
-                    if (connectionId.hasMore()) {
-                        
-                        data.receive(server, Frame::block::none);
-                        
-                    } else {
-                        
-                        std::cout << "invalid id" << std::endl;
-                    }
-                    
-                } catch (Exception &e) {
-                    
-//                    std::cout << "Server receive failed: " << zmq_strerror(e.errorCode()) << std::endl;
-
-                    if (e.errorCode() == EAGAIN) {
-                        
-                        continue;
-                    }
-                    
-                    throw;
-                }
-                
-                auto found = connectionBytes.find(connectionId.str());
-                
-                if (data.size() > 0) {
-
-//                    std::cout << data.size() << "-" << data.str() << std::endl;
-
-                    totalMessages++;
-                    
-                    if (found != connectionBytes.end()) {
-                        
-                        found->second += data.size();
-                        
-                    } else {
-                        
-                        std::cout << "data without previous connection" << std::endl;
-                        
-                    }
-                    
-                    Frame(connectionId).send(server, Frame::block::none, Frame::more::more);
-                    Frame(okay).send(server, Frame::block::none, Frame::more::none);
-                    
-                } else {
-                    
-                    if (found == connectionBytes.end()) {
-                        
-                        _totalClients++;
-                        
-                        // connect
-                        connectionBytes[connectionId.str()] = 0;
-                        
-                        if (connectionBytes.size() > _maxConcurrentClients) {
-                            _maxConcurrentClients = connectionBytes.size();
-                        }
-                        
-                    } else {
-                        
-                        if (found->second >= expectedBytes) {
-                            _successClients++;
-                            
-                        } else {
-                        
-                            std::cout << found->second << " of " << expectedBytes << std::endl;
-                            
-                        }
-                        
-                        totalBytes += found->second;
-
-                        // disconnect
-                        connectionBytes.erase(found);
-                        
-                    }
-
-                }
+                (this->*_state)();
                 
             }
             
-            auto runtime = std::chrono::high_resolution_clock::now() - start;
-            
-            auto duration = (double) runtime.count() / 1000000000;
-            
-            auto mps = (double)totalMessages / duration;
-            
-            auto bps = (double)totalBytes / duration;
-            
-            std::cout << _successClients << "/" << expectedClients << ", " << messageBytes << ", " << mps << ", " << std::setprecision(10) << bps << std::endl;
-            
         }
         
-        void stop() {
-            _done = true;
+        size_t complete() const {
+            return _complete;
         }
         
         size_t maxConcurrentClients() const {
             return _maxConcurrentClients;
         }
         
-        size_t totalClients() const {
-            return _totalClients;
+        void stop() {
+            _done = true;
+        }
+
+    protected:
+
+        void connecting() {
+        
+            _server.setReceiveTimeout(100);
+            _server.setBacklog(2000);
+            _server.setSendBufferSize(1000000);
+            _server.setReceiveBufferSize(1000000);
+            _server.setSendHighWaterMark(1000000);
+            _server.setReceiveHighWaterMark(1000000);
+            
+            _server.bind("tcp://*:5555");
+            
+            _state = &Server::receiveData;
+            
         }
         
-        size_t successClients() const {
-            return _successClients;
+        class Client {
+
+        public:
+            Client()
+            :
+                _state(&Client::sizeMsb),
+                _size(0),
+                _totalBytes(0),
+                _complete(false)
+            {}
+            
+            using State = void (Client::*)(unsigned char);
+            
+            void processData(unsigned char *data, size_t len, const std::function<void()> &acknowledge) {
+                
+                while (len-- > 0 && _state != nullptr) {
+                    
+                    (this->*_state)(*data++);
+                    
+                    if (_state == &Client::data && _size == 0) {
+                        acknowledge();
+                        _state = &Client::sizeMsb;
+                    }
+                }
+                
+            }
+            
+            size_t totalBytes() const {
+                return _totalBytes;
+            }
+            
+            bool complete() const {
+                return _complete;
+            }
+            
+        protected:
+            
+            void sizeMsb(unsigned char data) {
+            
+                _size |= data << 8;
+                
+                _state = &Client::sizeLsb;
+                
+            }
+            
+            void sizeLsb(unsigned char data) {
+                
+                _size |= data;
+                
+                if (_size == 0) {
+                    _complete = true;
+                }
+                
+                _state = &Client::data;
+                
+            }
+            
+            void data(unsigned char data) {
+                
+                _totalBytes++;
+                _size--;
+                
+            }
+            
+        private:
+            
+            State _state;
+            size_t _size;
+            
+            size_t _totalBytes;
+            bool _complete;
+        };
+        
+        void receiveData() {
+            
+            Message data;
+            
+            try {
+                
+                data.receive(_server, Message::block::blocking);
+                
+            } catch (Exception &e) {
+            
+                if (e.errorCode() == EAGAIN) {
+                    return;
+                }
+                
+                throw;
+                
+            }
+            
+            if (data.envelope().size() != 1) {
+                throw;
+            }
+            
+            if (data.size() != 1) {
+                throw;
+            }
+            
+            auto connectionId = data.envelope().front().str();
+            
+            auto found = _clients.find(connectionId);
+            
+//            std::cout << "S:" << connectionId << " " << data.front().size() << " " << data.front().str() << std::endl;
+            
+            if (data.front().size() == 0) {
+                
+                if (found == _clients.end()) {
+                    
+                    // new connection
+                    
+                    _clients.emplace(connectionId, Client());
+                    
+                    if (_clients.size() > _maxConcurrentClients) {
+                        _maxConcurrentClients = _clients.size();
+                    }
+                    
+                } else {
+                    
+                    // disconnection
+                    
+//                    std::cout << "TotalBytes: " << found->second.totalBytes() << std::endl;
+                    
+                    if (found->second.complete()) {
+                        _complete++;
+                    }
+                    
+                    _clients.erase(found);
+                    
+                }
+                
+            } else {
+                
+                // received bytes
+                
+                found->second.processData(data.front().data<unsigned char>(), data.front().size(), [&] {
+                
+                    Message okay;
+                    
+                    okay.envelope().emplace_back(connectionId);
+                    okay.emplace_back("OK");
+                    
+                    okay.send(_server, Message::block::blocking);
+
+                });
+                
+            }
+            
         }
         
     private:
         
         Context _ctx;
+        Socket _server;
         bool _done;
+        State _state;
+        size_t _complete;
         size_t _maxConcurrentClients;
-        size_t _totalClients;
-        size_t _successClients;
+        std::map<std::string, Client> _clients;
         
     };
     
@@ -171,15 +236,16 @@ namespace Messaging { namespace Benchmark {
         
         
     public:
-        Client(const Context &ctx, const size_t messageBytes, const size_t totalBytes)
+        Client(const Context &ctx, const size_t msgSize, const std::chrono::seconds &duration)
         :
             _ctx(ctx),
             _server(_ctx, Socket::Type::stream),
             _state(&Client::connecting),
-            _sent(0),
-            _totalBytes(totalBytes)
+            _sentBytes(0),
+            _sentMessages(0),
+            _duration(duration)
         {
-            _data.resize(messageBytes, '0');
+            _data.resize(msgSize, '0');
         }
         
         using State = void (Client::*)();
@@ -196,12 +262,26 @@ namespace Messaging { namespace Benchmark {
             
         }
         
+        size_t sentBytes() const {
+            return _sentBytes;
+        }
+        
+        size_t sentMessages() const {
+            return _sentMessages;
+        }
+        
+    protected:
+        
         void connecting() {
+            
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
             
             _server.connect("tcp://127.0.0.1:5555");
             
             _state = &Client::receiveConnId;
             
+            _until = std::chrono::high_resolution_clock::now() + _duration;
+
         }
         
         void receiveConnId() {
@@ -220,40 +300,78 @@ namespace Messaging { namespace Benchmark {
 
             Message msg;
             
-            msg.envelope().push_back(_connectionId);
-            msg.emplace_back(_data);
+            msg.envelope().emplace_back(_connectionId);
             
-            _sent += msg.send(_server);
+            Frame data(_data.size()+2);
+            *data.data<char>() = _data.size() >> 8;
+            *(data.data<char>()+1) = _data.size() & 0xFF;
+            memcpy(data.data<char>()+2, _data.data(), _data.size());
             
-            _state = &Client::receiveOk;
+            msg.emplace_back(std::move(data));
+            
+            msg.send(_server);
+            
+            _sentBytes += _data.size();
+            _sentMessages++;
+            
+            _state = &Client::receiveOkay;
             
         }
         
-        void receiveOk() {
+        void receiveOkay() {
             
-            Message ok;
+            Message okay;
             
-            ok.receive(_server);
+            okay.receive(_server, Message::block::blocking);
             
             _state = &Client::terminate;
 
-            if (ok.envelope().front().str() != _connectionId) {
-                std::cout << "Expected ID " << _connectionId << ", got " << ok.envelope().front().str() << std::endl;
+            if (okay.envelope().front().str() != _connectionId) {
+                std::cout << "C: Expected ID " << _connectionId << ", got " << okay.front().size() << " " << okay.envelope().front().str() << std::endl;
+                return;
             }
             
-            if (ok.front().str() != "OK") {
-                std::cout << "Expected OK, got " << ok.front().str() << std::endl;
+            if (okay.front().size() == 0) {
+                std::cout << "C: " << okay.envelope().front() << " - " << "Disconnect" << std::endl;
+                return;
+            }
+            
+            if (okay.front().str() != "OK") {
+                std::cout << "C: Expected OK, got " << okay.front().size() << " " << okay.front().str() << std::endl;
+                return;
             }
 
-            if (_sent < _totalBytes) {
+//            std::cout << "C: " << okay.envelope().front() << " - " << okay.front() << std::endl;
+            
+            if (std::chrono::high_resolution_clock::now() < _until) {
                 
                 _state = &Client::sendData;
                 
+            } else {
+                _state = &Client::sendEnd;
             }
+            
+        }
+        
+        void sendEnd() {
+            
+            Message end;
+            Frame size(2);
+            *size.data<char>() = 0;
+            *(size.data<char>()+1) = 0;
+            
+            end.envelope().emplace_back(_connectionId);
+            end.emplace_back(std::move(size));
+            
+            end.send(_server, Message::block::blocking);
+            
+            _state = &Client::terminate;
             
         }
      
         void terminate() {
+            
+//            std::cout << "Client terminate" << std::endl;
             
             _state = nullptr;
             
@@ -265,9 +383,12 @@ namespace Messaging { namespace Benchmark {
         Socket _server;
         State _state;
         std::string _connectionId;
-        size_t _sent;
-        size_t _totalBytes;
+        size_t _sentBytes;
+        size_t _sentMessages;
         std::string _data;
+        std::chrono::high_resolution_clock::time_point _until;
+        std::chrono::seconds _duration;
+        
     };
     
     
@@ -283,6 +404,7 @@ namespace Messaging { namespace Benchmark {
 
                     if (iter->run()) {
                         
+                        _completed.emplace_back(std::move(*iter));
                         _clients.erase(iter);
                         break;
                         
@@ -306,9 +428,19 @@ namespace Messaging { namespace Benchmark {
             
         }
         
+        const std::vector<Client> &completed() const {
+            return _completed;
+        }
+        
+        void reset() {
+            _clients.clear();
+            _completed.clear();
+        }
+        
     private:
         
         std::vector<Client> _clients;
+        std::vector<Client> _completed;
         
     };
     
@@ -316,26 +448,35 @@ namespace Messaging { namespace Benchmark {
         
     public:
         
-        size_t operator()(const size_t clients, const size_t messageBytes) {
+        Test(const size_t numClients, const size_t msgSize, const std::chrono::seconds &duration, const size_t numWorkers, const size_t ioThreads)
+        :
+            _numClients(numClients),
+            _msgSize(msgSize),
+            _duration(duration),
+            _numWorkers(numWorkers),
+            _ioThreads(ioThreads)
+        {}
+        
+        size_t operator()() {
             
             Context ctx;
-//            ctx.setIOThreads(1);
-            ctx.setMaxSockets(3000);
+            ctx.setIOThreads((int)_ioThreads);
+            ctx.setMaxSockets(static_cast<int>(_numClients+1));
             
             auto server = Server(ctx);
-            auto totalBytes = 1024 * 1024;
             
-            auto serverThread = std::thread(std::ref(server), clients, messageBytes, totalBytes);
+            auto serverThread = std::thread(std::ref(server));
             
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
             
-            std::array<Worker, 2> workers;
+            std::vector<Worker> workers;
+            workers.resize(_numWorkers);
             
             // Assign clients to workers
             
-            for(unsigned i = 0 ; i < clients ; i++) {
+            for(unsigned i = 0 ; i < _numClients ; i++) {
                 
-                workers[i % workers.size()].push_back(Client(ctx, messageBytes, totalBytes));
+                workers[i % workers.size()].push_back(Client(ctx, _msgSize, _duration));
                 
             }
             
@@ -360,33 +501,80 @@ namespace Messaging { namespace Benchmark {
                 }
             }
 
+            _totalBytes = _totalMessages = 0;
+            
+            for (auto &worker : workers) {
+                
+                for ( auto &client : worker.completed()) {
+                    
+//                    std::cout << "ClientBytes: " << client.sentBytes() << std::endl;
+            
+                    _totalBytes += client.sentBytes();
+                    _totalMessages += client.sentMessages();
+                    
+                }
+
+                worker.reset();
+                
+            }
+            
             // short sleep to allow connections to close so server can count them as complete
             
-            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
             // stop the server and wait for completion
             
             server.stop();
             serverThread.join();
             
-            return server.successClients();
+            if (server.maxConcurrentClients() < _numClients) {
+                std::cout << "Warning: MaxConcurrent = " << server.maxConcurrentClients() << std::endl;
+            }
             
+            return server.complete();
         }
+        
+        size_t totalBytes() const {
+            return _totalBytes;
+        }
+        
+        size_t totalMessages() const {
+            return _totalMessages;
+        }
+        
+    private:
+        
+        size_t _numClients;
+        size_t _msgSize;
+        std::chrono::seconds _duration;
+        size_t _numWorkers;
+        size_t _ioThreads;
+
+        size_t _totalBytes;
+        size_t _totalMessages;
+        
     };
 
     describe(Peer, {
        
-        std::cout << "nClients,MsgSize,Msg/sec,Bytes/sec" << std::endl;
+        std::chrono::seconds duration(3);
         
-        for(int clients=4 ; clients <= 16 ; clients *= 2) {
-            
-            for (size_t bytes = 64 ; bytes <= 64 ; bytes *= 2) {
+        size_t numWorkers = 3;
+        size_t ioThreads = 1;
+    
+        std::cout << "ioThreads = " << ioThreads << ", numWorkers = " << numWorkers << std::endl;
+        
+        std::cout << "nClients, MsgSize, Msg/sec, Bytes/sec" << std::endl;
+        
+        for(int clients=1024 ; clients <= 1024 ; clients *= 4) {
+
+            for (size_t msgSize = 512 ; msgSize <= 512 ; msgSize *= 4) {
                 
-                size_t actual;
+                Test test(clients, msgSize, duration, numWorkers, ioThreads);
                 
-                if ((actual = Test()(clients, bytes)) != clients) {
-                    std::cout << "ERROR, expected " << clients << ", got " << actual << std::endl;
-                }
+                auto complete = test();
+                
+                std::cout << complete << ", " << msgSize << ", " << test.totalMessages() / duration.count() << ", " << test.totalBytes() / duration.count() << std::endl;
                 
             }
 

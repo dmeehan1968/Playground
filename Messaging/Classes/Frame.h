@@ -12,6 +12,7 @@
 #include "Socket.h"
 
 #include <cstdlib>
+#include <iomanip>
 
 namespace Messaging {
 
@@ -116,6 +117,10 @@ namespace Messaging {
             
             auto len = zmq_msg_recv(&_msg, socket.get(), flags);
             
+            if (len >= 0 && len != size()) {
+                throw Exception("msg size inconsistency", 0);
+            }
+            
             if (len < 0) {
                 
                 throw Exception("receive failed");
@@ -155,6 +160,48 @@ namespace Messaging {
         
     };
 
+    inline std::ostream &operator << (std::ostream &stream, const Frame &frame) {
+        
+        auto size = frame.size();
+        unsigned char *ptr = frame.data<unsigned char>();
+        unsigned char *end = ptr + size;
+
+        auto flags = stream.flags();
+        
+        while (ptr < end) {
+            
+            auto needle = ptr;
+            
+            
+            for (int i=0; i < 16 && needle < end; i++, needle++) {
+                
+                if (i > 0) stream << " ";
+                
+                stream << std::hex << std::setw(2) << std::setfill('0');
+                
+                stream << (int)*needle;
+                
+            }
+
+            stream.flags(flags);
+            stream << " ";
+            
+            needle = ptr;
+            for (int i=0; i < 16 && needle < end; i++, needle++) {
+                
+                stream << (unsigned char)(isprint(*needle) ? *needle : '.');
+                
+            }
+            
+            ptr = needle;
+            
+        }
+        
+        stream.flags(flags);
+        
+        return stream;
+        
+    }
 }
 
 #endif /* defined(__Messaging__Frame__) */

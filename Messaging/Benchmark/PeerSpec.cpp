@@ -581,18 +581,24 @@ namespace Messaging { namespace Benchmark {
 
     describe(Peer, {
        
-        std::chrono::seconds duration(3);
+        std::chrono::seconds duration(3);   // Test duration (actually sending data, after setup)
         
-        size_t numWorkers = 2;
-        size_t ioThreads = 1;
-    
+        const size_t ioThreads = 1;         // Number of ZeroMQ threads
+        const size_t numWorkers = 2;        // Number of client worker threads
+        const size_t minClients = 1;        // Minimum number of clients
+        const size_t maxClients = 1024;     // Maximum number of clients
+        const size_t scaleClients = 4;      // Scale factor for clients
+        const size_t minMsgSize = 8;        // Minimum message size
+        const size_t maxMsgSize = 8192;     // Maximum message size
+        const size_t scaleMsgSize = 4;      // Scale factor for message size
+        
         std::cout << "ioThreads = " << ioThreads << ", numWorkers = " << numWorkers << std::endl;
         
         std::cout << "nClients, MsgSize, Msg/sec, Bytes/sec" << std::endl;
         
-        for(int clients=1 ; clients <= 1024 ; clients *= 4) {
+        for(int clients=minClients ; clients <= maxClients ; clients *= scaleClients) {
 
-            for (size_t msgSize = 8 ; msgSize <= 8192 ; msgSize *= 4) {
+            for (size_t msgSize = minMsgSize ; msgSize <= maxMsgSize ; msgSize *= scaleMsgSize) {
                 
                 Test test(clients, msgSize, duration, numWorkers, ioThreads);
                 

@@ -58,7 +58,7 @@ namespace Messaging { namespace Benchmark {
         void connecting() {
         
             _server.setReceiveTimeout(100);
-            _server.setBacklog(2000);
+            _server.setBacklog(4000);
             _server.setSendBufferSize(1000000);
             _server.setReceiveBufferSize(1000000);
             _server.setSendHighWaterMark(1000000);
@@ -66,7 +66,7 @@ namespace Messaging { namespace Benchmark {
             
             _server.bind("tcp://*:5555");
             
-            _state = &Server::receiveData;
+            _state = &Server::receiveConnId;
             
         }
         
@@ -143,13 +143,38 @@ namespace Messaging { namespace Benchmark {
             bool _complete;
         };
         
-        void receiveData() {
+        
+        void receiveConnId() {
             
-            Message data;
+            Frame connect;
             
             try {
                 
-                data.receive(_server, Message::block::blocking);
+                connect.receive(_server, Frame::block::blocking);
+                
+            } catch (Exception &e) {
+                
+                if (e.errorCode() == EAGAIN) {
+                    return;
+                }
+                
+                throw;
+        
+            }
+        
+            _connectionId = connect.str();
+            
+            _state = &Server::receiveData;
+            
+        }
+        
+        void receiveData() {
+            
+            Frame data;
+            
+            try {
+                
+                data.receive(_server, Message::block::none);
                 
             } catch (Exception &e) {
             
@@ -161,27 +186,17 @@ namespace Messaging { namespace Benchmark {
                 
             }
             
-            if (data.envelope().size() != 1) {
-                throw;
-            }
+            auto found = _clients.find(_connectionId);
             
-            if (data.size() != 1) {
-                throw;
-            }
+//            std::cout << "S:" << _connectionId << " " << data.size() << " " << data.str() << std::endl;
             
-            auto connectionId = data.envelope().front().str();
-            
-            auto found = _clients.find(connectionId);
-            
-//            std::cout << "S:" << connectionId << " " << data.front().size() << " " << data.front().str() << std::endl;
-            
-            if (data.front().size() == 0) {
+            if (data.size() == 0) {
                 
                 if (found == _clients.end()) {
                     
                     // new connection
                     
-                    _clients.emplace(connectionId, Client());
+                    _clients.emplace(std::move(_connectionId), Client());
                     
                     if (_clients.size() > _maxConcurrentClients) {
                         _maxConcurrentClients = _clients.size();
@@ -205,19 +220,16 @@ namespace Messaging { namespace Benchmark {
                 
                 // received bytes
                 
-                found->second.processData(data.front().data<unsigned char>(), data.front().size(), [&] {
+                found->second.processData(data.data<unsigned char>(), data.size(), [&] {
                 
-                    Message okay;
-                    
-                    okay.envelope().emplace_back(connectionId);
-                    okay.emplace_back("OK");
-                    
-                    okay.send(_server, Message::block::blocking);
+                    _connectionId.send(_server, Frame::block::blocking, Frame::more::more);
+                    Frame("OK").send(_server, Frame::block::blocking, Frame::more::none);
 
                 });
                 
             }
             
+            _state = &Server::receiveConnId;
         }
         
     private:
@@ -228,7 +240,9 @@ namespace Messaging { namespace Benchmark {
         State _state;
         size_t _complete;
         size_t _maxConcurrentClients;
-        std::map<std::string, Client> _clients;
+        std::map<Frame, Client> _clients;
+        
+        Frame _connectionId;
         
     };
     
@@ -286,30 +300,34 @@ namespace Messaging { namespace Benchmark {
         
         void receiveConnId() {
 
-            Message connect;
-            
-            connect.receive(_server, Message::block::blocking);
-            
-            _connectionId = connect.envelope().front().str();
+            _connectionId.receive(_server, Frame::block::blocking);
 
+            if ( ! _connectionId.hasMore()) {
+                throw;
+            }
+            
+            // receive zero data frame;
+            Frame nil;
+            
+            nil.receive(_server, Frame::block::blocking);
+            
+            if (nil.size() > 0) {
+                throw ;
+            }
+            
             _state = &Client::sendData;
             
         }
         
         void sendData() {
-
-            Message msg;
-            
-            msg.envelope().emplace_back(_connectionId);
             
             Frame data(_data.size()+2);
-            *data.data<char>() = _data.size() >> 8;
-            *(data.data<char>()+1) = _data.size() & 0xFF;
-            memcpy(data.data<char>()+2, _data.data(), _data.size());
+            *(data.data<unsigned char>()) = _data.size() >> 8;
+            *(data.data<unsigned char>()+1) = _data.size() & 0xFF;
+            memcpy(data.data<unsigned char>()+2, _data.data(), _data.size());
             
-            msg.emplace_back(std::move(data));
-            
-            msg.send(_server);
+            _connectionId.send(_server, Frame::block::blocking, Frame::more::more);
+            data.send(_server, Frame::block::blocking, Frame::more::none);
             
             _sentBytes += _data.size();
             _sentMessages++;
@@ -319,25 +337,34 @@ namespace Messaging { namespace Benchmark {
         }
         
         void receiveOkay() {
+
+            _connectionId = std::move(Frame());
             
-            Message okay;
-            
-            okay.receive(_server, Message::block::blocking);
+            try {
+                
+                _connectionId.receive(_server, Frame::block::blocking);
+                
+            } catch (Exception &e) {
+                
+                if (e.errorCode() == EAGAIN) {
+                    return;
+                }
+                throw;
+            }
             
             _state = &Client::terminate;
-
-            if (okay.envelope().front().str() != _connectionId) {
-                std::cout << "C: Expected ID " << _connectionId << ", got " << okay.front().size() << " " << okay.envelope().front().str() << std::endl;
+            
+            Frame okay;
+            
+            okay.receive(_server, Frame::block::none);
+            
+            if (okay.size() == 0) {
+                std::cout << "C: " << _connectionId << " - " << "Disconnect" << std::endl;
                 return;
             }
             
-            if (okay.front().size() == 0) {
-                std::cout << "C: " << okay.envelope().front() << " - " << "Disconnect" << std::endl;
-                return;
-            }
-            
-            if (okay.front().str() != "OK") {
-                std::cout << "C: Expected OK, got " << okay.front().size() << " " << okay.front().str() << std::endl;
+            if (okay.str() != "OK") {
+                std::cout << "C: Expected OK, got " << okay << std::endl;
                 return;
             }
 
@@ -355,15 +382,12 @@ namespace Messaging { namespace Benchmark {
         
         void sendEnd() {
             
-            Message end;
             Frame size(2);
             *size.data<char>() = 0;
             *(size.data<char>()+1) = 0;
-            
-            end.envelope().emplace_back(_connectionId);
-            end.emplace_back(std::move(size));
-            
-            end.send(_server, Message::block::blocking);
+
+            _connectionId.send(_server, Frame::block::blocking, Frame::more::more);
+            size.send(_server, Frame::block::blocking, Frame::more::none);
             
             _state = &Client::terminate;
             
@@ -382,7 +406,7 @@ namespace Messaging { namespace Benchmark {
         Context _ctx;
         Socket _server;
         State _state;
-        std::string _connectionId;
+        Frame _connectionId;
         size_t _sentBytes;
         size_t _sentMessages;
         std::string _data;
@@ -559,16 +583,16 @@ namespace Messaging { namespace Benchmark {
        
         std::chrono::seconds duration(3);
         
-        size_t numWorkers = 3;
+        size_t numWorkers = 2;
         size_t ioThreads = 1;
     
         std::cout << "ioThreads = " << ioThreads << ", numWorkers = " << numWorkers << std::endl;
         
         std::cout << "nClients, MsgSize, Msg/sec, Bytes/sec" << std::endl;
         
-        for(int clients=1024 ; clients <= 1024 ; clients *= 4) {
+        for(int clients=1 ; clients <= 1024 ; clients *= 4) {
 
-            for (size_t msgSize = 512 ; msgSize <= 512 ; msgSize *= 4) {
+            for (size_t msgSize = 8 ; msgSize <= 8192 ; msgSize *= 4) {
                 
                 Test test(clients, msgSize, duration, numWorkers, ioThreads);
                 

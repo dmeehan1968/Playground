@@ -21,18 +21,34 @@ namespace Messaging {
     public:
         
         Frame() {
-            zmq_msg_init(&_msg);
+            
+            if (zmq_msg_init(&_msg) < 0) {
+                throw Exception("message init failed");
+            }
         }
         
         Frame(const size_t size) {
-            zmq_msg_init_size(&_msg, size);
+            
+            if (zmq_msg_init_size(&_msg, size) < 0) {
+                throw Exception("message init with size failed");
+            }
         }
         
         Frame(const std::string &string) {
             
-            zmq_msg_init_size(&_msg, string.size());
+            if (zmq_msg_init_size(&_msg, string.size()) < 0) {
+                throw Exception("message init with size for string failed");
+            }
             memcpy(zmq_msg_data(&_msg), string.data(), string.size());
 
+        }
+        
+        Frame(void *data, const size_t size, zmq_free_fn ffn, void *hint) {
+
+            if (zmq_msg_init_data(&_msg, data, size, ffn, hint) < 0) {
+                throw Exception("message init with data failed");
+            }
+            
         }
 
         ~Frame() {
@@ -59,6 +75,12 @@ namespace Messaging {
             zmq_msg_init(&_msg);
             moveFrom(std::move(other));
             return *this;
+        }
+        
+        bool operator < (const Frame &other) const {
+        
+            if (size() < other.size()) return true;
+            return memcmp(data<void>(), other.data<void>(), std::min(size(), other.size())) < 0;
         }
         
         size_t size() const {

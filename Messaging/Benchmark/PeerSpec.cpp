@@ -586,15 +586,18 @@ namespace Messaging { namespace Benchmark {
         const size_t ioThreads = 1;         // Number of ZeroMQ threads
         const size_t numWorkers = 2;        // Number of client worker threads
         const size_t minClients = 1;        // Minimum number of clients
-        const size_t maxClients = 1024;     // Maximum number of clients
+        const size_t maxClients = 0;     // Maximum number of clients
         const size_t scaleClients = 4;      // Scale factor for clients
         const size_t minMsgSize = 8;        // Minimum message size
         const size_t maxMsgSize = 8192;     // Maximum message size
         const size_t scaleMsgSize = 4;      // Scale factor for message size
         
-        std::cout << "ioThreads = " << ioThreads << ", numWorkers = " << numWorkers << std::endl;
-        
-        std::cout << "nClients, MsgSize, Msg/sec, Bytes/sec" << std::endl;
+        if (maxClients * maxMsgSize > 0) {
+            
+            std::cout << "ioThreads = " << ioThreads << ", numWorkers = " << numWorkers << std::endl;
+            std::cout << "nClients, MsgSize, Msg/sec, Bytes/sec" << std::endl;
+            
+        }
         
         for(int clients=minClients ; clients <= maxClients ; clients *= scaleClients) {
 

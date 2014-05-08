@@ -19,11 +19,13 @@
 		A3672F7C190A754500F9EE5E /* ProxySpec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3672F7B190A754500F9EE5E /* ProxySpec.cpp */; };
 		A3672F7F190A758200F9EE5E /* Proxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3672F7D190A758200F9EE5E /* Proxy.cpp */; };
 		A36EDD951917F26500AD7925 /* PeerSpec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A36EDD941917F26500AD7925 /* PeerSpec.cpp */; };
+		A36EDD9B191AA0FE00AD7925 /* PubSubMultipartSpec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A36EDD9A191AA0FE00AD7925 /* PubSubMultipartSpec.cpp */; };
 		A3B1F9DB19016AC700DA0C90 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3B1F9DA19016AC700DA0C90 /* main.cpp */; };
 		A3B1F9DD19016B1D00DA0C90 /* ContextSpec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3B1F9DC19016B1D00DA0C90 /* ContextSpec.cpp */; };
 		A3B1F9E019016C4000DA0C90 /* Context.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3B1F9DE19016C4000DA0C90 /* Context.cpp */; };
 		A3B1F9E219052FD300DA0C90 /* SocketSpec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3B1F9E119052FD300DA0C90 /* SocketSpec.cpp */; };
 		A3B1F9E51905300600DA0C90 /* Socket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3B1F9E31905300600DA0C90 /* Socket.cpp */; };
+		A3FC916A191AACF900726D01 /* SingleVsMultiPartSpec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3FC9169191AACF900726D01 /* SingleVsMultiPartSpec.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -57,6 +59,7 @@
 		A3672F7D190A758200F9EE5E /* Proxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Proxy.cpp; sourceTree = "<group>"; };
 		A3672F7E190A758200F9EE5E /* Proxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Proxy.h; sourceTree = "<group>"; };
 		A36EDD941917F26500AD7925 /* PeerSpec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PeerSpec.cpp; sourceTree = "<group>"; };
+		A36EDD9A191AA0FE00AD7925 /* PubSubMultipartSpec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PubSubMultipartSpec.cpp; sourceTree = "<group>"; };
 		A3B1F9CC190168EA00DA0C90 /* Messaging */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Messaging; sourceTree = BUILT_PRODUCTS_DIR; };
 		A3B1F9DA19016AC700DA0C90 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		A3B1F9DC19016B1D00DA0C90 /* ContextSpec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContextSpec.cpp; sourceTree = "<group>"; };
@@ -65,6 +68,7 @@
 		A3B1F9E119052FD300DA0C90 /* SocketSpec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SocketSpec.cpp; sourceTree = "<group>"; };
 		A3B1F9E31905300600DA0C90 /* Socket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Socket.cpp; sourceTree = "<group>"; };
 		A3B1F9E41905300600DA0C90 /* Socket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Socket.h; sourceTree = "<group>"; };
+		A3FC9169191AACF900726D01 /* SingleVsMultiPartSpec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SingleVsMultiPartSpec.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +85,7 @@
 		A3672F80190AA4F600F9EE5E /* Examples */ = {
 			isa = PBXGroup;
 			children = (
+				A36EDD9A191AA0FE00AD7925 /* PubSubMultipartSpec.cpp */,
 			);
 			path = Examples;
 			sourceTree = "<group>";
@@ -89,6 +94,7 @@
 			isa = PBXGroup;
 			children = (
 				A36EDD941917F26500AD7925 /* PeerSpec.cpp */,
+				A3FC9169191AACF900726D01 /* SingleVsMultiPartSpec.cpp */,
 			);
 			path = Benchmark;
 			sourceTree = "<group>";
@@ -218,6 +224,8 @@
 				A3B1F9E219052FD300DA0C90 /* SocketSpec.cpp in Sources */,
 				A3672F7C190A754500F9EE5E /* ProxySpec.cpp in Sources */,
 				A36EDD951917F26500AD7925 /* PeerSpec.cpp in Sources */,
+				A36EDD9B191AA0FE00AD7925 /* PubSubMultipartSpec.cpp in Sources */,
+				A3FC916A191AACF900726D01 /* SingleVsMultiPartSpec.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

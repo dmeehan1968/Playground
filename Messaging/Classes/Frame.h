@@ -43,6 +43,16 @@ namespace Messaging {
 
         }
         
+        Frame(const char *data) {
+            
+            auto len = strlen(data);
+            if (zmq_msg_init_size(&_msg, len) < 0) {
+                throw Exception("message init with C string failed");
+            }
+            memcpy(zmq_msg_data(&_msg), data, len);
+            
+        }
+        
         Frame(void *data, const size_t size, zmq_free_fn ffn, void *hint) {
 
             if (zmq_msg_init_data(&_msg, data, size, ffn, hint) < 0) {

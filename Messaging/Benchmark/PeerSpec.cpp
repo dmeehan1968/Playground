@@ -338,8 +338,6 @@ namespace Messaging { namespace Benchmark {
         
         void receiveOkay() {
 
-            _connectionId = std::move(Frame());
-            
             try {
                 
                 _connectionId.receive(_server, Frame::block::blocking);

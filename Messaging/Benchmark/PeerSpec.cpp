@@ -586,10 +586,10 @@ namespace Messaging { namespace Benchmark {
        
         std::chrono::seconds duration(3);   // Test duration (actually sending data, after setup)
         
-        const size_t ioThreads = 2;         // Number of ZeroMQ threads
+        const size_t ioThreads = 1;         // Number of ZeroMQ threads
         const size_t numWorkers = 2;        // Number of client worker threads
         const size_t minClients = 1;        // Minimum number of clients
-        const size_t maxClients = 1024;     // Maximum number of clients
+        const size_t maxClients = 0;     // Maximum number of clients
         const size_t scaleClients = 2;      // Scale factor for clients
         const size_t minMsgSize = 8;        // Minimum message size
         const size_t maxMsgSize = 8192;     // Maximum message size

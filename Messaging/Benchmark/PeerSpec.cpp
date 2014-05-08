@@ -577,40 +577,124 @@ namespace Messaging { namespace Benchmark {
         
     };
 
+    struct Stat {
+        size_t mps;
+        double kbps;
+    };
+    
     describe(Peer, {
        
         std::chrono::seconds duration(3);   // Test duration (actually sending data, after setup)
         
-        const size_t ioThreads = 1;         // Number of ZeroMQ threads
+        const size_t ioThreads = 2;         // Number of ZeroMQ threads
         const size_t numWorkers = 2;        // Number of client worker threads
         const size_t minClients = 1;        // Minimum number of clients
-        const size_t maxClients = 0;     // Maximum number of clients
-        const size_t scaleClients = 4;      // Scale factor for clients
+        const size_t maxClients = 1024;     // Maximum number of clients
+        const size_t scaleClients = 2;      // Scale factor for clients
         const size_t minMsgSize = 8;        // Minimum message size
         const size_t maxMsgSize = 8192;     // Maximum message size
-        const size_t scaleMsgSize = 4;      // Scale factor for message size
+        const size_t scaleMsgSize = 2;      // Scale factor for message size
         
-        if (maxClients * maxMsgSize > 0) {
-            
-            std::cout << "ioThreads = " << ioThreads << ", numWorkers = " << numWorkers << std::endl;
-            std::cout << "nClients, MsgSize, Msg/sec, Bytes/sec" << std::endl;
-            
-        }
+        std::map<size_t, std::map<size_t, struct Stat>> _clientStats;
         
-        for(int clients=minClients ; clients <= maxClients ; clients *= scaleClients) {
+        for(size_t clients=minClients ; clients <= maxClients ; clients *= scaleClients) {
 
+            std::ostringstream clientContext;
+
+            clientContext << clients << " clients";
+
+            context(clientContext.str(), {
+
+                for (size_t msgSize = minMsgSize ; msgSize <= maxMsgSize ; msgSize *= scaleMsgSize) {
+                
+                    std::ostringstream messageContext;
+
+                    messageContext << msgSize << " bytes message";
+
+                    context(messageContext.str(), {
+                        
+                        Test test(clients, msgSize, duration, numWorkers, ioThreads);
+                        
+                        auto complete = test();
+                        
+                        it("completes test", {
+                            
+                            expect(complete).should.equal(clients);
+                            
+                        });
+                        
+                        auto &stats = _clientStats[clients][msgSize];
+                        stats.mps = test.totalMessages() / duration.count();
+                        stats.kbps = ((double)test.totalBytes() / duration.count()) / 1024;
+
+                    });
+
+                }
+
+            });
+                    
+        }
+
+        if (_clientStats.size() > 0) {
+            
+            std::cout << "ioThreads = " << ioThreads << ", numWorkers = " << numWorkers << ", duration = " << duration.count() << std::endl;
+            
+            std::cout << "Messages Per Second" << std::endl << "-------------------------------" << std::endl;
+            
+            std::cout << "NumClients";
+            
             for (size_t msgSize = minMsgSize ; msgSize <= maxMsgSize ; msgSize *= scaleMsgSize) {
                 
-                Test test(clients, msgSize, duration, numWorkers, ioThreads);
-                
-                auto complete = test();
-                
-                std::cout << complete << ", " << msgSize << ", " << test.totalMessages() / duration.count() << ", " << test.totalBytes() / duration.count() << std::endl;
+                std::cout << ", " << msgSize;
                 
             }
-
+            
+            std::cout << std::endl;
+            
+            for (auto &clientStat : _clientStats) {
+                
+                std::cout << clientStat.first;
+                
+                for( auto &msgStat : clientStat.second ) {
+                    
+                    std::cout << ", " << msgStat.second.mps;
+                    
+                }
+                
+                std::cout << std::endl;
+                
+            }
+            
+            std::cout << std::endl;
+            
+            std::cout << "Kilobytes Per Second" << std::endl << "-------------------------------" << std::endl;
+            
+            std::cout << "NumClients";
+            
+            for (size_t msgSize = minMsgSize ; msgSize <= maxMsgSize ; msgSize *= scaleMsgSize) {
+                
+                std::cout << ", " << msgSize;
+                
+            }
+            
+            std::cout << std::endl;
+            
+            for (auto &clientStat : _clientStats) {
+                
+                std::cout << clientStat.first;
+                
+                for( auto &msgStat : clientStat.second ) {
+                    
+                    std::cout << ", " << msgStat.second.kbps;
+                    
+                }
+                
+                std::cout << std::endl;
+            }
+            
+            std::cout << std::endl << std::endl;
+            
         }
-
     });
     
 } }

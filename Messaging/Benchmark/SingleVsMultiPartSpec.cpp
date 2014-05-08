@@ -242,51 +242,55 @@ namespace Messaging { namespace Benchmark {
 
         Context ctx;
         
-        std::chrono::seconds duration(1);
+        std::chrono::seconds duration(0);
 
-        context("single", {
+        if (duration.count() > 0) {
             
-            std::vector<std::thread> _threads;
-            
-            auto singlePub = SinglePublisher(ctx, duration);
-            auto singleSub = SingleSubscriber(ctx);
-            
-            _threads.emplace_back(std::ref(singlePub));
-            _threads.emplace_back(std::ref(singleSub));
-            
-            std::for_each(_threads.begin(), _threads.end(), std::mem_fn(&std::thread::join));
-            
-            std::cout << "    : " << (singleSub.frames() / duration.count()) << " Messages Per Second" << std::endl;
-            
-            it("receives whats sent", {
+            context("single", {
                 
-                expect(singlePub.frames()).should.equal(singleSub.frames());
+                std::vector<std::thread> _threads;
                 
-            });
-
-        });
-        
-        context("multi", {
-            
-            std::vector<std::thread> _threads;
-            
-            auto multiPub = MultiPublisher(ctx, duration);
-            auto multiSub = MultiSubscriber(ctx);
-            
-            _threads.emplace_back(std::ref(multiPub));
-            _threads.emplace_back(std::ref(multiSub));
-            
-            std::for_each(_threads.begin(), _threads.end(), std::mem_fn(&std::thread::join));
-            
-            std::cout << "    : " << (multiSub.frames() / duration.count()) << " Messages Per Second" << std::endl;
-            
-            it("receives whats sent", {
+                auto singlePub = SinglePublisher(ctx, duration);
+                auto singleSub = SingleSubscriber(ctx);
                 
-                expect(multiPub.frames()).should.equal(multiSub.frames());
+                _threads.emplace_back(std::ref(singlePub));
+                _threads.emplace_back(std::ref(singleSub));
+                
+                std::for_each(_threads.begin(), _threads.end(), std::mem_fn(&std::thread::join));
+                
+                std::cout << "    : " << (singleSub.frames() / duration.count()) << " Messages Per Second" << std::endl;
+                
+                it("receives whats sent", {
+                    
+                    expect(singlePub.frames()).should.equal(singleSub.frames());
+                    
+                });
                 
             });
             
-        });
+            context("multi", {
+                
+                std::vector<std::thread> _threads;
+                
+                auto multiPub = MultiPublisher(ctx, duration);
+                auto multiSub = MultiSubscriber(ctx);
+                
+                _threads.emplace_back(std::ref(multiPub));
+                _threads.emplace_back(std::ref(multiSub));
+                
+                std::for_each(_threads.begin(), _threads.end(), std::mem_fn(&std::thread::join));
+                
+                std::cout << "    : " << (multiSub.frames() / duration.count()) << " Messages Per Second" << std::endl;
+                
+                it("receives whats sent", {
+                    
+                    expect(multiPub.frames()).should.equal(multiSub.frames());
+                    
+                });
+                
+            });
+
+        }
 
     });
     

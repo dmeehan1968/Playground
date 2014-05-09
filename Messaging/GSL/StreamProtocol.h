@@ -13,6 +13,7 @@
 
 namespace StreamProtocol {
 
+    template <class Frame = Messaging::Frame>
     class Parser {
 
     public:
@@ -26,9 +27,13 @@ namespace StreamProtocol {
             Data
         };
         
-        Parser() : type(Type::Message) {}
+        Parser()
+        :
+            type(Type::Message),
+            field(Field::Client)
+        {}
         
-        bool parse(const Messaging::Frame &frame) {
+        bool parse(const Frame &frame) {
 
             switch (type) {
 
@@ -70,16 +75,9 @@ namespace StreamProtocol {
         Type type;
         Field field;
         
-        Messaging::Frame client;
-        Messaging::Frame data;
+        Frame client;
+        Frame data;
         
-    };
-    
-    class Message {
-      
-        Messaging::Frame client;
-        Messaging::Frame data;
-
     };
     
 }

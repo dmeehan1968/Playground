@@ -96,13 +96,13 @@ namespace Messaging {
         bool operator == (const Frame &other) const {
             
             if (size() != other.size()) return false;
-            return memcmp(data<void>(), other.data<void>(), std::min(size(), other.size())) != 0;
+            return memcmp(data<void>(), other.data<void>(), std::min(size(), other.size())) == 0;
             
         }
         
         bool operator != (const Frame &other) const {
             
-            return operator ==(other);
+            return ! operator ==(other);
             
         }
         

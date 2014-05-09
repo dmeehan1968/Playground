@@ -1,0 +1,35 @@
+
+<class name="notifications">
+
+    <header>
+
+        <field name = "id" type = "string">Message Identifier</field>
+        
+    </header>
+
+    <message name = "tag" id = "WRS/1.0/TAG">
+        
+        <field name = "serial" type = "integer">Reader Serial</field>
+        <field name = "timestamp" type = "timestamp">Server Timestamp</field>
+        <field name = "first seen time" type = "integer">First Seen Time (seconds since Reader boot)</field>
+        <field name = "last seen time" type = "integer">Last Seen Time (seconds since Reader boot)</field>
+        <field name = "test" type = "frame">Temp</field>
+        
+    </message>
+
+    <message name = "heartbeat" id = "WRS/1.0/HEARTBEAT">
+        
+        <field name = "serial" type = "integer">Reader Serial</field>
+        <field name = "timestamp" type = "timestamp">Server Timestamp</field>
+        <field name = "interval" type = "integer">Heartbeat interval</field>
+        <field name = "auto report" type = "bool">Auto Report</field>
+        <field name = "receiver gain" type = "integer">Receiver Gain</field>
+        <field name = "relay 0" type = "bool">Relay 0</field>
+        <field name = "relay 1" type = "bool">Relay 1</field>
+        <field name = "has tags" type = "bool">Has Tags</field>
+        
+    </message>
+
+</class>
+
+

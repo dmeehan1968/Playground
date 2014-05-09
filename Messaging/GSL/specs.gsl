@@ -1,0 +1,40 @@
+.#  Trivial IDL generator (specs.gsl)
+.#
+.output "$(class.name).md"
+## The $(class.Name) Protocol
+.for message
+.   frames = count (class->header.field) + count (field)
+
+A $(message.NAME) consists of a multipart message of $(frames)
+frames:
+
+| Frame # | Field | Type |
+| ------------- | ------------- | ---------- |
+.   for class->header.field
+.       if name = "id"
+|$(item ())|$(field.:)|"$(message.id:)"|
+.       else
+* Frame $(item ()): "$(value:)" ($(string.length ("$(value)")) \
+                                 bytes, $(field.:))
+.       endif
+.   endfor
+.   index = count (class->header.field) + 1
+.   for field
+|$(index)|$(field.?'')| \
+.       if type = "string"
+Printable string \
+.       elsif type = "frame"
+Opaque binary \
+.       elsif type = "integer"
+Integer \
+.       elsif type = "timestamp"
+ISO 8601 \
+.       elsif type = "bool"
+Boolean \
+.       else
+.           echo "E: unknown field type : $(type)"
+.       endif
+|
+.       index += 1
+.   endfor
+.endfor

@@ -7,3 +7,6 @@
 [submodule "ZingBDD"]
 	path = ZingBDD
 	url = https://github.com/dmeehan1968/ZingBDD.git
+[submodule "gsl"]
+	path = gsl
+	url = http://github.com/imatix/gsl.git

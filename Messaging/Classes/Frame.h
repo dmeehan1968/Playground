@@ -93,6 +93,19 @@ namespace Messaging {
             return memcmp(data<void>(), other.data<void>(), std::min(size(), other.size())) < 0;
         }
         
+        bool operator == (const Frame &other) const {
+            
+            if (size() != other.size()) return false;
+            return memcmp(data<void>(), other.data<void>(), std::min(size(), other.size())) != 0;
+            
+        }
+        
+        bool operator != (const Frame &other) const {
+            
+            return operator ==(other);
+            
+        }
+        
         size_t size() const {
             return zmq_msg_size(&_msg);
         }

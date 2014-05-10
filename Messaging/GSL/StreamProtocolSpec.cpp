@@ -62,22 +62,22 @@ describe(StreamProtocol, {
 
     using Codec = Codec<MockFrame>;
     
-    Codec codec;
-    
-    context("Decoding", {
+    context("decoding", {
 
-        context("message", {
+        Codec codec;
+        
+        context("stream message", {
             
             MockFrame expectedClient("12345", true);
-            MockFrame expectedData;
+            MockFrame expectedData("ABCDEF", false);
             
-            it("parses first field", {
+            it("decodes first field", {
                 
                 codec.decode(expectedClient);
                 
             });
             
-            it("parses second field", {
+            it("decodes second field", {
                 
                 codec.decode(expectedData);
                 
@@ -101,11 +101,35 @@ describe(StreamProtocol, {
                 
             });
             
-            
-            
         });
 
     });
-    
+
+    context("encoding", {
+        
+        Codec codec;
+        
+        context("stream message", {
+            
+            codec.type = Codec::MessageType::Stream;
+            codec.stream.client = MockFrame("12345", true);
+            codec.stream.data = MockFrame("ABCDEF", false);
+            
+            it("encodes client", {
+                
+                expect(codec.encode().data()).should.equal("12345");
+                
+            });
+            
+            it("encodes data", {
+                
+                expect(codec.encode().data()).should.equal("ABCDEF");
+                
+            });
+            
+        });
+        
+    });
+
 });
 

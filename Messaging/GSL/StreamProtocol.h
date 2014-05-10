@@ -36,11 +36,16 @@ namespace StreamProtocol {
             Data
         };
         
-        Codec()
-        :
-            type(MessageType::Stream),
-            field(Field::Client)
-        {}
+        Codec() {
+            reset();
+        }
+        
+        void reset() {
+            
+            type = MessageType::Stream;
+            field = Field::Client;
+            
+        }
         
         bool decode(const Frame &frame) {
 
@@ -63,7 +68,7 @@ namespace StreamProtocol {
                             return true;
                             
                         default:
-                            break;
+                            throw;
                             
                     }
 
@@ -78,6 +83,34 @@ namespace StreamProtocol {
             }
             
             return false;
+            
+        }
+        
+        Frame encode() {
+        
+            switch (type) {
+                case MessageType::Stream:
+                    
+                    switch (field) {
+                            
+                        case Field::Client:
+                            
+                            field = Field::Data;
+                            return stream.client;
+
+                        case Field::Data:
+                            
+                            field = Field::Client;
+                            return stream.data;
+                            
+                        default:
+                            throw;
+                    }
+                    break;
+                    
+                default:
+                    break;
+            }
             
         }
         

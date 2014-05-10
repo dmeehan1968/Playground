@@ -14,12 +14,21 @@
 namespace StreamProtocol {
 
     template <class Frame = Messaging::Frame>
-    class Parser {
+    class Codec {
 
     public:
         
-        enum Type {
-            Message
+        class StreamMessage {
+        
+        public:
+            
+            Frame client;
+            Frame data;
+            
+        };
+        
+        enum MessageType {
+            Stream
         };
         
         enum Field {
@@ -27,29 +36,29 @@ namespace StreamProtocol {
             Data
         };
         
-        Parser()
+        Codec()
         :
-            type(Type::Message),
+            type(MessageType::Stream),
             field(Field::Client)
         {}
         
-        bool parse(const Frame &frame) {
+        bool decode(const Frame &frame) {
 
             switch (type) {
 
-                case Type::Message:
+                case MessageType::Stream:
                     
                     switch (field) {
                             
                         case Field::Client:
                             
-                            client = frame;
+                            stream.client = frame;
                             field = Field::Data;
                             break;
                             
                         case Field::Data:
                             
-                            data = frame;
+                            stream.data = frame;
                             field = Field::Client;
                             return true;
                             
@@ -72,11 +81,10 @@ namespace StreamProtocol {
             
         }
         
-        Type type;
+        MessageType type;
         Field field;
-        
-        Frame client;
-        Frame data;
+
+        StreamMessage stream;
         
     };
     

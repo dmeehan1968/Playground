@@ -1,6 +1,10 @@
 ## The Stream Protocol
 
-A MESSAGE consists of a multipart message of 2
+NB: This files is 100% generated and will be recreated
+at the next build.  Any modifications WILL BE LOST!
+
+
+A STREAM consists of a multipart message of 2
 frames:
 
 | Frame # | Field | Type |

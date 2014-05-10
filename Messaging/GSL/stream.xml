@@ -3,11 +3,11 @@
 
     <header />
 
-    <message name="message">
+    <message name="stream">
 
         <field name="client" type="frame">Client ID</field>
         <field name="data" type="frame">Data</field>
-
+        
     </message>
 
 </class>

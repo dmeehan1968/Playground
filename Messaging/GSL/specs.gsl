@@ -1,10 +1,13 @@
 .#  Trivial IDL generator (specs.gsl)
 .#
-.output "$(class.name).md"
+.output "$(switches.arg1)"
 ## The $(class.Name) Protocol
+
+NB: This files is 100% generated and will be recreated
+at the next build.  Any modifications WILL BE LOST!
+
 .for message
 .   frames = count (class->header.field) + count (field)
-
 A $(message.NAME) consists of a multipart message of $(frames)
 frames:
 

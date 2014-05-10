@@ -60,49 +60,52 @@ inline std::ostream &operator << (std::ostream &stream, const MockFrame &frame) 
 
 describe(StreamProtocol, {
 
-    using Parser = Parser<MockFrame>;
+    using Codec = Codec<MockFrame>;
     
-    Parser parser;
+    Codec codec;
     
-    context("message", {
-        
-        MockFrame expectedClient("12345", true);
-        MockFrame expectedData;
-        
-        it("parses first field", {
+    context("Decoding", {
+
+        context("message", {
             
-            parser.parse(expectedClient);
+            MockFrame expectedClient("12345", true);
+            MockFrame expectedData;
+            
+            it("parses first field", {
+                
+                codec.decode(expectedClient);
+                
+            });
+            
+            it("parses second field", {
+                
+                codec.decode(expectedData);
+                
+            });
+            
+            it("is a message", {
+                
+                expect(codec.type).should.equal(Codec::MessageType::Stream);
+                
+            });
+            
+            it("matches client id", {
+                
+                expect(codec.stream.client).should.equal(expectedClient);
+                
+            });
+            
+            it("matches data", {
+                
+                expect(codec.stream.data).should.equal(expectedData);
+                
+            });
+            
+            
             
         });
 
-        it("parses second field", {
-            
-            parser.parse(expectedData);
-            
-        });
-        
-        it("is a message", {
-            
-            expect(parser.type).should.equal(Parser::Type::Message);
-            
-        });
-
-        it("matches client id", {
-            
-            expect(parser.client).should.equal(expectedClient);
-            
-        });
-        
-        it("matches data", {
-            
-            expect(parser.data).should.equal(expectedData);
-            
-        });
-
-
-        
     });
-
     
 });
 

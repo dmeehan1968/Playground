@@ -13,8 +13,7 @@
         <field name = "timestamp" type = "timestamp">Server Timestamp</field>
         <field name = "first seen time" type = "integer">First Seen Time (seconds since Reader boot)</field>
         <field name = "last seen time" type = "integer">Last Seen Time (seconds since Reader boot)</field>
-        <field name = "test" type = "frame">Temp</field>
-        
+
     </message>
 
     <message name = "heartbeat" id = "WRS/1.0/HEARTBEAT">

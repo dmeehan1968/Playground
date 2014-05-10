@@ -1,6 +1,9 @@
 ## The Notifications Protocol
 
-A TAG consists of a multipart message of 6
+NB: This files is 100% generated and will be recreated
+at the next build.  Any modifications WILL BE LOST!
+
+A TAG consists of a multipart message of 5
 frames:
 
 | Frame # | Field | Type |
@@ -10,8 +13,6 @@ frames:
 |3|Server Timestamp| ISO 8601 |
 |4|First Seen Time (seconds since Reader boot)| Integer |
 |5|Last Seen Time (seconds since Reader boot)| Integer |
-|6|Temp| Opaque binary |
-
 A HEARTBEAT consists of a multipart message of 9
 frames:
 

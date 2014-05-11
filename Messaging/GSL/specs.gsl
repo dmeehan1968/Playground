@@ -3,7 +3,7 @@
 .output "$(switches.arg1)"
 ## The $(class.Name) Protocol
 
-NB: This files is 100% generated and will be recreated
+NB: This file is 100% generated and will be recreated
 at the next build.  Any modifications WILL BE LOST!
 
 .for message

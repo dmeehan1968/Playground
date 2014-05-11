@@ -3,10 +3,10 @@
 
     <header />
 
-    <message name="stream">
+    <message name="raw">
 
         <field name="data" type="frame">Data</field>
         
     </message>
-
+    
 </class>

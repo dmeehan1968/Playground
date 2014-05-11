@@ -1,15 +1,17 @@
 .#  Trivial IDL generator (specs.gsl)
 .#
-.output "$(switches.arg1)"
+.output "$(switches.arg1:no)"
 ## The $(class.Name) Protocol
 
-NB: This file is 100% generated and will be recreated
-at the next build.  Any modifications WILL BE LOST!
-
+$("NB: This file is 100% generated and will be recreated at the next build.  Any modifications WILL BE LOST!":justify)
 .for message
 .   frames = count (class->header.field) + count (field)
-A $(message.NAME) consists of a multipart message of $(frames)
-frames:
+
+.if frames > 1
+$("A $(message.NAME) message consists of a multipart message of $(frames) frames:":justify)
+.else
+$("A $(message.NAME) message consists of a single part message:":justify)
+.endif
 
 | Frame # | Field | Type |
 | ------------- | ------------- | ---------- |

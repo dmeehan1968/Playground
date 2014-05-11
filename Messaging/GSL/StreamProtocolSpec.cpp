@@ -48,7 +48,7 @@ describe(StreamProtocol, {
                 
                 context("data event", {
                     
-                    auto data = std::dynamic_pointer_cast<DataEvent>(event);
+                    auto data = std::dynamic_pointer_cast<RawEvent>(event);
                     
                     it("is a data event", {
                         

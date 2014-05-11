@@ -10,61 +10,16 @@
 #define __Messaging__StreamProtocol__
 
 #include "Message.h"
-#include "Reactor.h"
 
-/*
- 
- <class name = "stream">
-
-    <socket name = "frontend" codec = "stream" />
-    <socket name = "backend" codec = "session" />
- 
-    <state name = "open">
- 
-        <event name = "DATA" next = "ready">
- 
-            <action name="is empty" />
- 
-        </event>
- 
-        <event name = "terminate" next = "close">
- 
-            <action name="send" message="" />
- 
-        </event>
- 
-    </state>
- 
-    <state name = "ready">
- 
-        <event name = "DATA" next = "ready">
- 
-            <action name = "is empty" />
- 
-        </event>
- 
-        <event name = "terminate" next = "close">
- 
-            <action name="send" message="" />
- 
-        </event>
- 
-    </state>
- 
- </class>
- 
- */
-
-
-namespace StreamProtocol {
+namespace Messaging {
     
     class Event {
-    
+        
     public:
         
         Event(const Messaging::Frame &frame)
         :
-            replyTo(frame)
+        replyTo(frame)
         {}
         
         virtual ~Event() {}
@@ -73,11 +28,23 @@ namespace StreamProtocol {
         
     };
     
-    class DataEvent : public Event {
+    class AbstractCodec {
         
     public:
         
-        DataEvent(const Event &event, const Messaging::Frame &frame)
+        virtual void reset() = 0;
+        virtual std::shared_ptr<Messaging::Event> decode(const Messaging::Frame &frame) = 0;
+        
+    };
+}
+
+namespace StreamProtocol {
+    
+    class RawEvent : public Messaging::Event {
+        
+    public:
+        
+        RawEvent(const Event &event, const Messaging::Frame &frame)
         :
             Event(event),
             data(frame)
@@ -87,49 +54,61 @@ namespace StreamProtocol {
         
     };
     
-    class TerminateEvent : public Event {
+    class TerminateEvent : public Messaging::Event {
         
     public:
         
-        TerminateEvent(const Event &event)
+        TerminateEvent(const Messaging::Event &event)
         :
             Event(event)
         {}
         
     };
     
-    class Codec {
+    class Codec : public Messaging::AbstractCodec {
 
     public:
         
         enum class State {
           
             ReplyAddress,
-            Data
+            Data,
+            Complete
             
         };
         
-        Codec()
-        :
-            _state(State::ReplyAddress)
-        {}
+        Codec() {
+            
+            reset();
+            
+        }
         
-        std::shared_ptr<Event> decode(const Messaging::Frame &frame) {
+        void reset() {
+            
+            _state = State::ReplyAddress;
+            _event = nullptr;
+            
+        }
+        
+        std::shared_ptr<Messaging::Event> decode(const Messaging::Frame &frame) {
 
             switch (_state) {
                     
                 case State::ReplyAddress:
                     
                     _state = State::Data;
-                    _event = std::make_shared<Event>(frame);
+                    _event = std::make_shared<Messaging::Event>(frame);
                     break;
                     
                 case State::Data:
                     
-                    _state = State::ReplyAddress;
-                    _event = std::make_shared<DataEvent>(*_event, frame);
+                    _state = State::Complete;
+                    _event = std::make_shared<RawEvent>(*_event, frame);
                     break;
                     
+                case State::Complete:
+
+                    break;
             }
             
             return frame.hasMore() ? nullptr : _event;
@@ -139,7 +118,7 @@ namespace StreamProtocol {
     private:
         
         State _state;
-        std::shared_ptr<Event> _event;
+        std::shared_ptr<Messaging::Event> _event;
         
     };
     

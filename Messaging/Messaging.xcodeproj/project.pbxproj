@@ -16,6 +16,7 @@
 		A30B45CC19057FFA0058F066 /* Poller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30B45CA19057FFA0058F066 /* Poller.cpp */; };
 		A30D88C4191E46FA00BE1879 /* notifications.xml in Sources */ = {isa = PBXBuildFile; fileRef = A3A28C65191D2EFE008E9EEE /* notifications.xml */; };
 		A30D88CB191FB54100BE1879 /* StreamServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30D88C9191FB54100BE1879 /* StreamServer.cpp */; };
+		A30D88CE191FCCF000BE1879 /* StreamServer.xml in Sources */ = {isa = PBXBuildFile; fileRef = A30D88CC191FCC0D00BE1879 /* StreamServer.xml */; };
 		A3672F77190A615E00F9EE5E /* ReactorSpec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3672F76190A615E00F9EE5E /* ReactorSpec.cpp */; };
 		A3672F7A190A618D00F9EE5E /* Reactor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3672F78190A618D00F9EE5E /* Reactor.cpp */; };
 		A3672F7C190A754500F9EE5E /* ProxySpec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3672F7B190A754500F9EE5E /* ProxySpec.cpp */; };
@@ -47,18 +48,6 @@
 		};
 /* End PBXBuildRule section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		A3B1F9CA190168EA00DA0C90 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
 		A30B45BB19053CA50058F066 /* FrameSpec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrameSpec.cpp; sourceTree = "<group>"; };
 		A30B45BD19053CDC0058F066 /* Frame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Frame.cpp; sourceTree = "<group>"; };
@@ -75,6 +64,7 @@
 		A30D88C8191E7BD700BE1879 /* notifications.md */ = {isa = PBXFileReference; lastKnownFileType = text; path = notifications.md; sourceTree = "<group>"; };
 		A30D88C9191FB54100BE1879 /* StreamServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StreamServer.cpp; sourceTree = "<group>"; };
 		A30D88CA191FB54100BE1879 /* StreamServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamServer.h; sourceTree = "<group>"; };
+		A30D88CC191FCC0D00BE1879 /* StreamServer.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = StreamServer.xml; sourceTree = "<group>"; };
 		A3672F76190A615E00F9EE5E /* ReactorSpec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReactorSpec.cpp; sourceTree = "<group>"; };
 		A3672F78190A618D00F9EE5E /* Reactor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Reactor.cpp; sourceTree = "<group>"; };
 		A3672F79190A618D00F9EE5E /* Reactor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reactor.h; sourceTree = "<group>"; };
@@ -141,6 +131,7 @@
 				A3A28C6C191D4261008E9EEE /* StreamProtocolSpec.cpp */,
 				A30D88C9191FB54100BE1879 /* StreamServer.cpp */,
 				A30D88CA191FB54100BE1879 /* StreamServer.h */,
+				A30D88CC191FCC0D00BE1879 /* StreamServer.xml */,
 			);
 			path = GSL;
 			sourceTree = "<group>";
@@ -212,7 +203,6 @@
 			buildPhases = (
 				A3B1F9C8190168EA00DA0C90 /* Sources */,
 				A3B1F9C9190168EA00DA0C90 /* Frameworks */,
-				A3B1F9CA190168EA00DA0C90 /* CopyFiles */,
 			);
 			buildRules = (
 				A30D88C6191E66CE00BE1879 /* PBXBuildRule */,
@@ -279,6 +269,7 @@
 				A3A28C6D191D4261008E9EEE /* StreamProtocolSpec.cpp in Sources */,
 				A3A28C72191E4697008E9EEE /* stream.xml in Sources */,
 				A30D88C4191E46FA00BE1879 /* notifications.xml in Sources */,
+				A30D88CE191FCCF000BE1879 /* StreamServer.xml in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

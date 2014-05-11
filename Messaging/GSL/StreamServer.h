@@ -13,16 +13,35 @@
 #include "Reactor.h"
 #include "StreamProtocol.h"
 
+namespace SessionPacketProtocol {
+
+    class PacketEvent : public Messaging::Event {
+        
+    };
+    
+    class Codec : public Messaging::AbstractCodec {
+        
+    public:
+        
+        void reset() {}
+        
+        std::shared_ptr<Messaging::Event> decode(const Messaging::Frame &frame) {
+            return nullptr;
+        }
+    };
+    
+}
+
 namespace StreamServer {
 
     class Dispatch {
         
     public:
         
-        Dispatch(const StreamProtocol::Event &event)
+        Dispatch(const Messaging::Event &event)
         :
-        _event(event),
-        _handled(false)
+            _event(event),
+            _handled(false)
         {}
         
         template <class T>
@@ -49,7 +68,7 @@ namespace StreamServer {
         
     private:
         
-        const StreamProtocol::Event &_event;
+        const Messaging::Event &_event;
         bool _handled;
         
     };
@@ -62,20 +81,40 @@ namespace StreamServer {
             
             Open,
             Ready,
-            Terminate,
             Close
             
         };
         
+        class ControlEvent : public StreamProtocol::RawEvent {
+        
+        public:
+            
+            ControlEvent(const Messaging::Frame &replyTo, const Messaging::Frame &data)
+            :
+                RawEvent(Event(replyTo), data)
+            {}
+            
+        };
+        
+        class DataEvent : public StreamProtocol::RawEvent {
+            
+        public:
+            
+            DataEvent(const Messaging::Frame &replyTo, const Messaging::Frame &data)
+            :
+                RawEvent(Event(replyTo), data)
+            {}
+            
+        };
         
         Client(const Messaging::Socket &frontend, const Messaging::Socket &backend)
         :
-        _state(State::Open),
-        _frontend(frontend),
-        _backend(backend)
+            _state(State::Open),
+            _frontend(frontend),
+            _backend(backend)
         {}
         
-        State dispatch(const StreamProtocol::Event &event) {
+        State dispatch(const Messaging::Event &event) {
             
             Messaging::Message reply;
             
@@ -83,11 +122,13 @@ namespace StreamServer {
                     
                 case State::Open:
                     
-                    Dispatch(event).handle<StreamProtocol::DataEvent>([&](const StreamProtocol::DataEvent &event) {
+                    Dispatch(event).handle<StreamProtocol::RawEvent>([&](const StreamProtocol::RawEvent &event) {
                         
-                        _state = State::Ready;
+                        detectMessageType(event);
                         
-                        isEmptyAction(event);
+                    }).handle<ControlEvent>([&](const ControlEvent &event) {
+                        
+                        terminate(event);
                         
                     });
                     
@@ -95,17 +136,24 @@ namespace StreamServer {
                     
                 case State::Ready:
                     
-                    _state = State::Ready;
+                    Dispatch(event).handle<StreamProtocol::RawEvent>([&](const StreamProtocol::RawEvent &event) {
+                        
+                        detectMessageType(event);
+                        
+                    }).handle<ControlEvent>([&](const ControlEvent &event) {
+                        
+                        _state = State::Close;
+                        
+                    }).handle<DataEvent>([&](const DataEvent &event) {
+                        
+                        convertBytes(event);
+                        
+                    }).handle<SessionPacketProtocol::PacketEvent>([&](const SessionPacketProtocol::PacketEvent &event) {
+                        
+                        convertPacket(event);
+                        
+                    });
                     
-                    
-                    
-                    break;
-                    
-                case State::Terminate:
-                    
-                    _state = State::Close;
-                    
-                    reply.emplace_back("");
                     break;
                     
                 case State::Close:
@@ -130,14 +178,27 @@ namespace StreamServer {
         
     protected:
         
-        void isEmptyAction(const StreamProtocol::DataEvent &event) {
+        void detectMessageType(const StreamProtocol::RawEvent &event) {
             
-            if (event.data.size() > 0) {
+            if (event.data.size() == 0) {
                 
-                _state = State::Open;
-                dispatch(StreamProtocol::TerminateEvent(event));
+                throw ControlEvent(event.replyTo, event.data);
                 
             }
+            
+            throw DataEvent(event.replyTo, event.data);
+        }
+        
+        void terminate(const Messaging::Event &event) {
+            
+        }
+        
+        void convertBytes(const Messaging::Event &event) {
+            
+        }
+        
+        void convertPacket(const Messaging::Event &event) {
+            
         }
         
     private:
@@ -154,8 +215,8 @@ namespace StreamServer {
         
         Server(const Messaging::Socket &frontend, const Messaging::Socket &backend)
         :
-        _frontend(frontend),
-        _backend(backend)
+            _frontend(frontend),
+            _backend(backend)
         {}
         
         void operator()() {
@@ -163,6 +224,8 @@ namespace StreamServer {
             using namespace std::placeholders;
             
             _reactor.addObserver(_frontend, Messaging::Reactor::Event::Readable, std::bind(&Server::onFrontendReadable, this, _1, _2));
+            
+            _reactor.addObserver(_backend, Messaging::Reactor::Event::Readable, std::bind(&Server::onBackendReadable, this, _1, _2));
             
             _reactor.run(100);
             
@@ -174,28 +237,46 @@ namespace StreamServer {
         
     protected:
         
-        void onFrontendReadable(const Messaging::Socket &socket, const Messaging::Reactor::Event &event) {
+        void onFrontendReadable(Messaging::Socket &socket, const Messaging::Reactor::Event &event) {
+            
+            onSocketReadable(socket, event, _frontendCodec);
+            
+        }
+        
+        void onBackendReadable(Messaging::Socket &socket, const Messaging::Reactor::Event &event) {
+            
+            onSocketReadable(socket, event, _backendCodec);
+            
+        }
+        
+        void onSocketReadable(Messaging::Socket &socket, const Messaging::Reactor::Event &event, Messaging::AbstractCodec &codec) {
             
             bool more = false;
+            std::shared_ptr<Messaging::Event> eventPtr;
             
             do {
                 
                 Messaging::Frame frame;
-                frame.receive(_frontend, Messaging::Frame::block::none);
+                frame.receive(socket, Messaging::Frame::block::none);
                 
                 more = frame.hasMore();
                 
-                auto event = _frontendCodec.decode(frame);
-                
-                if (event) {
-                    dispatch(*event);
-                }
+                eventPtr = codec.decode(frame);
                 
             } while (more);
             
+            if (eventPtr) {
+
+                dispatch(*eventPtr);
+                
+            } else {
+                
+                // WTF
+            }
+            
         }
         
-        void dispatch(const StreamProtocol::Event &event) {
+        void dispatch(const Messaging::Event &event) {
             
             auto found = _clients.find(event.replyTo);
             
@@ -220,6 +301,7 @@ namespace StreamServer {
         Messaging::Socket _backend;
         StreamProtocol::Codec _frontendCodec;
         std::map<Messaging::Frame, Client> _clients;
+        SessionPacketProtocol::Codec _backendCodec;
         
     };
     

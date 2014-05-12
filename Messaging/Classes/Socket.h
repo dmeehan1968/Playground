@@ -239,6 +239,33 @@ namespace Messaging {
             throw Exception("unknown socket type", 0);
         }
         
+        std::string getIdentity() const {
+            
+            std::string identity(255, NULL);
+            size_t size = identity.size();
+            
+            auto rc = zmq_getsockopt(_socket.get(), ZMQ_IDENTITY, (void *)identity.data(), &size);
+            
+            if (rc < 0) {
+                throw Exception("cannot get identity");
+            }
+            
+            identity.resize(size);
+            
+            return identity;
+            
+        }
+        
+        void setIdentity(const std::string &identity) {
+            
+            auto rc = zmq_setsockopt(_socket.get(), ZMQ_IDENTITY, identity.data(), identity.size());
+
+            if (rc < 0) {
+                throw Exception("cannot set identity");
+            }
+            
+        }
+        
     protected:
 
         friend class Specs::SocketSpec;

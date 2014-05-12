@@ -24,6 +24,8 @@
 		A3672F7F190A758200F9EE5E /* Proxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3672F7D190A758200F9EE5E /* Proxy.cpp */; };
 		A36EDD951917F26500AD7925 /* PeerSpec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A36EDD941917F26500AD7925 /* PeerSpec.cpp */; };
 		A36EDD9B191AA0FE00AD7925 /* PubSubMultipartSpec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A36EDD9A191AA0FE00AD7925 /* PubSubMultipartSpec.cpp */; };
+		A3AEC54E19214D2E007E5421 /* SessionCodec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3AEC54C19214D2E007E5421 /* SessionCodec.cpp */; };
+		A3AEC55019214D5F007E5421 /* SessionCodecSpec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3AEC54F19214D5F007E5421 /* SessionCodecSpec.cpp */; };
 		A3B1F9DB19016AC700DA0C90 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3B1F9DA19016AC700DA0C90 /* main.cpp */; };
 		A3B1F9DD19016B1D00DA0C90 /* ContextSpec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3B1F9DC19016B1D00DA0C90 /* ContextSpec.cpp */; };
 		A3B1F9E019016C4000DA0C90 /* Context.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3B1F9DE19016C4000DA0C90 /* Context.cpp */; };
@@ -72,6 +74,9 @@
 		A3672F7E190A758200F9EE5E /* Proxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Proxy.h; sourceTree = "<group>"; };
 		A36EDD941917F26500AD7925 /* PeerSpec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PeerSpec.cpp; sourceTree = "<group>"; };
 		A36EDD9A191AA0FE00AD7925 /* PubSubMultipartSpec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PubSubMultipartSpec.cpp; sourceTree = "<group>"; };
+		A3AEC54C19214D2E007E5421 /* SessionCodec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SessionCodec.cpp; sourceTree = "<group>"; };
+		A3AEC54D19214D2E007E5421 /* SessionCodec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SessionCodec.h; sourceTree = "<group>"; };
+		A3AEC54F19214D5F007E5421 /* SessionCodecSpec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SessionCodecSpec.cpp; sourceTree = "<group>"; };
 		A3B1F9CC190168EA00DA0C90 /* Messaging */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Messaging; sourceTree = BUILT_PRODUCTS_DIR; };
 		A3B1F9DA19016AC700DA0C90 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		A3B1F9DC19016B1D00DA0C90 /* ContextSpec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContextSpec.cpp; sourceTree = "<group>"; };
@@ -103,6 +108,9 @@
 				A30D88D51920D57000BE1879 /* Session.cpp */,
 				A30D88D61920D57000BE1879 /* Session.h */,
 				A30D88D81920D5D900BE1879 /* SessionSpec.cpp */,
+				A3AEC54C19214D2E007E5421 /* SessionCodec.cpp */,
+				A3AEC54D19214D2E007E5421 /* SessionCodec.h */,
+				A3AEC54F19214D5F007E5421 /* SessionCodecSpec.cpp */,
 			);
 			path = Nodes;
 			sourceTree = "<group>";
@@ -244,6 +252,7 @@
 				A3672F7F190A758200F9EE5E /* Proxy.cpp in Sources */,
 				A3B1F9E51905300600DA0C90 /* Socket.cpp in Sources */,
 				A30B45C419055BEB0058F066 /* Message.cpp in Sources */,
+				A3AEC54E19214D2E007E5421 /* SessionCodec.cpp in Sources */,
 				A30B45C119055BBD0058F066 /* MessageSpec.cpp in Sources */,
 				A30B45CC19057FFA0058F066 /* Poller.cpp in Sources */,
 				A30B45C919057FB30058F066 /* PollerSpec.cpp in Sources */,
@@ -256,6 +265,7 @@
 				A3FC916A191AACF900726D01 /* SingleVsMultiPartSpec.cpp in Sources */,
 				A30D88D119200ABC00BE1879 /* StreamServerSpec.cpp in Sources */,
 				A30D88D91920D5D900BE1879 /* SessionSpec.cpp in Sources */,
+				A3AEC55019214D5F007E5421 /* SessionCodecSpec.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

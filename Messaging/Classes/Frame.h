@@ -13,6 +13,8 @@
 
 #include <cstdlib>
 #include <iomanip>
+#include <iostream>
+#include <sstream>
 
 namespace Messaging {
 
@@ -136,6 +138,8 @@ namespace Messaging {
         
         size_t send(Socket &socket, const block block_type, const more more_type) {
         
+            std::cout << socket.get() << " >> " << toString(true, more_type == more::more) << std::endl;
+            
             int flags = 0;
             flags |= block_type == block::none ? ZMQ_DONTWAIT : 0;
             flags |= more_type == more::more ? ZMQ_SNDMORE : 0;
@@ -172,11 +176,74 @@ namespace Messaging {
                 
             }
             
+            std::cout << socket.get() << " << " << toString() << std::endl;
+            
             return len;
         }
         
         bool hasMore() const {
             return zmq_msg_more(&_msg);
+        }
+        
+        std::string toString(const bool useMore = false, const bool more = false) const {
+            
+            std::ostringstream stream;
+            
+            unsigned char *ptr = data<unsigned char>();
+            unsigned char *end = ptr + size();
+            
+            auto flags = stream.flags();
+            bool once = true;
+            
+            while (once || ptr < end) {
+                
+                auto needle = ptr;
+                
+                for (int i=0; i < 16 ; i++) {
+                    
+                    if (i > 0) stream << " ";
+                    
+                    if (needle < end) {
+                        
+                        stream << std::hex << std::setw(2) << std::setfill('0');
+                        stream << (int)*needle;
+                        needle++;
+                        
+                    } else {
+                        stream << "..";
+                    }
+                    
+                    if (i == 7) {
+                        stream << "  ";
+                    }
+                    
+                }
+                
+                stream.flags(flags);
+                stream << " ";
+                
+                needle = ptr;
+                for (int i=0; i < 16 ; i++) {
+                    
+                    if (needle < end) {
+                        stream << (unsigned char)(isprint(*needle) ? *needle : '.');
+                        needle++;
+                    } else {
+                        stream << ' ';
+                    }
+                    
+                }
+                
+                ptr = needle;
+                once = false;
+            }
+            
+            stream << ((useMore && more) || hasMore() ? "+" : " ");
+            
+            stream.flags(flags);
+            
+            return stream.str();
+
         }
         
     protected:
@@ -207,44 +274,8 @@ namespace Messaging {
 
     inline std::ostream &operator << (std::ostream &stream, const Frame &frame) {
         
-        auto size = frame.size();
-        unsigned char *ptr = frame.data<unsigned char>();
-        unsigned char *end = ptr + size;
-
-        auto flags = stream.flags();
         
-        while (ptr < end) {
-            
-            auto needle = ptr;
-            
-            
-            for (int i=0; i < 16 && needle < end; i++, needle++) {
-                
-                if (i > 0) stream << " ";
-                
-                stream << std::hex << std::setw(2) << std::setfill('0');
-                
-                stream << (int)*needle;
-                
-            }
-
-            stream.flags(flags);
-            stream << " ";
-            
-            needle = ptr;
-            for (int i=0; i < 16 && needle < end; i++, needle++) {
-                
-                stream << (unsigned char)(isprint(*needle) ? *needle : '.');
-                
-            }
-            
-            ptr = needle;
-            
-        }
-        
-        stream.flags(flags);
-        
-        return stream;
+        return stream << frame.toString();
         
     }
 }

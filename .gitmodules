@@ -16,3 +16,9 @@
 [submodule "zproto"]
 	path = zproto
 	url = https://github.com/zeromq/zproto.git
+[submodule "czmq"]
+	path = czmq
+	url = https://github.com/zeromq/czmq.git
+[submodule "libsodium"]
+	path = libsodium
+	url = https://github.com/jedisct1/libsodium.git

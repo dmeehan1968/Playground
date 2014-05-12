@@ -122,8 +122,8 @@ namespace Messaging { namespace SessionManager {
         
     };
     
-    inline std::ostream &operator << (std::ostream &stream, const Session &state) {
-        return stream << "Session: data=" << state.data();
+    inline std::ostream &operator << (std::ostream &stream, const Session &session) {
+        return stream << "Session: data=" << session.data();
     }
     
     using SessionId = std::string;

@@ -18,7 +18,7 @@ namespace Messaging { namespace Specs {
     describe(Session, {
 
         Context context;
-        Socket serverSocket(context, Socket::Type::router);
+        Socket serverSocket(context, Socket::Type::reply);
         std::string endpoint("inproc://SessionSpec");
         serverSocket.bind(endpoint);
         serverSocket.setReceiveTimeout(100);
@@ -36,13 +36,13 @@ namespace Messaging { namespace Specs {
             std::string expectedData("ABCDEF");
             expectedSession.setData(expectedData);
             
-            SessionManager::SessionId testAddress("12345");
+            SessionManager::SessionId testId("12345");
             
-            client.set(testAddress, expectedSession);
+            client.set(testId, expectedSession);
             
-            auto actualState = client.get(testAddress);
+            auto actualSession = client.get(testId);
             
-            expect(*actualState).should.equal(expectedSession);
+            expect(*actualSession).should.equal(expectedSession);
             
         });
 

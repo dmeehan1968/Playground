@@ -161,6 +161,137 @@ namespace Messaging { namespace Nodes { namespace Specs {
 
         });
         
+        context("encoding", {
+        
+            Frame address("12345");
+            Frame identity("ABC");
+
+            context("abc message", {
+                
+                AbcMsg abc;
+                Frame address("12345");
+                Frame identity("ABC");
+                
+                abc.address = address;
+                abc.identity = identity;
+                auto frames = abc.encode();
+                
+                it("has address", {
+                    
+                    expect(frames.size()).should.beGreaterThan(0);
+                    expect(frames.front()).should.equal(address);
+                    
+                });
+                
+                it("has delimiter", {
+                    
+                    frames.pop_front();
+                    
+                    expect(frames.size()).should.beGreaterThan(0);
+                    expect(frames.front()).should.equal(Frame());
+                    
+                });
+                
+                it("has identity", {
+                    
+                    frames.pop_front();
+                    
+                    expect(frames.size()).should.beGreaterThan(0);
+                    expect(frames.front()).should.equal(identity);
+                    
+                });
+                
+                it("should be empty", {
+                    
+                    frames.pop_front();
+                    
+                    expect(frames.size()).should.equal(0);
+                    
+                });
+                
+            });
+
+            context("def message", {
+                
+                DefMsg def;
+                Frame address("12345");
+                Frame identity("DEF");
+                Frame d("d");
+                Frame e("e");
+                Frame f("f");
+                
+                def.address = address;
+                def.identity = identity;
+                def.d = d;
+                def.e = e;
+                def.f = f;
+                
+                auto frames = def.encode();
+                
+                it("has address", {
+                    
+                    expect(frames.size()).should.beGreaterThan(0);
+                    expect(frames.front()).should.equal(address);
+                    
+                });
+                
+                it("has delimiter", {
+                    
+                    frames.pop_front();
+                    
+                    expect(frames.size()).should.beGreaterThan(0);
+                    expect(frames.front()).should.equal(Frame());
+                    
+                });
+                
+                it("has identity", {
+                    
+                    frames.pop_front();
+                    
+                    expect(frames.size()).should.beGreaterThan(0);
+                    expect(frames.front()).should.equal(identity);
+                    
+                });
+                
+                it("has d frame", {
+                    
+                    frames.pop_front();
+                    
+                    expect(frames.size()).should.beGreaterThan(0);
+                    expect(frames.front()).should.equal(d);
+                    
+                });
+                
+                it("has e frame", {
+                    
+                    frames.pop_front();
+                    
+                    expect(frames.size()).should.beGreaterThan(0);
+                    expect(frames.front()).should.equal(e);
+                    
+                });
+                
+                it("has f frame", {
+                    
+                    frames.pop_front();
+                    
+                    expect(frames.size()).should.beGreaterThan(0);
+                    expect(frames.front()).should.equal(f);
+                    
+                });
+                
+                it("should be empty", {
+                    
+                    frames.pop_front();
+                    
+                    expect(frames.size()).should.equal(0);
+                    
+                });
+                
+            });
+            
+        });
+        
     });
     
 } } }

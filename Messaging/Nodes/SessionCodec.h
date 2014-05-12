@@ -11,11 +11,39 @@
 
 #include "Frame.h"
 
+#include <deque>
+
+/*
+ 
+ <header>
+ 
+    <field name = "id" />
+ 
+ </header>
+ 
+ <message name = "abc" id = "abc">
+ 
+ </message>
+ 
+ <message name = "def" id = "def">
+ 
+    <field name = "d" type = "frame" />
+    <field name = "e" type = "frame" />
+    <field name = "f" type = "frame" />
+ 
+ </message>
+ 
+ */
+
 namespace Messaging { namespace Nodes {
 
     class AbstractMsg {
     
     public:
+        
+        using Frame = Messaging::Frame;
+        using String = std::string;
+        using Number = int;
         
         AbstractMsg()
         :
@@ -63,6 +91,18 @@ namespace Messaging { namespace Nodes {
             return new AbstractMsg(*this);
         };
         
+        virtual std::deque<Frame> encode() const {
+            
+            std::deque<Frame> frames;
+
+            frames.emplace_back(address);
+            frames.emplace_back(Frame());
+            frames.emplace_back(identity);
+            
+            return frames;
+            
+        }
+        
         Frame address;
         Frame identity;
         
@@ -85,6 +125,8 @@ namespace Messaging { namespace Nodes {
         
     public:
         
+        AbcMsg() {}
+        
         AbcMsg(const AbstractMsg &msg)
         :
             AbstractMsg(msg)
@@ -98,11 +140,18 @@ namespace Messaging { namespace Nodes {
             return new AbcMsg(*this);
         }
         
+        virtual std::deque<Frame> encode() const override {
+        
+            return AbstractMsg::encode();
+            
+        }
     };
     
     class DefMsg : public AbstractMsg {
         
     public:
+        
+        DefMsg() {}
         
         DefMsg(const AbstractMsg &msg)
         :
@@ -147,6 +196,18 @@ namespace Messaging { namespace Nodes {
             }
             
             return isFinal();
+        }
+        
+        virtual std::deque<Frame> encode() const override {
+
+            auto frames = AbstractMsg::encode();
+            
+            frames.emplace_back(d);
+            frames.emplace_back(e);
+            frames.emplace_back(f);
+            
+            return frames;
+            
         }
         
         Frame d;

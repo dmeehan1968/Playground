@@ -16,6 +16,8 @@
 		A30B45CC19057FFA0058F066 /* Poller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30B45CA19057FFA0058F066 /* Poller.cpp */; };
 		A30D88D119200ABC00BE1879 /* StreamServerSpec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30D88D019200ABC00BE1879 /* StreamServerSpec.cpp */; };
 		A30D88D419200B1F00BE1879 /* StreamServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30D88D219200B1F00BE1879 /* StreamServer.cpp */; };
+		A30D88D71920D57000BE1879 /* Session.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30D88D51920D57000BE1879 /* Session.cpp */; };
+		A30D88D91920D5D900BE1879 /* SessionSpec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A30D88D81920D5D900BE1879 /* SessionSpec.cpp */; };
 		A3672F77190A615E00F9EE5E /* ReactorSpec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3672F76190A615E00F9EE5E /* ReactorSpec.cpp */; };
 		A3672F7A190A618D00F9EE5E /* Reactor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3672F78190A618D00F9EE5E /* Reactor.cpp */; };
 		A3672F7C190A754500F9EE5E /* ProxySpec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3672F7B190A754500F9EE5E /* ProxySpec.cpp */; };
@@ -59,6 +61,9 @@
 		A30D88D019200ABC00BE1879 /* StreamServerSpec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StreamServerSpec.cpp; sourceTree = "<group>"; };
 		A30D88D219200B1F00BE1879 /* StreamServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StreamServer.cpp; sourceTree = "<group>"; };
 		A30D88D319200B1F00BE1879 /* StreamServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamServer.h; sourceTree = "<group>"; };
+		A30D88D51920D57000BE1879 /* Session.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Session.cpp; sourceTree = "<group>"; };
+		A30D88D61920D57000BE1879 /* Session.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Session.h; sourceTree = "<group>"; };
+		A30D88D81920D5D900BE1879 /* SessionSpec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SessionSpec.cpp; sourceTree = "<group>"; };
 		A3672F76190A615E00F9EE5E /* ReactorSpec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReactorSpec.cpp; sourceTree = "<group>"; };
 		A3672F78190A618D00F9EE5E /* Reactor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Reactor.cpp; sourceTree = "<group>"; };
 		A3672F79190A618D00F9EE5E /* Reactor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reactor.h; sourceTree = "<group>"; };
@@ -95,6 +100,9 @@
 				A30D88D219200B1F00BE1879 /* StreamServer.cpp */,
 				A30D88D319200B1F00BE1879 /* StreamServer.h */,
 				A30D88D019200ABC00BE1879 /* StreamServerSpec.cpp */,
+				A30D88D51920D57000BE1879 /* Session.cpp */,
+				A30D88D61920D57000BE1879 /* Session.h */,
+				A30D88D81920D5D900BE1879 /* SessionSpec.cpp */,
 			);
 			path = Nodes;
 			sourceTree = "<group>";
@@ -237,15 +245,17 @@
 				A3B1F9E51905300600DA0C90 /* Socket.cpp in Sources */,
 				A30B45C419055BEB0058F066 /* Message.cpp in Sources */,
 				A30B45C119055BBD0058F066 /* MessageSpec.cpp in Sources */,
-				A30D88D119200ABC00BE1879 /* StreamServerSpec.cpp in Sources */,
 				A30B45CC19057FFA0058F066 /* Poller.cpp in Sources */,
 				A30B45C919057FB30058F066 /* PollerSpec.cpp in Sources */,
 				A3672F77190A615E00F9EE5E /* ReactorSpec.cpp in Sources */,
 				A3B1F9E219052FD300DA0C90 /* SocketSpec.cpp in Sources */,
 				A3672F7C190A754500F9EE5E /* ProxySpec.cpp in Sources */,
 				A36EDD951917F26500AD7925 /* PeerSpec.cpp in Sources */,
+				A30D88D71920D57000BE1879 /* Session.cpp in Sources */,
 				A36EDD9B191AA0FE00AD7925 /* PubSubMultipartSpec.cpp in Sources */,
 				A3FC916A191AACF900726D01 /* SingleVsMultiPartSpec.cpp in Sources */,
+				A30D88D119200ABC00BE1879 /* StreamServerSpec.cpp in Sources */,
+				A30D88D91920D5D900BE1879 /* SessionSpec.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -26,6 +26,12 @@
 		A36EDD9B191AA0FE00AD7925 /* PubSubMultipartSpec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A36EDD9A191AA0FE00AD7925 /* PubSubMultipartSpec.cpp */; };
 		A3AEC54E19214D2E007E5421 /* SessionCodec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3AEC54C19214D2E007E5421 /* SessionCodec.cpp */; };
 		A3AEC55019214D5F007E5421 /* SessionCodecSpec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3AEC54F19214D5F007E5421 /* SessionCodecSpec.cpp */; };
+		A3AEC55619224A06007E5421 /* NomServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3AEC55419224A06007E5421 /* NomServer.cpp */; };
+		A3AEC55919224A65007E5421 /* Msg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3AEC55719224A65007E5421 /* Msg.cpp */; };
+		A3AEC55C19224B5C007E5421 /* NomSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3AEC55A19224B5C007E5421 /* NomSession.cpp */; };
+		A3AEC55F19224BDD007E5421 /* NomMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3AEC55D19224BDD007E5421 /* NomMessage.cpp */; };
+		A3AEC56219224CA9007E5421 /* NomClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3AEC56019224CA9007E5421 /* NomClient.cpp */; };
+		A3AEC56519224DD9007E5421 /* NomProtocolSpec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3AEC56419224DD9007E5421 /* NomProtocolSpec.cpp */; };
 		A3B1F9DB19016AC700DA0C90 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3B1F9DA19016AC700DA0C90 /* main.cpp */; };
 		A3B1F9DD19016B1D00DA0C90 /* ContextSpec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3B1F9DC19016B1D00DA0C90 /* ContextSpec.cpp */; };
 		A3B1F9E019016C4000DA0C90 /* Context.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3B1F9DE19016C4000DA0C90 /* Context.cpp */; };
@@ -77,6 +83,19 @@
 		A3AEC54C19214D2E007E5421 /* SessionCodec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SessionCodec.cpp; sourceTree = "<group>"; };
 		A3AEC54D19214D2E007E5421 /* SessionCodec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SessionCodec.h; sourceTree = "<group>"; };
 		A3AEC54F19214D5F007E5421 /* SessionCodecSpec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SessionCodecSpec.cpp; sourceTree = "<group>"; };
+		A3AEC55219224239007E5421 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
+		A3AEC55319224601007E5421 /* NomProtocol.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = NomProtocol.xml; sourceTree = "<group>"; };
+		A3AEC55419224A06007E5421 /* NomServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NomServer.cpp; sourceTree = "<group>"; };
+		A3AEC55519224A06007E5421 /* NomServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NomServer.h; sourceTree = "<group>"; };
+		A3AEC55719224A65007E5421 /* Msg.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Msg.cpp; sourceTree = "<group>"; };
+		A3AEC55819224A65007E5421 /* Msg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Msg.h; sourceTree = "<group>"; };
+		A3AEC55A19224B5C007E5421 /* NomSession.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NomSession.cpp; sourceTree = "<group>"; };
+		A3AEC55B19224B5C007E5421 /* NomSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NomSession.h; sourceTree = "<group>"; };
+		A3AEC55D19224BDD007E5421 /* NomMessage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NomMessage.cpp; sourceTree = "<group>"; };
+		A3AEC55E19224BDD007E5421 /* NomMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NomMessage.h; sourceTree = "<group>"; };
+		A3AEC56019224CA9007E5421 /* NomClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NomClient.cpp; sourceTree = "<group>"; };
+		A3AEC56119224CA9007E5421 /* NomClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NomClient.h; sourceTree = "<group>"; };
+		A3AEC56419224DD9007E5421 /* NomProtocolSpec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NomProtocolSpec.cpp; sourceTree = "<group>"; };
 		A3B1F9CC190168EA00DA0C90 /* Messaging */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Messaging; sourceTree = BUILT_PRODUCTS_DIR; };
 		A3B1F9DA19016AC700DA0C90 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		A3B1F9DC19016B1D00DA0C90 /* ContextSpec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContextSpec.cpp; sourceTree = "<group>"; };
@@ -132,12 +151,41 @@
 			path = Benchmark;
 			sourceTree = "<group>";
 		};
+		A3AEC55119224201007E5421 /* NomProtocol */ = {
+			isa = PBXGroup;
+			children = (
+				A3AEC56319224DC2007E5421 /* Specs */,
+				A3AEC55219224239007E5421 /* README.md */,
+				A3AEC55319224601007E5421 /* NomProtocol.xml */,
+				A3AEC56019224CA9007E5421 /* NomClient.cpp */,
+				A3AEC56119224CA9007E5421 /* NomClient.h */,
+				A3AEC55419224A06007E5421 /* NomServer.cpp */,
+				A3AEC55519224A06007E5421 /* NomServer.h */,
+				A3AEC55D19224BDD007E5421 /* NomMessage.cpp */,
+				A3AEC55E19224BDD007E5421 /* NomMessage.h */,
+				A3AEC55A19224B5C007E5421 /* NomSession.cpp */,
+				A3AEC55B19224B5C007E5421 /* NomSession.h */,
+				A3AEC55719224A65007E5421 /* Msg.cpp */,
+				A3AEC55819224A65007E5421 /* Msg.h */,
+			);
+			path = NomProtocol;
+			sourceTree = "<group>";
+		};
+		A3AEC56319224DC2007E5421 /* Specs */ = {
+			isa = PBXGroup;
+			children = (
+				A3AEC56419224DD9007E5421 /* NomProtocolSpec.cpp */,
+			);
+			path = Specs;
+			sourceTree = "<group>";
+		};
 		A3B1F9C3190168EA00DA0C90 = {
 			isa = PBXGroup;
 			children = (
 				A3B1F9DA19016AC700DA0C90 /* main.cpp */,
 				A3B1F9D819016A5A00DA0C90 /* Classes */,
 				A30D88CF19200A2F00BE1879 /* Nodes */,
+				A3AEC55119224201007E5421 /* NomProtocol */,
 				A36EDD931917ED9F00AD7925 /* Benchmark */,
 				A3672F80190AA4F600F9EE5E /* Examples */,
 				A3B1F9D919016A6000DA0C90 /* Tests */,
@@ -244,16 +292,19 @@
 				A3B1F9E019016C4000DA0C90 /* Context.cpp in Sources */,
 				A3B1F9DD19016B1D00DA0C90 /* ContextSpec.cpp in Sources */,
 				A3B1F9DB19016AC700DA0C90 /* main.cpp in Sources */,
+				A3AEC55919224A65007E5421 /* Msg.cpp in Sources */,
 				A30D88D419200B1F00BE1879 /* StreamServer.cpp in Sources */,
 				A30B45C719055FA20058F066 /* Exception.cpp in Sources */,
 				A30B45BF19053CDC0058F066 /* Frame.cpp in Sources */,
 				A3672F7A190A618D00F9EE5E /* Reactor.cpp in Sources */,
 				A30B45BC19053CA50058F066 /* FrameSpec.cpp in Sources */,
+				A3AEC55C19224B5C007E5421 /* NomSession.cpp in Sources */,
 				A3672F7F190A758200F9EE5E /* Proxy.cpp in Sources */,
 				A3B1F9E51905300600DA0C90 /* Socket.cpp in Sources */,
 				A30B45C419055BEB0058F066 /* Message.cpp in Sources */,
 				A3AEC54E19214D2E007E5421 /* SessionCodec.cpp in Sources */,
 				A30B45C119055BBD0058F066 /* MessageSpec.cpp in Sources */,
+				A3AEC56219224CA9007E5421 /* NomClient.cpp in Sources */,
 				A30B45CC19057FFA0058F066 /* Poller.cpp in Sources */,
 				A30B45C919057FB30058F066 /* PollerSpec.cpp in Sources */,
 				A3672F77190A615E00F9EE5E /* ReactorSpec.cpp in Sources */,
@@ -266,6 +317,9 @@
 				A30D88D119200ABC00BE1879 /* StreamServerSpec.cpp in Sources */,
 				A30D88D91920D5D900BE1879 /* SessionSpec.cpp in Sources */,
 				A3AEC55019214D5F007E5421 /* SessionCodecSpec.cpp in Sources */,
+				A3AEC55619224A06007E5421 /* NomServer.cpp in Sources */,
+				A3AEC55F19224BDD007E5421 /* NomMessage.cpp in Sources */,
+				A3AEC56519224DD9007E5421 /* NomProtocolSpec.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

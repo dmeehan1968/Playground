@@ -91,16 +91,24 @@ namespace Messaging { namespace Nodes {
             return new AbstractMsg(*this);
         };
         
-        virtual std::deque<Frame> encode() const {
-            
-            std::deque<Frame> frames;
+        virtual std::deque<Frame> encode(Socket * const socket = nullptr, const Frame::more more_type = Frame::more::none) {
 
-            frames.emplace_back(address);
-            frames.emplace_back(Frame());
-            frames.emplace_back(identity);
+            if (socket == nullptr) {
             
-            return frames;
+                std::deque<Frame> frames;
+                
+                frames.emplace_back(address);
+                frames.emplace_back(Frame());
+                frames.emplace_back(identity);
+                
+                return frames;
+            }
+
+            address.send(*socket, Frame::block::blocking, Frame::more::more);
+            Frame().send(*socket, Frame::block::blocking, Frame::more::more);
+            identity.send(*socket, Frame::block::blocking, more_type);
             
+            return {};
         }
         
         Frame address;
@@ -140,9 +148,9 @@ namespace Messaging { namespace Nodes {
             return new AbcMsg(*this);
         }
         
-        virtual std::deque<Frame> encode() const override {
+        virtual std::deque<Frame> encode(Socket * const socket = nullptr, const Frame::more more_type = Frame::more::none) override {
         
-            return AbstractMsg::encode();
+            return AbstractMsg::encode(socket, more_type);
             
         }
     };
@@ -198,13 +206,23 @@ namespace Messaging { namespace Nodes {
             return isFinal();
         }
         
-        virtual std::deque<Frame> encode() const override {
+        virtual std::deque<Frame> encode(Socket * const socket = nullptr, const Frame::more more_type = Frame::more::none) override {
 
-            auto frames = AbstractMsg::encode();
+            auto frames = AbstractMsg::encode(socket, Frame::more::more);
             
-            frames.emplace_back(d);
-            frames.emplace_back(e);
-            frames.emplace_back(f);
+            if (socket != nullptr) {
+
+                d.send(*socket, Frame::block::blocking, Frame::more::more);
+                e.send(*socket, Frame::block::blocking, Frame::more::more);
+                f.send(*socket, Frame::block::blocking, more_type);
+                
+            } else {
+                
+                frames.emplace_back(d);
+                frames.emplace_back(e);
+                frames.emplace_back(f);
+                
+            }
             
             return frames;
             

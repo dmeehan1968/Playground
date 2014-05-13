@@ -226,68 +226,155 @@ namespace Messaging { namespace Nodes { namespace Specs {
                 def.e = e;
                 def.f = f;
                 
-                auto frames = def.encode();
-                
-                it("has address", {
+                context("to deque", {
                     
-                    expect(frames.size()).should.beGreaterThan(0);
-                    expect(frames.front()).should.equal(address);
+                    auto frames = def.encode();
+                    
+                    it("has address", {
+                        
+                        expect(frames.size()).should.beGreaterThan(0);
+                        expect(frames.front()).should.equal(address);
+                        
+                    });
+                    
+                    it("has delimiter", {
+                        
+                        frames.pop_front();
+                        
+                        expect(frames.size()).should.beGreaterThan(0);
+                        expect(frames.front()).should.equal(Frame());
+                        
+                    });
+                    
+                    it("has identity", {
+                        
+                        frames.pop_front();
+                        
+                        expect(frames.size()).should.beGreaterThan(0);
+                        expect(frames.front()).should.equal(identity);
+                        
+                    });
+                    
+                    it("has d frame", {
+                        
+                        frames.pop_front();
+                        
+                        expect(frames.size()).should.beGreaterThan(0);
+                        expect(frames.front()).should.equal(d);
+                        
+                    });
+                    
+                    it("has e frame", {
+                        
+                        frames.pop_front();
+                        
+                        expect(frames.size()).should.beGreaterThan(0);
+                        expect(frames.front()).should.equal(e);
+                        
+                    });
+                    
+                    it("has f frame", {
+                        
+                        frames.pop_front();
+                        
+                        expect(frames.size()).should.beGreaterThan(0);
+                        expect(frames.front()).should.equal(f);
+                        
+                    });
+                    
+                    it("should be empty", {
+                        
+                        frames.pop_front();
+                        
+                        expect(frames.size()).should.equal(0);
+                        
+                    });
                     
                 });
                 
-                it("has delimiter", {
+                context("to socket", {
                     
-                    frames.pop_front();
+                    Context context;
+                    std::string endpoint("inproc://SessionCodec");
                     
-                    expect(frames.size()).should.beGreaterThan(0);
-                    expect(frames.front()).should.equal(Frame());
+                    Socket pub(context, Socket::Type::push);
+                    pub.bind(endpoint);
                     
+                    Socket sub(context, Socket::Type::pull);
+                    sub.connect(endpoint);
+                    
+                    auto expected = def;
+                    
+                    it("sends to socket", {
+                        
+                        expect(def.encode(&pub, Frame::more::none)).should.haveCountOf(0);
+
+                    });
+
+                    it("gets address", {
+                        
+                        Frame address;
+                        address.receive(sub, Frame::block::none);
+                        
+                        expect(address).should.equal(expected.address);
+                        
+                    });
+                    
+                    it("gets delimiter", {
+                        
+                        Frame delim;
+                        delim.receive(sub, Frame::block::none);
+                        
+                        expect(delim).should.equal(Frame());
+                        
+                    });
+                    
+                    it("gets identity", {
+                        
+                        Frame ident;
+                        ident.receive(sub, Frame::block::none);
+                        
+                        expect(ident).should.equal(expected.identity);
+                        
+                    });
+                    
+                    it("gets d frame", {
+                        
+                        Frame d;
+                        d.receive(sub, Frame::block::none);
+                        
+                        expect(d).should.equal(expected.d);
+                        
+                    });
+                    
+                    it("gets e frame", {
+                        
+                        Frame e;
+                        e.receive(sub, Frame::block::none);
+                        
+                        expect(e).should.equal(expected.e);
+                        
+                    });
+                    
+                    Frame f;
+
+                    it("gets f frame", {
+                        
+                        f.receive(sub, Frame::block::none);
+                        
+                        expect(f).should.equal(expected.f);
+
+                    });
+
+                    it("f frame should have no more", {
+                        
+                        expect(f.hasMore()).should.beFalse();
+                        
+                    });
+
                 });
-                
-                it("has identity", {
-                    
-                    frames.pop_front();
-                    
-                    expect(frames.size()).should.beGreaterThan(0);
-                    expect(frames.front()).should.equal(identity);
-                    
-                });
-                
-                it("has d frame", {
-                    
-                    frames.pop_front();
-                    
-                    expect(frames.size()).should.beGreaterThan(0);
-                    expect(frames.front()).should.equal(d);
-                    
-                });
-                
-                it("has e frame", {
-                    
-                    frames.pop_front();
-                    
-                    expect(frames.size()).should.beGreaterThan(0);
-                    expect(frames.front()).should.equal(e);
-                    
-                });
-                
-                it("has f frame", {
-                    
-                    frames.pop_front();
-                    
-                    expect(frames.size()).should.beGreaterThan(0);
-                    expect(frames.front()).should.equal(f);
-                    
-                });
-                
-                it("should be empty", {
-                    
-                    frames.pop_front();
-                    
-                    expect(frames.size()).should.equal(0);
-                    
-                });
-                
+
+
             });
             
         });

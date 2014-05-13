@@ -24,9 +24,7 @@ namespace Messaging { namespace NomProtocol { namespace Specs {
             
             auto reply = client.ohai();
             
-            expect((bool)reply).should.beTrue();
-            
-            expect(*reply).should.equal(Ohai());
+            expect(reply && reply->isa<Ohai>()).should.beTrue();
             
         });
 

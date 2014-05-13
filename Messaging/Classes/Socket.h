@@ -84,12 +84,32 @@ namespace Messaging {
         
         }
         
-        void connect(const endpoint &endpoint) {
+        void unbind(const endpoint &endpoint) {
+            
+            auto rc = zmq_unbind(get(), endpoint.c_str());
+            
+            if (rc < 0) {
+                throw Exception("unbind failed");
+            }
+            
+        }
         
+        void connect(const endpoint &endpoint) {
+            
             auto rc = zmq_connect(get(), endpoint.c_str());
             
             if (rc < 0) {
                 throw Exception("connect failed");
+            }
+            
+        }
+        
+        void disconnect() {
+            
+            auto rc = zmq_close(get());
+            
+            if (rc < 0) {
+                throw Exception("disconnect failed");
             }
             
         }

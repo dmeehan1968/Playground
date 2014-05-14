@@ -20,19 +20,19 @@
             <server send = "CHEEZ BURGER" />
 
             <server send = "WTF" />
-
+            
         </client>
 
         <client send = "HUGZ">
-
+            
             <server send = "HUGZ OK" />
-
+            
         </client>
 
         <server send = "HUGZ">
-
+            
             <client send = "HUGZ OK" />
-
+            
         </server>
 
     </state>

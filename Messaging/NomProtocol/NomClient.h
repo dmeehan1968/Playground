@@ -29,92 +29,212 @@ namespace Messaging { namespace NomProtocol {
                     NomCodec::Address::Ignore,
                     NomCodec::Envelope::Use),
             _endpoint(endpoint),
-            _state(State::OpenPeering)
+            _state(State::OpenPeering),
+            _lastRequest(NomCodec::MsgType::_None)
         {
             _socket.connect(_endpoint);
         }
         
         std::shared_ptr<Msg> ohai() {
         
-            return request(Ohai());
+            send(Ohai());
+            
+            return receive();
             
         }
         
         std::shared_ptr<Msg> iCanHaz() {
 
-            return request(ICanHaz());
+            send(ICanHaz());
+            
+            return receive();
             
         }
         
         std::shared_ptr<Msg> hugz() {
 
-            return request(Hugz());
+            send(Hugz());
+            
+            return receive();
             
         }
         
     protected:
         
         template <class T>
-        std::shared_ptr<Msg> request(T &&msg) {
-        
+        void send(T &&msg) {
+            
             switch (_state) {
                     
                 case State::OpenPeering:
                 {
 
                     if (std::is_base_of<Ohai, T>::value) {
-
+                        
+                        _socket.send(std::forward<T>(msg));
+                        _lastRequest = NomCodec::MsgType::Ohai;
+                        
+                    } else if (std::is_base_of<HugzOk, T>::value) {
+                        
                         _socket.send(std::forward<T>(msg));
                         
-                        auto reply = _socket.receive();
-                        
-                        if (std::dynamic_pointer_cast<OhaiOk>(reply) ||
-                            std::dynamic_pointer_cast<Wtf>(reply)) {
-                            
-                            _state = State::UsePeering;
-                            return reply;
-                            
-                        }
                     }
                     break;
                 }
                     
                 case State::UsePeering:
                 {
+                    
                     if (std::is_base_of<ICanHaz, T>::value) {
                         
                         _socket.send(std::forward<T>(msg));
-                        
-                        auto reply = _socket.receive();
-                        
-                        if (std::dynamic_pointer_cast<CheezBurger>(reply) ||
-                            std::dynamic_pointer_cast<Wtf>(reply)) {
-                            
-                            return reply;
-                        }
+                        _lastRequest = NomCodec::MsgType::ICanHaz;
                         
                     } else if (std::is_base_of<Hugz, T>::value) {
                         
                         _socket.send(std::forward<T>(msg));
+                        _lastRequest = NomCodec::MsgType::Hugz;
+
+                    } else if (std::is_base_of<HugzOk, T>::value) {
                         
-                        auto reply = _socket.receive();
+                        _socket.send(std::forward<T>(msg));
                         
-                        if (std::dynamic_pointer_cast<HugzOk>(reply)) {
-                            
-                            return reply;
-                            
-                        }
                     }
+                    
                     break;
                 }
                     
             }
+        }
+        
+        std::shared_ptr<Msg> receive() {
+        
+            do {
             
-            errno = EFSM;
-            throw Exception("invalid reply for state");
+                auto reply = _socket.receive();
+                
+                if ( ! reply ) {
+                    break;
+                }
+                
+                switch (_state) {
+                        
+                    case State::OpenPeering:
+                    {
+                        switch (_lastRequest) {
+                     
+                            case NomCodec::MsgType::_None:
+                                break;
+                                
+                            case NomCodec::MsgType::Ohai:
+                            {
+                                if (reply->isa<OhaiOk>()) {
+                                    
+                                    _lastRequest = NomCodec::MsgType::_None;
+                                    _state = State::UsePeering;
+                                    return reply;
+                                }
+                                
+                                if (reply->isa<Wtf>()) {
+                                    
+                                    _lastRequest = NomCodec::MsgType::_None;
+                                    return reply;
+                                    
+                                }
+                                break;
+                            }
+                                
+                            default:
+                                errno = EFSM;
+                                throw Exception("invalid last request");
+                        }
+                        
+                        Dispatch<Msg>(*reply).handle<Hugz>([&](const Hugz &hugz) {
+                            
+                            OpenPeering(hugz);
+                            
+                        }).handle<Msg>([&](const Msg &msg) {
+                          
+                            throw Exception("invalid message");
+                            
+                        });
+
+                        break;
+                    }
+
+                    case State::UsePeering:
+                    {
+                        switch (_lastRequest) {
+                                
+                            case NomCodec::MsgType::_None:
+                                break;
+                                
+                            case NomCodec::MsgType::ICanHaz:
+                            {
+                                
+                                if (reply->isa<CheezBurger>() ||
+                                    reply->isa<Wtf>()) {
+                                    
+                                    return reply;
+                                    
+                                }
+                                break;
+                            }
+                                
+                            case NomCodec::MsgType::Hugz:
+                            {
+                                
+                                if (reply->isa<HugzOk>()) {
+                                    
+                                    return reply;
+                                    
+                                }
+                                break;
+                            }
+                                
+                            default:
+                                errno = EFSM;
+                                throw Exception("invalid last request");
+                        }
+                        
+                        Dispatch<Msg>(*reply).handle<Hugz>([&](const Hugz &hugz) {
+                            
+                            UsePeering(hugz);
+                            
+                        }).handle<Msg>([&](const Msg &msg) {
+                            
+                            throw Exception("invalid message");
+                            
+                        });
+                        
+                        break;
+
+                    }
+                        
+                    default:
+                        break;
+                }
+                
+                
+            } while (1);
+
+            return nullptr;
             
         }
         
+        void OpenPeering(const Hugz &hugz) {
+            
+            send(HugzOk());
+            
+        }
+        
+        void UsePeering(const Hugz &hugz) {
+            
+            send(HugzOk());
+            
+        }
+        
+    
     private:
 
         enum class State {
@@ -127,7 +247,7 @@ namespace Messaging { namespace NomProtocol {
         NomSocket _socket;
         std::string _endpoint;
         State _state;
-        
+        NomCodec::MsgType _lastRequest;
         
     };
     

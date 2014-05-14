@@ -23,6 +23,27 @@ namespace Messaging { namespace NomProtocol {
         
     public:
         
+        enum class MsgType {
+            
+            // leave these alone
+            _None,
+            Msg,
+            
+            // insert message types here
+            Ohai,
+            OhaiOk,
+            Wtf,
+            ICanHaz,
+            CheezBurger,
+            Hugz,
+            HugzOk,
+            
+            // Leave this alone
+            
+            _Final
+            
+        };
+        
         using Address = Msg::Address;
         using Envelope = Msg::Envelope;
         
@@ -136,25 +157,6 @@ namespace Messaging { namespace NomProtocol {
         }
         
     private:
-        
-        enum class MsgType {
-            
-            Msg,
-            
-            // insert message types here
-            Ohai,
-            OhaiOk,
-            Wtf,
-            ICanHaz,
-            CheezBurger,
-            Hugz,
-            HugzOk,
-
-            // Leave this alone
-            
-            _Final
-            
-        };
         
         MsgType _msgType;
         std::shared_ptr<Msg> _msg;

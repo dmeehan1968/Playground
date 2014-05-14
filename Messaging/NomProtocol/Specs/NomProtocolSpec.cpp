@@ -39,6 +39,14 @@ namespace Messaging { namespace NomProtocol { namespace Specs {
             
         });
 
+        it("gets hugz", {
+            
+            auto reply = client.hugz();
+            
+            expect(reply && reply->isa<HugzOk>()).should.beTrue();
+            
+        });
+
         reactor->stop();
         
     });

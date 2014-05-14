@@ -73,8 +73,8 @@ namespace Messaging { namespace Protocol {
             
             identity.send(socket, blocking, more_type);
             
-
         }
+        
         virtual bool decode(const Frame &frame) {
             
             switch (_state) {

@@ -68,43 +68,39 @@ namespace Messaging { namespace NomProtocol {
                         
                         auto reply = _socket.receive();
                         
-                        if (std::dynamic_pointer_cast<OhaiOk>(reply)) {
+                        if (std::dynamic_pointer_cast<OhaiOk>(reply) ||
+                            std::dynamic_pointer_cast<Wtf>(reply)) {
                             
                             _state = State::UsePeering;
                             return reply;
                             
                         }
-                        
-                    } else {
-                        errno = EFSM;
-                        throw Exception("invalid");
                     }
                     break;
                 }
                     
                 case State::UsePeering:
                 {
-                    if (std::is_base_of<ICanHaz, T>::value) {
+                    if (std::is_base_of<ICanHaz, T>::value ||
+                        std::is_base_of<Hugz, T>::value) {
                         
                         _socket.send(std::forward<T>(msg));
                         
                         auto reply = _socket.receive();
                         
-                        if (std::dynamic_pointer_cast<CheezBurger>(reply)) {
+                        if (std::dynamic_pointer_cast<CheezBurger>(reply) ||
+                            std::dynamic_pointer_cast<HugzOk>(reply)) {
                             
                             return reply;
                         }
-                        
                     }
-                    errno = ENOSYS;
-                    throw Exception("");
-
                     break;
                 }
                     
             }
             
-            return nullptr;
+            errno = EFSM;
+            throw Exception("invalid reply for state");
             
         }
         

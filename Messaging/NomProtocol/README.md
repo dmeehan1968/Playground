@@ -43,7 +43,7 @@ Additional parentheses make this clearer, and I've added a response in the case 
     use-peering     =   ( C:ICANHAZ ( S:CHEEZBURGER / S:WTF ) )
                     /=  ( C:HUGZ S:HUGZ-OK )
                     /=  ( S:HUGZ C:HUGZ-OK )
-                    
+
 So this is going to be the basis of this example.
 
 ## XML Protocol Definition

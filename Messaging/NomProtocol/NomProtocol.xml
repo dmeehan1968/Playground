@@ -20,35 +20,35 @@
             <server send = "CHEEZ BURGER" />
 
             <server send = "WTF" />
-            
+
         </client>
 
         <client send = "HUGZ">
-            
+
             <server send = "HUGZ OK" />
-            
+
         </client>
 
         <server send = "HUGZ">
-            
+
             <client send = "HUGZ OK" />
-            
+
         </server>
 
     </state>
 
     <message name = "OHAI" />
-    
+
     <message name = "OHAI OK" />
-    
+
     <message name = "WTF" />
-    
+
     <message name = "I CAN HAZ" />
-    
+
     <message name = "CHEEZ BURGER" />
-    
+
     <message name = "HUGZ" />
-    
+
     <message name = "HUGZ OK" />
-    
+
 </class>

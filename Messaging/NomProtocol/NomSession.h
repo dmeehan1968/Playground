@@ -14,6 +14,7 @@
 #include "Dispatch.h"
 
 #include <memory>
+#include <iostream>
 
 namespace Messaging { namespace NomProtocol {
 
@@ -28,7 +29,17 @@ namespace Messaging { namespace NomProtocol {
             _socket(socket),
             _state(State::OpenPeering),
             _numCheezBurgers(10)
-        {}
+        {
+            std::cout << "Create: " << this << std::endl;
+
+            onOpenPeeringOhai = [&](const Ohai &) {};
+            onUsePeeringICanHaz = [&](const ICanHaz &) {};
+            onUsePeeringHugz = [&](const Hugz &) {};
+
+            init();
+        }
+
+        void init();
 
         void dispatch(const std::shared_ptr<Msg> &msg) {
 
@@ -44,7 +55,7 @@ namespace Messaging { namespace NomProtocol {
                     Dispatch<Msg>(*msg).handle<Ohai>([&](const Ohai &ohai) {
 
                         _state = State::UsePeering;
-                        OpenPeering(ohai);
+                        onOpenPeeringOhai(ohai);
 
                     });
 
@@ -56,11 +67,11 @@ namespace Messaging { namespace NomProtocol {
 
                     Dispatch<Msg>(*msg).handle<ICanHaz>([&](const ICanHaz &iCanHaz) {
 
-                        UsePeering(iCanHaz);
+                        onUsePeeringICanHaz(iCanHaz);
 
                     }).handle<Hugz>([&](const Hugz &hugz) {
 
-                        UsePeering(hugz);
+                        onUsePeeringHugz(hugz);
 
                     });
 
@@ -71,34 +82,9 @@ namespace Messaging { namespace NomProtocol {
             }
         }
 
-        void OpenPeering(const Ohai &ohai) {
-
-            if (_numCheezBurgers) {
-
-                reply(OhaiOk());
-
-            }
-        }
-
-        void UsePeering(const ICanHaz &iCanHaz) {
-
-            if (_numCheezBurgers-- > 0) {
-
-                reply(CheezBurger());
-
-            } else {
-
-                reply(Wtf());
-
-            }
-
-        }
-
-        void UsePeering(const Hugz &hugz) {
-
-            reply(HugzOk());
-
-        }
+        std::function<void(const Ohai &)> onOpenPeeringOhai;
+        std::function<void(const ICanHaz &)> onUsePeeringICanHaz;
+        std::function<void(const Hugz &)> onUsePeeringHugz;
 
         std::shared_ptr<Msg> hugz() {
 

@@ -7,3 +7,23 @@
 //
 
 #include "NomClient.h"
+
+namespace Messaging { namespace NomProtocol {
+
+    void NomClient::init() {
+
+        onOpenPeeringHugz = [&](const Hugz &hugz) {
+
+            send(HugzOk());
+
+        };
+
+        onUsePeeringHugz = [&](const Hugz &hugz) {
+
+            send(HugzOk());
+
+        };
+
+    }
+
+} }

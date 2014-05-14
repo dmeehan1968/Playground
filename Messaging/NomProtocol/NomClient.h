@@ -33,7 +33,15 @@ namespace Messaging { namespace NomProtocol {
             _lastRequest(NomCodec::MsgType::_None)
         {
             _socket.connect(_endpoint);
+
+            onOpenPeeringHugz = [](const Hugz &){};
+            onUsePeeringHugz = [](const Hugz &){};
+
+            init();
+
         }
+
+        void init();
 
         std::shared_ptr<Msg> ohai() {
 
@@ -58,6 +66,9 @@ namespace Messaging { namespace NomProtocol {
             return receive();
 
         }
+
+        std::function<void(const Hugz &)> onOpenPeeringHugz;
+        std::function<void(const Hugz &)> onUsePeeringHugz;
 
     protected:
 
@@ -151,7 +162,7 @@ namespace Messaging { namespace NomProtocol {
 
                         Dispatch<Msg>(*reply).handle<Hugz>([&](const Hugz &hugz) {
 
-                            OpenPeering(hugz);
+                            onOpenPeeringHugz(hugz);
 
                         }).handle<Msg>([&](const Msg &msg) {
 
@@ -199,7 +210,7 @@ namespace Messaging { namespace NomProtocol {
 
                         Dispatch<Msg>(*reply).handle<Hugz>([&](const Hugz &hugz) {
 
-                            UsePeering(hugz);
+                            onUsePeeringHugz(hugz);
 
                         }).handle<Msg>([&](const Msg &msg) {
 
@@ -218,22 +229,9 @@ namespace Messaging { namespace NomProtocol {
 
             } while (1);
 
-            return nullptr;
+            throw Exception("no message received, unexpected", 0);
 
         }
-
-        void OpenPeering(const Hugz &hugz) {
-
-            send(HugzOk());
-
-        }
-
-        void UsePeering(const Hugz &hugz) {
-
-            send(HugzOk());
-
-        }
-
 
     private:
 

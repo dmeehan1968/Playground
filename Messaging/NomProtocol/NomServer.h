@@ -78,13 +78,11 @@ namespace Messaging { namespace NomProtocol {
 
                 if (found == _sessions.end()) {
 
-                    found = _sessions.emplace(msg->address, NomSession(_socket)).first;
+                    found = _sessions.emplace(msg->address, _socket).first;
 
                 }
 
-                auto &session = found->second;
-
-                session.dispatch(msg);
+                found->second.dispatch(msg);
 
             }
         }

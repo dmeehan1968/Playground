@@ -12,6 +12,7 @@
 #include "Poller.h"
 
 #include <map>
+#include <thread>
 
 namespace Messaging {
     
@@ -141,8 +142,28 @@ namespace Messaging {
             
         }
         
+        void operator()() {
+            
+            run(100);
+            
+        }
+        
+        void start() {
+
+            _thread = std::thread(std::ref(*this));
+            
+        }
+        
         void stop() {
+            
             _done = true;
+            
+            if (_thread.joinable()) {
+                
+                _thread.join();
+                
+            }
+            
         }
         
     protected:
@@ -166,6 +187,8 @@ namespace Messaging {
         std::map<Socket, EventObserver> _readObservers;
         std::map<Socket, EventObserver> _writeObservers;
         std::map<Socket, EventObserver> _errorObservers;
+        
+        std::thread _thread;
         
     };
     

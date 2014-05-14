@@ -81,17 +81,28 @@ namespace Messaging { namespace NomProtocol {
                     
                 case State::UsePeering:
                 {
-                    if (std::is_base_of<ICanHaz, T>::value ||
-                        std::is_base_of<Hugz, T>::value) {
+                    if (std::is_base_of<ICanHaz, T>::value) {
                         
                         _socket.send(std::forward<T>(msg));
                         
                         auto reply = _socket.receive();
                         
                         if (std::dynamic_pointer_cast<CheezBurger>(reply) ||
-                            std::dynamic_pointer_cast<HugzOk>(reply)) {
+                            std::dynamic_pointer_cast<Wtf>(reply)) {
                             
                             return reply;
+                        }
+                        
+                    } else if (std::is_base_of<Hugz, T>::value) {
+                        
+                        _socket.send(std::forward<T>(msg));
+                        
+                        auto reply = _socket.receive();
+                        
+                        if (std::dynamic_pointer_cast<HugzOk>(reply)) {
+                            
+                            return reply;
+                            
                         }
                     }
                     break;

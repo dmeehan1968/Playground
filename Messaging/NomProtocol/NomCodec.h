@@ -46,21 +46,7 @@ namespace Messaging { namespace NomProtocol {
         template <class T>
         void encode(Socket &socket, T &&msg, const Frame::more more_type) {
             
-            auto blocking = Frame::block::blocking;
-            auto more = Frame::more::more;
-            
-            if (_address == Address::Use) {
-                
-                msg.address.send(socket, blocking, more);
-                
-            }
-            
-            if (_envelope == Envelope::Use) {
-                
-                Frame().send(socket, blocking, more);
-            }
-            
-            msg.identity.send(socket, blocking, more_type);
+            msg.encode(socket, _address, _envelope, more_type);
             
         }
         

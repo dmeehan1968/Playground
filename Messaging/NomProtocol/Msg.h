@@ -52,6 +52,29 @@ namespace Messaging { namespace Protocol {
             }
         }
         
+        virtual void encode(Socket &socket,
+                            const Address address_type,
+                            const Envelope envelope_type,
+                            const Frame::more more_type) {
+            
+            auto blocking = Frame::block::blocking;
+            auto more = Frame::more::more;
+            
+            if (address_type == Address::Use) {
+                
+                address.send(socket, blocking, more);
+                
+            }
+            
+            if (envelope_type == Envelope::Use) {
+                
+                Frame().send(socket, blocking, more);
+            }
+            
+            identity.send(socket, blocking, more_type);
+            
+
+        }
         virtual bool decode(const Frame &frame) {
             
             switch (_state) {

@@ -27,7 +27,7 @@
 
             <server send = "HUGZ OK" />
 
-        </server>
+        </client>
 
         <server send = "HUGZ">
 

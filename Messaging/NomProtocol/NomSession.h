@@ -10,7 +10,7 @@
 #define __Messaging__NomSession__
 
 #include "NomMessage.h"
-#include "NomSessionBase.h"
+#include "NomSocket.h"
 #include "Dispatch.h"
 
 #include <memory>
@@ -19,16 +19,22 @@ namespace Messaging { namespace NomProtocol {
 
     using namespace ::Messaging::Protocol;
     
-    class NomSession : public NomSessionBase {
+    class NomSession {
       
     public:
 
-        NomSession()
+        NomSession(const NomSocket &socket)
         :
-            _state(State::OpenPeering)
+            _socket(socket),
+            _state(State::OpenPeering),
+            _numCheezBurgers(10)
         {}
         
         void dispatch(const std::shared_ptr<Msg> &msg) {
+            
+            if (msg) {
+                _replyAddress = msg->address;
+            }
             
             switch (_state) {
                     
@@ -37,11 +43,8 @@ namespace Messaging { namespace NomProtocol {
                     
                     Dispatch<Msg>(*msg).handle<Ohai>([&](const Ohai &ohai) {
                         
+                        _state = State::UsePeering;
                         OpenPeering(ohai);
-                        
-                    }).handle<Wtf>([&](const Wtf &wtf) {
-                        
-                        OpenPeering(wtf);
                         
                     });
                     
@@ -68,9 +71,48 @@ namespace Messaging { namespace NomProtocol {
             }
         }
         
+        void OpenPeering(const Ohai &ohai) {
+            
+            if (_numCheezBurgers) {
+                
+                reply(OhaiOk());
+                
+            }
+        }
+        
+        void UsePeering(const ICanHaz &iCanHaz) {
+            
+            if (_numCheezBurgers-- > 0) {
+                
+                reply(CheezBurger());
+                
+            } else {
+                
+                reply(Wtf());
+                
+            }
+            
+        }
+        
+        void UsePeering(const Hugz &hugz) {
+            
+            reply(HugzOk());
+            
+        }
+        
         std::shared_ptr<Msg> hugz() {
             
             return nullptr;
+            
+        }
+        
+    protected:
+        
+        template <class T>
+        void reply(T &&msg) {
+         
+            msg.address = _replyAddress;
+            _socket.send(std::forward<T>(msg));
             
         }
         
@@ -83,7 +125,11 @@ namespace Messaging { namespace NomProtocol {
             
         };
         
-        State _state;
+        State       _state;
+        NomSocket   _socket;
+        Frame       _replyAddress;
+        
+        unsigned    _numCheezBurgers;
         
     };
     

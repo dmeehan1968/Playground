@@ -34,7 +34,7 @@
 		A3AEC56519224DD9007E5421 /* NomProtocolSpec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3AEC56419224DD9007E5421 /* NomProtocolSpec.cpp */; };
 		A3AEC56819226126007E5421 /* NomCodec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3AEC56619226126007E5421 /* NomCodec.cpp */; };
 		A3AEC56B19226A12007E5421 /* Dispatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3AEC56919226A12007E5421 /* Dispatch.cpp */; };
-		A3AEC56E19226F15007E5421 /* NomSessionBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3AEC56C19226F15007E5421 /* NomSessionBase.cpp */; };
+		A3AEC57119228F45007E5421 /* NomSocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3AEC56F19228F45007E5421 /* NomSocket.cpp */; };
 		A3B1F9DB19016AC700DA0C90 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3B1F9DA19016AC700DA0C90 /* main.cpp */; };
 		A3B1F9DD19016B1D00DA0C90 /* ContextSpec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3B1F9DC19016B1D00DA0C90 /* ContextSpec.cpp */; };
 		A3B1F9E019016C4000DA0C90 /* Context.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A3B1F9DE19016C4000DA0C90 /* Context.cpp */; };
@@ -103,8 +103,8 @@
 		A3AEC56719226126007E5421 /* NomCodec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NomCodec.h; sourceTree = "<group>"; };
 		A3AEC56919226A12007E5421 /* Dispatch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Dispatch.cpp; sourceTree = "<group>"; };
 		A3AEC56A19226A12007E5421 /* Dispatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Dispatch.h; sourceTree = "<group>"; };
-		A3AEC56C19226F15007E5421 /* NomSessionBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NomSessionBase.cpp; sourceTree = "<group>"; };
-		A3AEC56D19226F15007E5421 /* NomSessionBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NomSessionBase.h; sourceTree = "<group>"; };
+		A3AEC56F19228F45007E5421 /* NomSocket.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NomSocket.cpp; sourceTree = "<group>"; };
+		A3AEC57019228F45007E5421 /* NomSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NomSocket.h; sourceTree = "<group>"; };
 		A3B1F9CC190168EA00DA0C90 /* Messaging */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Messaging; sourceTree = BUILT_PRODUCTS_DIR; };
 		A3B1F9DA19016AC700DA0C90 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		A3B1F9DC19016B1D00DA0C90 /* ContextSpec.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContextSpec.cpp; sourceTree = "<group>"; };
@@ -176,8 +176,8 @@
 				A3AEC55519224A06007E5421 /* NomServer.h */,
 				A3AEC55A19224B5C007E5421 /* NomSession.cpp */,
 				A3AEC55B19224B5C007E5421 /* NomSession.h */,
-				A3AEC56C19226F15007E5421 /* NomSessionBase.cpp */,
-				A3AEC56D19226F15007E5421 /* NomSessionBase.h */,
+				A3AEC56F19228F45007E5421 /* NomSocket.cpp */,
+				A3AEC57019228F45007E5421 /* NomSocket.h */,
 				A3AEC56919226A12007E5421 /* Dispatch.cpp */,
 				A3AEC56A19226A12007E5421 /* Dispatch.h */,
 				A3AEC55719224A65007E5421 /* Msg.cpp */,
@@ -320,9 +320,9 @@
 				A30B45C419055BEB0058F066 /* Message.cpp in Sources */,
 				A3AEC54E19214D2E007E5421 /* SessionCodec.cpp in Sources */,
 				A30B45C119055BBD0058F066 /* MessageSpec.cpp in Sources */,
-				A3AEC56E19226F15007E5421 /* NomSessionBase.cpp in Sources */,
 				A3AEC56219224CA9007E5421 /* NomClient.cpp in Sources */,
 				A30B45CC19057FFA0058F066 /* Poller.cpp in Sources */,
+				A3AEC57119228F45007E5421 /* NomSocket.cpp in Sources */,
 				A30B45C919057FB30058F066 /* PollerSpec.cpp in Sources */,
 				A3672F77190A615E00F9EE5E /* ReactorSpec.cpp in Sources */,
 				A3AEC56B19226A12007E5421 /* Dispatch.cpp in Sources */,

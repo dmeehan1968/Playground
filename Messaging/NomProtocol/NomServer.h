@@ -10,7 +10,7 @@
 #define __Messaging__NomServer__
 
 #include "NomSession.h"
-#include "NomCodec.h"
+#include "NomSocket.h"
 
 #include "Msg.h"
 
@@ -30,31 +30,29 @@ namespace Messaging { namespace NomProtocol {
         
     public:
         
-        NomServer(const std::string &endpoint = std::string("inproc://nom"))
+        NomServer(const Context &context,
+                  const std::shared_ptr<Reactor> reactor,
+                  const std::string &endpoint = std::string("inproc://nom"))
         :
-            _socket(Context(), Socket::Type::router),
+            _socket(context,
+                    Socket::Type::router,
+                    NomCodec::Address::Use,
+                    NomCodec::Envelope::Use),
+            _reactor(reactor),
             _endpoint(endpoint)
-        {}
+        {
+        
+            _socket.bind(_endpoint);
+            
+            using namespace std::placeholders;
+            
+            _reactor->addObserver(_socket.socket(), Reactor::Event::Readable, std::bind(&NomServer::onSocketReadable, this, _1, _2));
+            
+        }
         
         ~NomServer() {
             
-            stop();
-            
-        }
-        
-        void start() {
-        
-            _serverThread = std::thread(std::ref(*this));
-            
-        }
-        
-        void operator()() {
-            
-            _socket.bind(_endpoint);
-            
-            _reactor.addObserver(_socket, Reactor::Event::Readable, std::bind(&NomServer::onSocketReadable, this, std::placeholders::_1, std::placeholders::_2));
-            
-            _reactor.run(100);
+            _reactor->removeObserver(_socket.socket(), Reactor::Event::Readable);
 
             try {
                 
@@ -66,61 +64,38 @@ namespace Messaging { namespace NomProtocol {
                     throw;
                 }
             }
-            
-        }
-        
-        void stop() {
-            
-            _reactor.stop();
-            
-            if (_serverThread.joinable()) {
-                _serverThread.join();
-            }
         }
         
     protected:
         
         void onSocketReadable(Socket &socket, const Reactor::Event &event) {
-            
-            bool more = false;
-            
-            do {
-                Frame frame;
-                frame.receive(socket, Frame::block::none);
-                
-                auto msg = _codec.decode(frame);
-                
-                if (msg) {
-                 
-                    auto found = _sessions.find(msg->address);
 
-                    if (found == _sessions.end()) {
-                        
-                        found = _sessions.emplace(msg->address, NomSession()).first;
-                        
-                    }
+            auto msg = _socket.receive();
+            
+            if (msg) {
+                
+                auto found = _sessions.find(msg->address);
+                
+                if (found == _sessions.end()) {
                     
-                    auto &session = found->second;
-                    
-                    msg->setSocket(_socket);
-                    
-                    session.dispatch(msg);
+                    found = _sessions.emplace(msg->address, NomSession(_socket)).first;
                     
                 }
                 
-            } while (more);
+                auto &session = found->second;
+                
+                session.dispatch(msg);
+                
+            }
         }
         
     private:
         
         std::map<Frame, NomSession> _sessions;
         
-        std::thread _serverThread;
-        
-        Reactor _reactor;
-        Socket _socket;
+        NomSocket _socket;
+        std::shared_ptr<Reactor> _reactor;
         std::string _endpoint;
-        NomCodec _codec;
         
     };
     

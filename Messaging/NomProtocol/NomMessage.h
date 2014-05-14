@@ -16,28 +16,26 @@ namespace Messaging { namespace NomProtocol {
     using namespace ::Messaging::Protocol;
     
     class Ohai : public Msg {
-    
+        
     public:
         
-        Ohai() = default;
+        Ohai() {
+            identity = "OHAI";
+        }
+        
         Ohai(const Msg &msg) : Msg(msg) {}
         
-        virtual Ohai *clone() const override {
-            return new Ohai(*this);
-        }
-    
     };
     
     class OhaiOk : public Msg {
-    
+        
     public:
         
-        OhaiOk() = default;
-        OhaiOk(const Msg &msg) : Msg(msg) {}
-        
-        virtual OhaiOk *clone() const override {
-            return new OhaiOk(*this);
+        OhaiOk() {
+            identity = "OHAI-OK";
         }
+        
+        OhaiOk(const Msg &msg) : Msg(msg) {}
         
     };
     
@@ -45,12 +43,11 @@ namespace Messaging { namespace NomProtocol {
         
     public:
         
-        Wtf() = default;
-        Wtf(const Msg &msg) : Msg(msg) {}
-
-        virtual Wtf *clone() const override {
-            return new Wtf(*this);
+        Wtf() {
+            identity = "WTF";
         }
+        
+        Wtf(const Msg &msg) : Msg(msg) {}
         
     };
     
@@ -58,12 +55,11 @@ namespace Messaging { namespace NomProtocol {
         
     public:
         
-        ICanHaz() = default;
-        ICanHaz(const Msg &msg) : Msg(msg) {}
-        
-        virtual ICanHaz *clone() const override {
-            return new ICanHaz(*this);
+        ICanHaz() {
+            identity = "ICANHAZ";
         }
+        
+        ICanHaz(const Msg &msg) : Msg(msg) {}
         
     };
     
@@ -71,12 +67,11 @@ namespace Messaging { namespace NomProtocol {
         
     public:
         
-        CheezBurger() = default;
-        CheezBurger(const Msg &msg) : Msg(msg) {}
-        
-        virtual CheezBurger *clone() const override {
-            return new CheezBurger(*this);
+        CheezBurger() {
+            identity = "CHEEZBURGER";
         }
+        
+        CheezBurger(const Msg &msg) : Msg(msg) {}
         
     };
     
@@ -84,12 +79,11 @@ namespace Messaging { namespace NomProtocol {
         
     public:
         
-        Hugz() = default;
-        Hugz(const Msg &msg) : Msg(msg) {}
-        
-        virtual Hugz *clone() const override {
-            return new Hugz(*this);
+        Hugz() {
+            identity = "HUGZ";
         }
+        
+        Hugz(const Msg &msg) : Msg(msg) {}
         
     };
     
@@ -97,12 +91,11 @@ namespace Messaging { namespace NomProtocol {
         
     public:
         
-        HugzOk() = default;
-        HugzOk(const Msg &msg) : Msg(msg) {}
-        
-        virtual HugzOk *clone() const override {
-            return new HugzOk(*this);
+        HugzOk() {
+            identity = "HUGZ-OK";
         }
+        
+        HugzOk(const Msg &msg) : Msg(msg) {}
         
     };
     

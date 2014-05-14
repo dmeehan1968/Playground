@@ -23,7 +23,14 @@ namespace Messaging { namespace NomProtocol {
         
     public:
         
-        NomCodec() {
+        using Address = Msg::Address;
+        using Envelope = Msg::Envelope;
+        
+        NomCodec(const Address address, const Envelope envelope)
+        :
+            _address(address),
+            _envelope(envelope)
+        {
             
             reset();
             
@@ -32,7 +39,28 @@ namespace Messaging { namespace NomProtocol {
         void reset() {
             
             _msgType = MsgType::Msg;
-            _msg = std::make_shared<Msg>();
+            _msg = std::make_shared<Msg>(_address, _envelope);
+            
+        }
+        
+        template <class T>
+        void encode(Socket &socket, T &&msg, const Frame::more more_type) {
+            
+            auto blocking = Frame::block::blocking;
+            auto more = Frame::more::more;
+            
+            if (_address == Address::Use) {
+                
+                msg.address.send(socket, blocking, more);
+                
+            }
+            
+            if (_envelope == Envelope::Use) {
+                
+                Frame().send(socket, blocking, more);
+            }
+            
+            msg.identity.send(socket, blocking, more_type);
             
         }
         
@@ -76,7 +104,7 @@ namespace Messaging { namespace NomProtocol {
                             _msg = std::make_shared<Hugz>(*_msg);
                             _msgType = MsgType::_Final;
                             
-                        } else if (_msg->identity == "HugzOk") {
+                        } else if (_msg->identity == "HUGZ-OK") {
                             
                             _msg = std::make_shared<HugzOk>(*_msg);
                             _msgType = MsgType::_Final;
@@ -110,7 +138,14 @@ namespace Messaging { namespace NomProtocol {
                     
             }
             
-            return _msg->isFinal() ? _msg : nullptr;
+            if (_msg->isFinal()) {
+                
+                auto retval = _msg;
+                reset();
+                return retval;
+            }
+            
+            return nullptr;
             
         }
         
@@ -137,6 +172,9 @@ namespace Messaging { namespace NomProtocol {
         
         MsgType _msgType;
         std::shared_ptr<Msg> _msg;
+
+        Address _address;
+        Envelope _envelope;
         
     };
     

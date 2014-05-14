@@ -15,10 +15,13 @@ namespace Messaging { namespace NomProtocol { namespace Specs {
     
     describe(NomProtocol, {
 
-        NomServer server;
-        NomClient client;
+        Context context;
+        auto reactor = std::make_shared<Reactor>();
+        
+        NomServer server(context, reactor);
+        NomClient client(context);
 
-        server.start();
+        reactor->start();
         
         it("opens peering", {
             
@@ -28,6 +31,15 @@ namespace Messaging { namespace NomProtocol { namespace Specs {
             
         });
 
+        it("gets cheezburger", {
+            
+            auto reply = client.iCanHaz();
+            
+            expect(reply && reply->isa<CheezBurger>()).should.beTrue();
+            
+        });
+
+        reactor->stop();
         
     });
     

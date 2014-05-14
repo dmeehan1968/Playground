@@ -9,22 +9,48 @@
 #ifndef __Messaging__Msg__
 #define __Messaging__Msg__
 
-
 #include "Frame.h"
 
 #include <ostream>
 #include <deque>
 
 namespace Messaging { namespace Protocol {
-  
+    
     class Msg {
         
     public:
+        
+        enum class Address {
+            
+            Use,
+            Ignore
+            
+        };
+        
+        enum class Envelope {
+            
+            Use,
+            Ignore
+            
+        };
         
         Msg()
         :
             _state(State::Address)
         {}
+        
+        Msg(const Address &address, const Envelope &envelope) {
+        
+            _state = State::Address;
+            
+            if (address == Address::Ignore) {
+                _state = State::Envelope;
+            }
+            
+            if (envelope == Envelope::Ignore) {
+                _state = State::Identity;
+            }
+        }
         
         virtual bool decode(const Frame &frame) {
             
@@ -33,10 +59,10 @@ namespace Messaging { namespace Protocol {
                 case State::Address:
                     
                     address = frame;
-                    _state = State::Delimiter;
+                    _state = State::Envelope;
                     break;
                     
-                case State::Delimiter:
+                case State::Envelope:
                     
                     _state = State::Identity;
                     break;
@@ -63,30 +89,6 @@ namespace Messaging { namespace Protocol {
             
         }
         
-        virtual Msg *clone() const {
-            return new Msg(*this);
-        };
-        
-        virtual std::deque<Frame> encode(Socket * const socket = nullptr, const Frame::more more_type = Frame::more::none) {
-            
-            if (socket == nullptr) {
-                
-                std::deque<Frame> frames;
-                
-                frames.emplace_back(address);
-                frames.emplace_back(Frame());
-                frames.emplace_back(identity);
-                
-                return frames;
-            }
-            
-            address.send(*socket, Frame::block::blocking, Frame::more::more);
-            Frame().send(*socket, Frame::block::blocking, Frame::more::more);
-            identity.send(*socket, Frame::block::blocking, more_type);
-            
-            return {};
-        }
-        
         Frame address;
         Frame identity;
         
@@ -105,7 +107,7 @@ namespace Messaging { namespace Protocol {
         bool isa() {
             
             try {
-              
+                
                 (void)dynamic_cast<T*>(this);
                 
             } catch (std::bad_cast &) {
@@ -118,51 +120,29 @@ namespace Messaging { namespace Protocol {
             
         }
         
-        void reply(const Msg &msg) {
-            
-            address = msg.address;
-
-            if ( ! _socket) {
-                errno = ENOTSOCK;
-                throw Exception("no source socket assigned");
-            }
-            
-            Socket socket = msg.socket();
-            encode(&socket, Frame::more::none);
-            
-        }
-        
-        const Socket &socket() const {
-            return *_socket;
-        }
-        
-        void setSocket(const Socket &socket) {
-            
-            _socket = std::make_shared<Socket>(socket);
-            
-        }
-        
     private:
         
         enum class State {
             
             Address,
-            Delimiter,
+            Envelope,
             Identity,
             _Final
             
         };
         
         State _state;
-        mutable std::shared_ptr<Socket> _socket;
         
     };
     
     inline std::ostream &operator << (std::ostream &stream, const Msg &msg) {
-
-        return stream << "Msg";
+        
+        return stream << "Msg: identity=" << msg.identity.str();
         
     }
+    
 } }
+
+
 
 #endif /* defined(__Messaging__Msg__) */

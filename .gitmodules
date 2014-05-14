@@ -4,3 +4,21 @@
 [submodule "libzmq"]
 	path = libzmq
 	url = https://github.com/zeromq/libzmq.git
+[submodule "ZingBDD"]
+	path = ZingBDD
+	url = https://github.com/dmeehan1968/ZingBDD.git
+[submodule "gsl"]
+	path = gsl
+	url = http://github.com/imatix/gsl.git
+[submodule "Messaging/zproto"]
+	path = Messaging/zproto
+	url = https://github.com/zeromq/zproto.git
+[submodule "zproto"]
+	path = zproto
+	url = https://github.com/zeromq/zproto.git
+[submodule "czmq"]
+	path = czmq
+	url = https://github.com/zeromq/czmq.git
+[submodule "libsodium"]
+	path = libsodium
+	url = https://github.com/jedisct1/libsodium.git

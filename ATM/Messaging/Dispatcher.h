@@ -25,7 +25,7 @@ namespace Messaging {
         {}
         
         template <class M>
-        Dispatcher &handle(const std::function<bool(const M&)> &func) {
+        Dispatcher &handle(const std::function<bool(M&)> &func) {
             
             if ( ! _handled) {
                 

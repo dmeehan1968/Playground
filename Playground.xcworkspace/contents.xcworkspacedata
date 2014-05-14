@@ -5,6 +5,9 @@
       location = "group:Messaging/Messaging.xcodeproj">
    </FileRef>
    <FileRef
+      location = "group:AltEnum/AltEnum.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:ZMQ_STREAM/ZMQ_STREAM.xcodeproj">
    </FileRef>
    <FileRef

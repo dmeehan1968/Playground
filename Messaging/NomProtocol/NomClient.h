@@ -13,6 +13,8 @@
 #include "NomSocket.h"
 #include "Dispatch.h"
 
+#include "Reactor.h"
+
 #include <memory>
 
 namespace Messaging { namespace NomProtocol {
@@ -22,12 +24,14 @@ namespace Messaging { namespace NomProtocol {
     public:
 
         NomClient(const Context &context,
+                  const std::shared_ptr<Reactor> reactor,
                   const std::string &endpoint = std::string("inproc://nom"))
         :
             _socket(context,
                     Socket::Type::dealer,
                     NomCodec::Address::Ignore,
                     NomCodec::Envelope::Use),
+            _reactor(reactor),
             _endpoint(endpoint),
             _state(State::OpenPeering),
             _lastRequest(NomCodec::MsgType::_None)
@@ -243,6 +247,7 @@ namespace Messaging { namespace NomProtocol {
         };
 
         NomSocket _socket;
+        std::shared_ptr<Reactor> _reactor;
         std::string _endpoint;
         State _state;
         NomCodec::MsgType _lastRequest;

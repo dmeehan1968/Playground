@@ -19,7 +19,7 @@ namespace Messaging { namespace NomProtocol { namespace Specs {
         auto reactor = std::make_shared<Reactor>();
 
         NomServer server(context, reactor);
-        NomClient client(context);
+        NomClient client(context, reactor);
 
         reactor->start();
 

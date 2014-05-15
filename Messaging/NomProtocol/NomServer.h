@@ -46,7 +46,7 @@ namespace Messaging { namespace NomProtocol {
 
             using namespace std::placeholders;
 
-            _reactor->addObserver(_socket.socket(), Reactor::Event::Readable, std::bind(&NomServer::onSocketReadable, this, _1, _2));
+            _reactor->addObserver(_socket.socket(), Reactor::Event::Readable, std::bind(&NomServer::onSocketReadable, this, _1, _2, _3));
 
         }
 
@@ -68,7 +68,7 @@ namespace Messaging { namespace NomProtocol {
 
     protected:
 
-        void onSocketReadable(Socket &socket, const Reactor::Event &event) {
+        void onSocketReadable(const Socket &socket, const Reactor::Event &event, const bool didTimeout) {
 
             auto msg = _socket.receive();
 

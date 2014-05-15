@@ -32,9 +32,9 @@ namespace Messaging { namespace NomProtocol {
         {
             std::cout << "Create: " << this << std::endl;
 
-            onOpenPeeringOhai = [&](const Ohai &) {};
-            onUsePeeringICanHaz = [&](const ICanHaz &) {};
-            onUsePeeringHugz = [&](const Hugz &) {};
+            onOpenPeeringOhai = [](const Ohai &) {};
+            onUsePeeringICanHaz = [](const ICanHaz &) {};
+            onUsePeeringHugz = [](const Hugz &) {};
 
             init();
         }

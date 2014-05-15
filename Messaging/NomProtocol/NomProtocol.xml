@@ -1,39 +1,44 @@
-
-<class name = "Nom">
+<class name = "nom">
 
     <state name = "open peering">
 
-        <client send = "OHAI" next = "use peering">
+        <request name = "OHAI" next = "use peering">
 
-            <server send = "OHAI OK" />
+            <response name = "OHAI OK" />
+            <response name = "WTF" />
 
-            <server send = "WTF" />
-
-        </client>
+        </request>
 
     </state>
 
     <state name = "use peering">
 
-        <client send = "I CAN HAZ">
+        <request name = "I CAN HAZ">
 
-            <server send = "CHEEZ BURGER" />
+            <response name = "CHEEZ BURGER" />
+            <response name = "WTF" />
 
-            <server send = "WTF" />
+        </request>
 
-        </client>
+        <request name = "HUGZ">
 
-        <client send = "HUGZ">
+            <response name = "HUGZ OK" />
 
-            <server send = "HUGZ OK" />
+        </request>
 
-        </client>
+        <request name = "timeout" next = "need luv">
 
-        <server send = "HUGZ">
+            <response name = "HUGZ" />
 
-            <client send = "HUGZ OK" />
+        </request>
 
-        </server>
+    </state>
+
+    <state name = "need luv">
+
+        <request name = "HUGZ OK" next = "use peering" />
+
+        <request name = "timeout" next = "open peering" />
 
     </state>
 

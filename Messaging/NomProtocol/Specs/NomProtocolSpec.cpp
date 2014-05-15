@@ -18,7 +18,7 @@ namespace Messaging { namespace NomProtocol { namespace Specs {
         Context context;
         auto reactor = std::make_shared<Reactor>();
 
-        NomServer server(context, reactor);
+        NomServer server(context, reactor, NomSession::Milliseconds(100));
         NomClient client(context, reactor);
 
         reactor->start();
@@ -27,7 +27,7 @@ namespace Messaging { namespace NomProtocol { namespace Specs {
 
             auto reply = client.ohai();
 
-            expect(reply && reply->isa<Ohai>()).should.beTrue();
+            expect(reply && reply->isa<OhaiOk>()).should.beTrue();
 
         });
 
@@ -44,6 +44,18 @@ namespace Messaging { namespace NomProtocol { namespace Specs {
             auto reply = client.hugz();
 
             expect(reply && reply->isa<HugzOk>()).should.beTrue();
+
+        });
+
+        it("receives hugz on timeout", {
+
+            std::this_thread::sleep_for(std::chrono::milliseconds(150));
+
+            auto reply = client.iCanHaz();
+
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+
+            expect(reply && reply->isa<Hugz>()).should.beTrue();
 
         });
 

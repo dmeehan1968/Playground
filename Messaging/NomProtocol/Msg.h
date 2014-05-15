@@ -34,8 +34,9 @@ namespace Messaging { namespace Protocol {
 
         };
 
-        Msg()
+        Msg(const std::string identity = "")
         :
+            identity(identity),
             _state(State::Address)
         {}
 
@@ -131,7 +132,7 @@ namespace Messaging { namespace Protocol {
 
             try {
 
-                (void)dynamic_cast<T*>(this);
+                (void)dynamic_cast<T&>(*this);
 
             } catch (std::bad_cast &) {
 

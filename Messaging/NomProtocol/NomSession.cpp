@@ -41,6 +41,12 @@ namespace Messaging { namespace NomProtocol {
 
         };
 
+        onUsePeeringTimeout = [&](const Hugz &hugz) {
+
+            reply(Hugz());
+
+        };
+
     }
 
 } }

@@ -32,6 +32,7 @@ namespace Messaging { namespace NomProtocol {
 
         NomServer(const Context &context,
                   const std::shared_ptr<Reactor> reactor,
+                  const NomSession::Milliseconds &timeout = NomSession::Milliseconds(60000),
                   const std::string &endpoint = std::string("inproc://nom"))
         :
             _socket(context,
@@ -39,6 +40,7 @@ namespace Messaging { namespace NomProtocol {
                     NomCodec::Address::Use,
                     NomCodec::Envelope::Use),
             _reactor(reactor),
+            _timeout(timeout),
             _endpoint(endpoint)
         {
 
@@ -46,7 +48,7 @@ namespace Messaging { namespace NomProtocol {
 
             using namespace std::placeholders;
 
-            _reactor->addObserver(_socket.socket(), Reactor::Event::Readable, std::bind(&NomServer::onSocketReadable, this, _1, _2, _3));
+            _reactor->addObserver(_socket.socket(), Reactor::Event::Readable, std::bind(&NomServer::onSocketReadable, this, _1, _2, _3), Reactor::Milliseconds(100));
 
         }
 
@@ -70,6 +72,24 @@ namespace Messaging { namespace NomProtocol {
 
         void onSocketReadable(const Socket &socket, const Reactor::Event &event, const bool didTimeout) {
 
+            if (didTimeout) {
+
+                for ( auto &iter : _sessions ) {
+
+                    auto session = iter.second;
+
+                    if (session.isExpired()) {
+
+                        auto timeout = std::make_shared<Timeout>();
+                        timeout->address = iter.first;
+                        session.dispatch(std::make_shared<Timeout>());
+
+                    }
+                }
+
+                return;
+            }
+
             auto msg = _socket.receive();
 
             if (msg) {
@@ -78,7 +98,7 @@ namespace Messaging { namespace NomProtocol {
 
                 if (found == _sessions.end()) {
 
-                    found = _sessions.emplace(msg->address, _socket).first;
+                    found = _sessions.emplace(std::piecewise_construct, std::make_tuple(msg->address), std::make_tuple(_socket, _timeout)).first;
 
                 }
 
@@ -94,6 +114,8 @@ namespace Messaging { namespace NomProtocol {
         NomSocket _socket;
         std::shared_ptr<Reactor> _reactor;
         std::string _endpoint;
+
+        NomSession::Milliseconds _timeout;
 
     };
 

@@ -188,7 +188,8 @@ namespace Messaging { namespace NomProtocol {
                             {
 
                                 if (reply->isa<CheezBurger>() ||
-                                    reply->isa<Wtf>()) {
+                                    reply->isa<Wtf>() ||
+                                    reply->isa<Hugz>()) {
 
                                     return reply;
 

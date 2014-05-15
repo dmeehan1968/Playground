@@ -15,13 +15,21 @@ namespace Messaging { namespace NomProtocol {
 
     using namespace ::Messaging::Protocol;
 
+    class Timeout : public Msg {
+
+    public:
+
+        Timeout() : Msg("TIMEOUT") {}
+
+        Timeout(const Msg &msg) : Msg(msg) {}
+
+    };
+
     class Ohai : public Msg {
 
     public:
 
-        Ohai() {
-            identity = "OHAI";
-        }
+        Ohai() : Msg("OHAI") {}
 
         Ohai(const Msg &msg) : Msg(msg) {}
 
@@ -31,9 +39,7 @@ namespace Messaging { namespace NomProtocol {
 
     public:
 
-        OhaiOk() {
-            identity = "OHAI-OK";
-        }
+        OhaiOk() : Msg("OHAI-OK") {}
 
         OhaiOk(const Msg &msg) : Msg(msg) {}
 
@@ -43,9 +49,7 @@ namespace Messaging { namespace NomProtocol {
 
     public:
 
-        Wtf() {
-            identity = "WTF";
-        }
+        Wtf() : Msg("WTF") {}
 
         Wtf(const Msg &msg) : Msg(msg) {}
 
@@ -55,9 +59,7 @@ namespace Messaging { namespace NomProtocol {
 
     public:
 
-        ICanHaz() {
-            identity = "ICANHAZ";
-        }
+        ICanHaz() : Msg("ICANHAZ") {}
 
         ICanHaz(const Msg &msg) : Msg(msg) {}
 
@@ -67,9 +69,7 @@ namespace Messaging { namespace NomProtocol {
 
     public:
 
-        CheezBurger() {
-            identity = "CHEEZBURGER";
-        }
+        CheezBurger() : Msg("CHEEZBURGER") {}
 
         CheezBurger(const Msg &msg) : Msg(msg) {}
 
@@ -79,9 +79,7 @@ namespace Messaging { namespace NomProtocol {
 
     public:
 
-        Hugz() {
-            identity = "HUGZ";
-        }
+        Hugz() : Msg("HUGZ") {}
 
         Hugz(const Msg &msg) : Msg(msg) {}
 
@@ -91,9 +89,7 @@ namespace Messaging { namespace NomProtocol {
 
     public:
 
-        HugzOk() {
-            identity = "HUGZ-OK";
-        }
+        HugzOk() : Msg("HUGZ-OK") {}
 
         HugzOk(const Msg &msg) : Msg(msg) {}
 

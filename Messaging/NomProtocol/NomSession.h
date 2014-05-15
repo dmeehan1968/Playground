@@ -24,17 +24,22 @@ namespace Messaging { namespace NomProtocol {
 
     public:
 
-        NomSession(const NomSocket &socket)
+        using Clock = std::chrono::steady_clock;
+        using Milliseconds = std::chrono::milliseconds;
+
+        NomSession(const NomSocket &socket, const Milliseconds &timeout)
         :
             _socket(socket),
             _state(State::OpenPeering),
-            _numCheezBurgers(10)
+            _numCheezBurgers(10),
+            _timeout(timeout)
         {
-            std::cout << "Create: " << this << std::endl;
+            resetTimeout();
 
             onOpenPeeringOhai = [](const Ohai &) {};
             onUsePeeringICanHaz = [](const ICanHaz &) {};
             onUsePeeringHugz = [](const Hugz &) {};
+            onUsePeeringTimeout = [](const Timeout &) {};
 
             init();
         }
@@ -44,7 +49,11 @@ namespace Messaging { namespace NomProtocol {
         void dispatch(const std::shared_ptr<Msg> &msg) {
 
             if (msg) {
+
                 _replyAddress = msg->address;
+
+                resetTimeout();
+
             }
 
             switch (_state) {
@@ -73,6 +82,10 @@ namespace Messaging { namespace NomProtocol {
 
                         onUsePeeringHugz(hugz);
 
+                    }).handle<Timeout>([&](const Timeout &timeout) {
+
+                        onUsePeeringTimeout(timeout);
+
                     });
 
                     break;
@@ -85,10 +98,28 @@ namespace Messaging { namespace NomProtocol {
         std::function<void(const Ohai &)> onOpenPeeringOhai;
         std::function<void(const ICanHaz &)> onUsePeeringICanHaz;
         std::function<void(const Hugz &)> onUsePeeringHugz;
+        std::function<void(const Timeout &)> onUsePeeringTimeout;
 
         std::shared_ptr<Msg> hugz() {
 
             return nullptr;
+
+        }
+
+        bool isExpired() const {
+
+            auto now = Clock::now();
+            return _expires < now;
+
+        }
+
+        void resetTimeout() {
+
+            auto now = Clock::now();
+
+            auto limit = std::chrono::duration_cast<Milliseconds>(Clock::time_point::duration::max() - now.time_since_epoch());
+
+            _expires = now + ((limit < _timeout) ? limit : _timeout);
 
         }
 
@@ -114,6 +145,9 @@ namespace Messaging { namespace NomProtocol {
         State       _state;
         NomSocket   _socket;
         Frame       _replyAddress;
+
+        Clock::time_point   _expires;
+        Milliseconds        _timeout;
 
         unsigned    _numCheezBurgers;
 

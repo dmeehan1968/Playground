@@ -257,6 +257,7 @@ namespace Messaging {
 
                     (observation.second.observer())(observation.first, event, true);
                     didNotify = true;
+                    observation.second.resetTimeout();
 
                 }
             }

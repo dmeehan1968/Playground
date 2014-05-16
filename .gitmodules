@@ -13,9 +13,6 @@
 [submodule "Messaging/zproto"]
 	path = Messaging/zproto
 	url = https://github.com/zeromq/zproto.git
-[submodule "zproto"]
-	path = zproto
-	url = https://github.com/zeromq/zproto.git
 [submodule "czmq"]
 	path = czmq
 	url = https://github.com/zeromq/czmq.git

@@ -38,7 +38,11 @@
 
         <request name = "HUGZ OK" next = "use peering" />
 
-        <request name = "timeout" next = "open peering" />
+        <request name = "timeout" next = "open peering">
+
+            <response name = "DEAD KITTEH" />
+
+        </request>
 
     </state>
 

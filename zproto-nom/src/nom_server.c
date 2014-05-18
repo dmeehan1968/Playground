@@ -104,17 +104,16 @@ nom_server_test (bool verbose)
     assert (self);
 
     nom_server_set(self, "server/timeout", "500");
+    nom_server_set(self, "server/animate", "1");
 
     nom_server_bind (self, "tcp://127.0.0.1:5670");
 
     void *dealer = zsocket_new (ctx, ZMQ_DEALER);
     assert (dealer);
-    zsocket_set_rcvtimeo (dealer, 5000);
+    zsocket_set_rcvtimeo (dealer, 2000);
     zsocket_connect (dealer, "tcp://127.0.0.1:5670");
 
     nom_msg_t *request, *reply;
-
-    zclock_log("Use Peering...");
 
     // Attempt to open peering by sending an OHAI
 
@@ -125,13 +124,8 @@ nom_server_test (bool verbose)
     assert (reply);
     assert (nom_msg_id (reply) == NOM_MSG_OHAI_OK);
     nom_msg_destroy (&reply);
-    zclock_log("OHAI -> OHAI-OK: PASS");
-
-    zclock_log("Open Peering: PASS");
 
     // Attempt to use Peering
-
-    zclock_log("Use Peering...");
 
     // Send a ICANHAZ and see if we get CHEEZBURGER
 
@@ -142,7 +136,6 @@ nom_server_test (bool verbose)
     assert (reply);
     assert (nom_msg_id (reply) == NOM_MSG_CHEEZBURGER);
     nom_msg_destroy (&reply);
-    zclock_log("ICANHAZ -> CHEEZBURGER: PASS");
 
     // Send HUGZ and get and HUGZ-OK
 
@@ -153,7 +146,6 @@ nom_server_test (bool verbose)
     assert (reply);
     assert (nom_msg_id (reply) == NOM_MSG_HUGZ_OK);
     nom_msg_destroy (&reply);
-    zclock_log("HUGZ -> HUGZ-OK: PASS");
 
     // Wait for a timeout, server should send HUGZ, we reply HUGZ-OK
 
@@ -164,8 +156,6 @@ nom_server_test (bool verbose)
     request = nom_msg_new(NOM_MSG_HUGZ_OK);
     nom_msg_send(&request, dealer);
 
-    zclock_log("timeout -> HUGZ: PASS");
-
     // Make sure the session is still alive with an ICANHAZ
 
     request = nom_msg_new (NOM_MSG_ICANHAZ);
@@ -175,9 +165,6 @@ nom_server_test (bool verbose)
     assert (reply);
     assert (nom_msg_id (reply) == NOM_MSG_CHEEZBURGER);
     nom_msg_destroy (&reply);
-    zclock_log("ICANHAZ -> CHEEZBURGER: PASS");
-
-    zclock_log("Use Peering: PASS");
 
     nom_server_destroy (&self);
 

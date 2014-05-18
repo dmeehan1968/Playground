@@ -48,6 +48,7 @@
 		A33FFAFE1926330600E325E0 /* nom_server.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nom_server.h; sourceTree = "<group>"; };
 		A33FFAFF1926330D00E325E0 /* nom_server.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nom_server.c; sourceTree = "<group>"; };
 		A33FFB011926375300E325E0 /* nom_server_engine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nom_server_engine.h; sourceTree = "<group>"; };
+		A35B7E1C1928C58B00B4266A /* nom_msg.bnf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = nom_msg.bnf; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +82,7 @@
 		A33FFAF31926209600E325E0 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				A35B7E1C1928C58B00B4266A /* nom_msg.bnf */,
 				A33FFB011926375300E325E0 /* nom_server_engine.h */,
 				A33FFAFF1926330D00E325E0 /* nom_server.c */,
 				A33FFAF81926252600E325E0 /* nom_msg.c */,
@@ -286,6 +288,7 @@
 				A33FFAF219261C1E00E325E0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

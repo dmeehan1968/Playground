@@ -1,0 +1,29 @@
+The following ABNF grammar defines the nom protocol:
+
+    nom_msg         = *(  OHAI |  OHAI-OK |  WTF |  ICANHAZ |  CHEEZBURGER |  HUGZ |  HUGZ-OK )
+
+    ; 
+    ohai            = signature %d1
+    signature       = %xAA %xA0             ; two octets
+
+    ; 
+    ohai_ok         = signature %d2
+
+    ; 
+    wtf             = signature %d3
+
+    ; 
+    icanhaz         = signature %d4
+
+    ; 
+    cheezburger     = signature %d5
+
+    ; 
+    hugz            = signature %d6
+
+    ; 
+    hugz_ok         = signature %d7
+
+    ; Strings are always length + text contents
+
+    ; Numbers are unsigned integers in network byte order

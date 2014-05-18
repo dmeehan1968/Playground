@@ -16,7 +16,7 @@ namespace Messaging { namespace NomProtocol {
 
             if (_numCheezBurgers) {
 
-                reply(OhaiOk());
+                send(OhaiOk());
 
             }
         };
@@ -25,11 +25,11 @@ namespace Messaging { namespace NomProtocol {
 
             if (_numCheezBurgers-- > 0) {
 
-                reply(CheezBurger());
+                send(CheezBurger());
 
             } else {
 
-                reply(Wtf());
+                send(Wtf());
 
             }
 
@@ -37,13 +37,13 @@ namespace Messaging { namespace NomProtocol {
 
         onUsePeeringHugz = [&](const Hugz &hugz) {
 
-            reply(HugzOk());
+            send(HugzOk());
 
         };
 
         onUsePeeringTimeout = [&](const Hugz &hugz) {
 
-            reply(Hugz());
+            send(Hugz());
 
         };
 

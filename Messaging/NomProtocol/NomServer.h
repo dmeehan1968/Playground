@@ -98,7 +98,7 @@ namespace Messaging { namespace NomProtocol {
 
                 if (found == _sessions.end()) {
 
-                    found = _sessions.emplace(std::piecewise_construct, std::make_tuple(msg->address), std::make_tuple(_socket, _timeout)).first;
+                    found = _sessions.emplace(std::piecewise_construct, std::make_tuple(msg->address), std::make_tuple(msg->address, _socket, _timeout)).first;
 
                 }
 

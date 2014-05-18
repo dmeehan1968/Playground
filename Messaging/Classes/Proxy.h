@@ -64,11 +64,11 @@ namespace Messaging {
             
             using namespace std::placeholders;
             
-            _frontendWriteObserver = std::bind(&Proxy::onFrontendWritable, this, _1, _2);
-            _backendWriteObserver = std::bind(&Proxy::onBackendWritable, this, _1, _2);
+            _frontendWriteObserver = std::bind(&Proxy::onFrontendWritable, this, _1, _2, _3);
+            _backendWriteObserver = std::bind(&Proxy::onBackendWritable, this, _1, _2, _3);
             
-            _frontendReadObserver = std::bind(&Proxy::onFrontendReadable, this, _1, _2);
-            _backendReadObserver = std::bind(&Proxy::onBackendReadable, this, _1, _2);
+            _frontendReadObserver = std::bind(&Proxy::onFrontendReadable, this, _1, _2, _3);
+            _backendReadObserver = std::bind(&Proxy::onBackendReadable, this, _1, _2, _3);
             
             _reactor->addObserver(_frontend, Reactor::Event::Writable, _frontendWriteObserver);
             
@@ -76,21 +76,21 @@ namespace Messaging {
             
         }
         
-        void onFrontendWritable(Socket &socket, const Reactor::Event &event) {
+        void onFrontendWritable(const Socket &socket, const Reactor::Event &event, const bool didTimeout) {
          
             _reactor->removeObserver(_frontend, Reactor::Event::Writable);
             _reactor->addObserver(_backend, Reactor::Event::Readable, _backendReadObserver);
             
         }
         
-        void onBackendWritable(Socket &socket, const Reactor::Event &event) {
+        void onBackendWritable(const Socket &socket, const Reactor::Event &event, const bool didTimeout) {
           
             _reactor->removeObserver(_backend, Reactor::Event::Writable);
             _reactor->addObserver(_frontend, Reactor::Event::Readable, _frontendReadObserver);
             
         }
         
-        void onFrontendReadable(Socket &socket, const Reactor::Event &event) {
+        void onFrontendReadable(const Socket &socket, const Reactor::Event &event, const bool didTimeout) {
             
             forward(_frontend, _backend);
             
@@ -99,7 +99,7 @@ namespace Messaging {
             
         }
         
-        void onBackendReadable(Socket &socket, const Reactor::Event &event) {
+        void onBackendReadable(const Socket &socket, const Reactor::Event &event, const bool didTimeout) {
 
             forward(_backend, _frontend);
             
@@ -147,10 +147,10 @@ namespace Messaging {
         Socket _frontend;
         Socket _backend;
         
-        Reactor::EventObserver _frontendWriteObserver;
-        Reactor::EventObserver _backendWriteObserver;
-        Reactor::EventObserver _frontendReadObserver;
-        Reactor::EventObserver _backendReadObserver;
+        Reactor::Observer _frontendWriteObserver;
+        Reactor::Observer _backendWriteObserver;
+        Reactor::Observer _frontendReadObserver;
+        Reactor::Observer _backendReadObserver;
         
     };
     

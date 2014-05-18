@@ -1,0 +1,46 @@
+
+<class  name = "nom_server"
+        title = "nom server"
+        proto = "nom_msg"
+        script = "zproto_server_c"
+        >
+
+    <state name = "open-peering">
+
+        <event name = "OHAI" next = "use-peering">
+
+            <action name = "send" message = "OHAI-OK" />
+
+        </event>
+
+    </state>
+
+    <state name = "use-peering">
+
+        <event name = "ICANHAZ">
+
+            <action name = "send" message = "CHEEZBURGER" />
+
+        </event>
+
+        <event name = "HUGZ">
+
+            <action name = "send" message = "HUGZ-OK" />
+
+        </event>
+
+        <event name = "expired" next = "needluv">
+
+            <action name = "send" message = "HUGZ" />
+
+        </event>
+
+    </state>
+
+    <state name = "needluv">
+
+        <event name = "HUGZ-OK" next = "use-peering" />
+
+    </state>
+    
+</class>

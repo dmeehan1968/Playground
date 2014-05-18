@@ -21,8 +21,65 @@ namespace Messaging {
     public:
         
         using Event = Poller::Event;
-        using EventObserver = std::function<void(Socket &, const Event &)>;
-        
+        using Observer = std::function<void(const Socket &, const Event &event, const bool didTimeout)>;
+
+        using Milliseconds = std::chrono::milliseconds;
+        using TimePoint = std::chrono::steady_clock::time_point;
+
+        class EventObservation {
+
+        public:
+
+            EventObservation(const Observer &observer, const Milliseconds &duration)
+            :
+                _observer(observer),
+                _duration(duration)
+            {
+                resetTimeout();
+            }
+
+            const Observer &observer() const {
+                return _observer;
+            }
+
+            void setObserver(const Observer &observer) {
+                _observer = observer;
+            }
+
+            const Milliseconds &duration() const {
+                return _duration;
+            }
+
+            void setDuration(const Milliseconds &duration) {
+                _duration = duration;
+            }
+
+            bool isExpired() const {
+
+                auto now = TimePoint::clock::now();
+
+                return _expires < now;
+
+            }
+
+            void resetTimeout() {
+
+                auto now = TimePoint::clock::now();
+
+                auto limit = std::chrono::duration_cast<Milliseconds>(TimePoint::duration::max() - now.time_since_epoch());
+
+                _expires = now + ((limit < _duration) ? limit : _duration);
+
+            }
+
+        private:
+
+            Observer _observer;
+            std::chrono::milliseconds _duration;
+            std::chrono::high_resolution_clock::time_point _expires;
+
+        };
+
         Reactor()
         :
             _done(false),
@@ -35,35 +92,38 @@ namespace Messaging {
             _poller(poller)
         {}
         
-        void addObserver(const Socket &socket, const Event &event, const EventObserver &observer) {
+        void addObserver(const Socket &socket,
+                         const Event &event,
+                         const Observer &observer,
+                         const Milliseconds timeout = Milliseconds::max()) {
             
             if ( ! observer ) {
                 throw Exception("observer cannot be null", 0);
             }
-            
+
             auto events = _poller->observedEvents(socket);
-            
+
             if (events.is(event)) {
-                
+
                 throw Exception("event already observed", 0);
-                
+
             }
-            
+
             events.insert(event);
             
             _poller->observe(socket, events);
-            
+
             switch (event) {
                 case Event::Readable:
-                    _readObservers[socket] = observer;
+                    _readObservers.emplace(socket, EventObservation(observer, timeout));
                     break;
                     
                 case Event::Writable:
-                    _writeObservers[socket] = observer;
+                    _writeObservers.emplace(socket, EventObservation(observer, timeout));
                     break;
                     
                 case Event::Error:
-                    _errorObservers[socket] = observer;
+                    _errorObservers.emplace(socket, EventObservation(observer, timeout));
                     break;
                     
             }
@@ -101,36 +161,43 @@ namespace Messaging {
         }
         
         bool runOnce(const long timeout) {
-            
+
+            bool didNotify = false;
+
             if (_poller->poll(timeout) > 0) {
                 
                 _poller->dispatch([&](Socket &socket, const Poller::Events &events) {
                 
                     if (events.is(Poller::Event::Readable)) {
                         
-                        notify(_readObservers, socket, Poller::Event::Readable);
+                        notify(_readObservers, socket, Poller::Event::Readable, false);
+                        didNotify = true;
                         
                     }
                     
                     if (events.is(Poller::Event::Writable)) {
                         
-                        notify(_writeObservers, socket, Poller::Event::Writable);
-                        
+                        notify(_writeObservers, socket, Poller::Event::Writable, false);
+                        didNotify = true;
+
                     }
                     
                     if (events.is(Poller::Event::Error)) {
                         
-                        notify(_errorObservers, socket, Poller::Event::Error);
+                        notify(_errorObservers, socket, Poller::Event::Error, false);
+                        didNotify = true;
                         
                     }
 
                 });
             
-                return true;
-                
             }
-            
-            return false;
+
+            didNotify |= notifyTimeouts(_readObservers, Event::Readable);
+            didNotify |= notifyTimeouts(_writeObservers, Event::Writable);
+            didNotify |= notifyTimeouts(_errorObservers, Event::Error);
+
+            return didNotify;
             
         }
         
@@ -168,25 +235,44 @@ namespace Messaging {
         
     protected:
         
-        void notify(const std::map<Socket, EventObserver> &observers, Socket &socket, const Event &event) {
+        void notify(std::map<Socket, EventObservation> &observers, Socket &socket, const Event &event, const bool didTimeout) {
             
             auto found = observers.find(socket);
             
             if (found != observers.end()) {
                 
-                (found->second)(socket, event);
-                
+                (found->second.observer())(socket, event, didTimeout);
+                found->second.resetTimeout();
             }
             
+        }
+
+        bool notifyTimeouts(std::map<Socket, EventObservation> &observers, const Event &event) {
+
+            bool didNotify = false;
+
+            for ( auto &observation : observers ) {
+
+                if (observation.second.isExpired()) {
+
+                    (observation.second.observer())(observation.first, event, true);
+                    didNotify = true;
+                    observation.second.resetTimeout();
+
+                }
+            }
+
+            return didNotify;
+
         }
         
     private:
 
         bool _done;
         std::shared_ptr<Poller> _poller;
-        std::map<Socket, EventObserver> _readObservers;
-        std::map<Socket, EventObserver> _writeObservers;
-        std::map<Socket, EventObserver> _errorObservers;
+        std::map<Socket, EventObservation> _readObservers;
+        std::map<Socket, EventObservation> _writeObservers;
+        std::map<Socket, EventObservation> _errorObservers;
         
         std::thread _thread;
         

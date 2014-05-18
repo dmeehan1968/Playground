@@ -29,7 +29,7 @@ namespace Messaging { namespace Specs {
             reactor = Reactor(poller);
             
         });
-        
+
         it("exists", {
         
             expect(poller.get()).shouldNot.beNil();
@@ -80,7 +80,7 @@ namespace Messaging { namespace Specs {
 
             beforeEach({
                 
-                reactor.addObserver(socket, Reactor::Event::Readable, [](Socket &socket, const Reactor::Event &event) {
+                reactor.addObserver(socket, Reactor::Event::Readable, [](const Socket &socket, const Reactor::Event &event, const bool) {
                     
                 });
                 
@@ -98,7 +98,7 @@ namespace Messaging { namespace Specs {
                     
                     beforeEach({
                         
-                        reactor.addObserver(socket, Reactor::Event::Writable, [](Socket &socket, const Reactor::Event &event) {
+                        reactor.addObserver(socket, Reactor::Event::Writable, [](const Socket &socket, const Reactor::Event &event, const bool) {
                             
                         });
                         
@@ -120,7 +120,7 @@ namespace Messaging { namespace Specs {
                 
                 beforeEach({
                     
-                    reactor.addObserver(other, Reactor::Event::Readable, [](Socket &, const Reactor::Event &) {
+                    reactor.addObserver(other, Reactor::Event::Readable, [](const Socket &, const Reactor::Event &, const bool) {
                         
                     });
                     
@@ -142,9 +142,9 @@ namespace Messaging { namespace Specs {
             
             beforeEach({
                 
-                reactor.addObserver(socket, Reactor::Event::Readable, [](Socket &, const Reactor::Event &) {});
+                reactor.addObserver(socket, Reactor::Event::Readable, [](const Socket &, const Reactor::Event &, const bool) {});
                 
-                reactor.addObserver(socket, Reactor::Event::Writable, [](Socket &, const Reactor::Event &) {});
+                reactor.addObserver(socket, Reactor::Event::Writable, [](const Socket &, const Reactor::Event &, const bool) {});
                 
             });
 
@@ -211,14 +211,21 @@ namespace Messaging { namespace Specs {
                 
                 beforeEach({
                     
-                    reactor.addObserver(*client, Reactor::Event::Writable, [&](Socket &socket, const Reactor::Event &event) {
+                    reactor.addObserver(*client, Reactor::Event::Writable, [&](const Socket &socket, const Reactor::Event &event, const bool) {
                 
                         didNotify = true;
                         
                     });
                     
                 });
-                
+
+                afterEach({
+
+                    reactor.removeObserver(*client, Reactor::Event::Writable);
+
+                });
+
+
                 it("notifies writable", {
                     
                     reactor.runOnce(100);
@@ -235,7 +242,7 @@ namespace Messaging { namespace Specs {
                 
                 beforeEach({
                     
-                    reactor.addObserver(*server, Reactor::Event::Readable, [&](Socket &socket, const Reactor::Event &event) {
+                    reactor.addObserver(*server, Reactor::Event::Readable, [&](const Socket &socket, const Reactor::Event &event, const bool) {
                     
                         didNotify = true;
                         
@@ -246,7 +253,13 @@ namespace Messaging { namespace Specs {
                     frame.send(*client, Frame::block::blocking, Frame::more::none);
                     
                 });
-                
+
+                afterEach({
+
+                    reactor.removeObserver(*server, Reactor::Event::Readable);
+
+                });
+
                 it("notifies readable", {
                     
                     reactor.runOnce(100);
@@ -254,6 +267,64 @@ namespace Messaging { namespace Specs {
                     expect(didNotify).should.beTrue();
                     
                 });
+
+            });
+
+            context("read timeout", {
+
+                bool didNotify = false;
+                bool didTimeout = false;
+                std::chrono::high_resolution_clock::time_point start;
+                std::chrono::high_resolution_clock::time_point end;
+
+                beforeEach({
+
+                    start = decltype(start)::clock::now();
+                    end = start;
+
+                    reactor.addObserver(*server, Reactor::Event::Readable,  [&](const Socket &socket, const Reactor::Event &event, const bool didTimeout_) {
+
+                        end = decltype(end)::clock::now();
+                        didNotify = true;
+                        didTimeout = didTimeout_;
+
+                    }, Reactor::Milliseconds(50));
+
+                });
+
+                afterEach({
+
+                    reactor.removeObserver(*server, Reactor::Event::Readable);
+
+                });
+
+
+                it("notifies", {
+
+                    reactor.runOnce(100);
+
+                    expect(didNotify).should.beTrue();
+
+                });
+
+                it("notifies timeout", {
+
+                    reactor.runOnce(100);
+
+                    expect(didTimeout).should.beTrue();
+
+                });
+
+                it("takes at least 50 msecs", {
+
+                    reactor.runOnce(100);
+
+                    expect((end - start).count()).should.beGreaterThan(50);
+
+                });
+
+
+
 
             });
             

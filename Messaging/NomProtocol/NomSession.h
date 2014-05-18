@@ -49,7 +49,7 @@ namespace Messaging { namespace NomProtocol {
 
         void dispatch(const std::shared_ptr<Msg> &msg) {
 
-            if (msg) {
+            if (msg && ! msg->isa<Timeout>()) {
 
                 resetTimeout();
 
@@ -129,6 +129,7 @@ namespace Messaging { namespace NomProtocol {
 
             msg.address = _replyAddress;
             _socket.send(std::forward<T>(msg));
+            resetTimeout();
 
         }
 

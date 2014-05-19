@@ -27,8 +27,9 @@ namespace Messaging { namespace NomProtocol {
         using Clock = std::chrono::steady_clock;
         using Milliseconds = std::chrono::milliseconds;
 
-        NomSession(const NomSocket &socket, const Milliseconds &timeout)
+        NomSession(const Frame &replyAddress, const NomSocket &socket, const Milliseconds &timeout)
         :
+            _replyAddress(replyAddress),
             _socket(socket),
             _state(State::OpenPeering),
             _numCheezBurgers(10),
@@ -48,9 +49,7 @@ namespace Messaging { namespace NomProtocol {
 
         void dispatch(const std::shared_ptr<Msg> &msg) {
 
-            if (msg) {
-
-                _replyAddress = msg->address;
+            if (msg && ! msg->isa<Timeout>()) {
 
                 resetTimeout();
 
@@ -126,10 +125,11 @@ namespace Messaging { namespace NomProtocol {
     protected:
 
         template <class T>
-        void reply(T &&msg) {
+        void send(T &&msg) {
 
             msg.address = _replyAddress;
             _socket.send(std::forward<T>(msg));
+            resetTimeout();
 
         }
 
